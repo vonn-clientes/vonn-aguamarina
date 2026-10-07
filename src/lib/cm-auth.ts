@@ -14,7 +14,7 @@ function sign(payload: string) {
   return createHmac("sha256", secret()).update(payload).digest("hex");
 }
 
-// "Agua Marina CM", "aguamarina cm" y "aguamarinacm" cuentan como lo mismo.
+// Mayúsculas y espacios no importan al comparar.
 export function normalize(v: string) {
   return v.toLowerCase().replace(/\s+/g, "").trim();
 }
