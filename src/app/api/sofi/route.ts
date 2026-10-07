@@ -48,6 +48,11 @@ async function ask(p: Provider, system: string, messages: ChatMsg[]): Promise<st
   }
 }
 
+function asksAboutVonn(t: string): boolean {
+  const q = fold(t);
+  return /\bvonn\b|quien (hizo|creo|armo|desarrollo|diseno|programo|hace) (esta|la|el|este)|quien (esta )?(detras|hizo)|(hacer|armar|crear|tener|necesito|quiero|quisiera|diseñar|disenar|desarrollar)[^.?!]{0,25}(pagina|sitio|web|tienda online|sistema de turnos|app)\b|desarrollador|programador|agencia web|diseno web|pagina web para mi/.test(q);
+}
+
 export async function POST(req: Request) {
   const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "anon";
   if (limited(ip)) return NextResponse.json({ reply: "Uf, me escribiste muchísimo 😅 Probá en unos minutos o escribile directo a Ingrid por WhatsApp.", mentioned: [] });
@@ -60,6 +65,16 @@ export async function POST(req: Request) {
     .map((m) => ({ role: m.role, content: m.content.slice(0, 600) }));
   if (!messages.length || messages[messages.length - 1].role !== "user") return NextResponse.json({ error: "bad" }, { status: 400 });
   const name = (body.name ?? "").replace(/[^\p{L}\p{N} .'-]/gu, "").trim().slice(0, 30) || null;
+
+  const lastText = messages[messages.length - 1].content;
+  if (asksAboutVonn(lastText)) {
+    return NextResponse.json({
+      reply: "Esta página la hizo VONN, un estudio de software de Concepción del Uruguay que crea webs, sistemas de turnos y asistentes como yo para comercios y profesionales 💙 Si querés una página o un sistema para tu negocio, acá te dejo su ficha.",
+      mentioned: [],
+      card: "vonn",
+      via: "rule",
+    });
+  }
 
   const site = await getPublicSite();
   if (!site) return NextResponse.json({ reply: "Ahora no puedo consultar el catálogo. Escribile a Ingrid por WhatsApp 💙", mentioned: [] });

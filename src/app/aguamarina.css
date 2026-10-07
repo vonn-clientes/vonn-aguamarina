@@ -762,3 +762,8 @@ body:has(.ag-stickybar) .ag-sofi-fab { bottom: calc(5.5rem + env(safe-area-inset
 
 .ag-sofi__avatar img, .ag-sofi-fab__dot img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; display: block; }
 .ag-sofi__avatar, .ag-sofi-fab__dot { overflow: visible; }
+
+.ag-sofi .ag-sofi__vonn { display: flex; flex-direction: column; gap: .5rem; margin-top: .65rem; padding: .85rem; border-radius: 16px; background: #f3f8fc; border: 1px solid #cfe0ef; text-decoration: none; color: #1b2b3a; }
+.ag-sofi .ag-sofi__vonn img { height: 26px; width: auto; align-self: flex-start; }
+.ag-sofi .ag-sofi__vonn span { font-size: .85rem; line-height: 1.4; color: #3d5a73; }
+.ag-sofi .ag-sofi__vonn b { align-self: flex-start; padding: .45rem .9rem; border-radius: 999px; background: #2f6fae; color: #fff; font-size: .85rem; font-weight: 600; }

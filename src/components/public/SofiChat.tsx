@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { waLink } from "@/lib/seo";
 
-type Msg = { role: "user" | "assistant"; content: string };
+type Msg = { role: "user" | "assistant"; content: string; card?: "vonn" };
 const KEY = "sofi-v1";
 const CHIPS = ["Quiero cuidar mi piel", "Busco algo para el cuerpo", "¿Qué promos hay?", "¿Qué productos venden?"];
 
@@ -45,7 +45,7 @@ export function SofiChat({ whatsapp }: { whatsapp: string | null | undefined }) 
         new Promise((res) => setTimeout(res, 1100)), // pausa natural: se ve "escribiendo…"
       ]);
       const j = await r.json();
-      setMsgs([...next, { role: "assistant", content: j.reply || "Uy, se me cruzaron los cables. ¿Me lo repetís? 💙" }]);
+      setMsgs([...next, { role: "assistant", content: j.reply || "Uy, se me cruzaron los cables. ¿Me lo repetís? 💙", card: j.card === "vonn" ? "vonn" : undefined }]);
       if (Array.isArray(j.mentioned) && j.mentioned.length) setInterest((cur) => [...new Set([...cur, ...j.mentioned])]);
     } catch {
       setMsgs([...next, { role: "assistant", content: "Uy, se me cortó la conexión. Probá de nuevo o escribile a Ingrid por WhatsApp 💙" }]);
@@ -79,7 +79,15 @@ export function SofiChat({ whatsapp }: { whatsapp: string | null | undefined }) 
           <div className="ag-sofi__body" aria-live="polite">
             <div className="ag-sofi__bot">¡Hola! Soy Sofi, la asesora virtual de Aguamarina 🌊 Te ayudo a elegir tratamientos, productos y packs. ¿Cómo te llamás?</div>
             {msgs.map((m, i) => (
-              <div key={i} className={m.role === "user" ? "ag-sofi__me" : "ag-sofi__bot"}>{m.content}</div>
+              <div key={i} className={m.role === "user" ? "ag-sofi__me" : "ag-sofi__bot"}>{m.content}
+                {m.card === "vonn" && (
+                  <a className="ag-sofi__vonn" href="https://www.vonn.com.ar" target="_blank" rel="noopener noreferrer">
+                    <img src="/logo/vonn-logo-light.svg" alt="VONN" />
+                    <span>Estudio de software y automatización para comercios y profesionales. Hicieron esta web, la agenda y a Sofi.</span>
+                    <b>Conocé VONN</b>
+                  </a>
+                )}
+              </div>
             ))}
             {busy && <div className="ag-sofi__bot ag-sofi__typing" aria-label="Sofi está escribiendo"><i /><i /><i /></div>}
             {name && msgs.length <= 1 && !busy && (
