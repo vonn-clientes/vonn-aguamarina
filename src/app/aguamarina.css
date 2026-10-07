@@ -388,3 +388,16 @@
 .ag-hero__lead { margin-top: 1.5rem; }
 .ag-brand__mark { width: 46px; height: 46px; }
 .ag-header__in { height: 60px; }
+
+/* ---- Filtros de la tienda ---- */
+.ag-filters { display: grid; gap: 1rem; margin-bottom: 1.5rem; }
+.ag-filter { border: 0; margin: 0; padding: 0; min-width: 0; }
+.ag-filter legend { font-size: 0.875rem; font-weight: 600; color: var(--soft); margin-bottom: 0.5rem; padding: 0; }
+.ag-filter [role="group"] { display: flex; gap: 0.5rem; overflow-x: auto; padding-bottom: 4px; scrollbar-width: none; flex-wrap: wrap; }
+.ag-chipbtn { min-height: 44px; padding: 0 1.1rem; border-radius: 980px; border: 1px solid var(--line); background: #fff; color: var(--ink); font: inherit; font-size: 0.9375rem; cursor: pointer; white-space: nowrap; transition: background-color 0.2s var(--ease), color 0.2s var(--ease), border-color 0.2s var(--ease); }
+.ag-chipbtn:hover { border-color: var(--accent); }
+.ag-chipbtn:active { transform: scale(0.97); }
+.ag-chipbtn[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: #fff; }
+.ag-count { color: var(--soft); font-size: 0.9375rem; margin: 0 0 0.75rem; }
+.ag-empty { text-align: center; padding: 3rem 1rem; display: grid; gap: 1rem; justify-items: center; color: var(--soft); }
+.ag-product__skins { font-size: 0.8125rem; color: var(--accent); margin: 0.35rem 0 0; }

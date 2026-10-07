@@ -20,6 +20,9 @@ export async function addCatalogItem(formData: FormData) {
     category: String(formData.get("category") || "") || null,
     image_url: String(formData.get("image_url") || "") || null,
     gallery_urls: formData.getAll("gallery_urls").map(String).filter(Boolean),
+    skin_types: formData.getAll("skin_types").map(String),
+    concerns: formData.getAll("concerns").map(String),
+    product_type: String(formData.get("product_type") || "") || null,
   });
 
   revalidatePath("/panel/catalogo");
@@ -71,6 +74,9 @@ export async function updateCatalogItem(itemId: string, formData: FormData) {
       category: String(formData.get("category") || "") || null,
       image_url: String(formData.get("image_url") || "") || null,
       gallery_urls: formData.getAll("gallery_urls").map(String).filter(Boolean),
+      skin_types: formData.getAll("skin_types").map(String),
+      concerns: formData.getAll("concerns").map(String),
+      product_type: String(formData.get("product_type") || "") || null,
     })
     .eq("id", itemId)
     .eq("tenant_id", membership.tenant.id);

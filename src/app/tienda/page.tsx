@@ -4,7 +4,7 @@ import { getPublicSite } from "@/lib/public-data";
 import { SITE } from "@/lib/site";
 import { breadcrumbJsonLd } from "@/lib/seo";
 import { Advice, JsonLd, SiteFooter, SiteHeader } from "@/components/public/ag";
-import { ProductCard } from "@/components/tienda/ProductCard";
+import { ShopGrid } from "@/components/tienda/ShopGrid";
 
 export const revalidate = 60;
 
@@ -54,11 +54,7 @@ export default async function TiendaPage() {
                 Estamos preparando la tienda. Mientras tanto, escribinos y te asesoramos.
               </p>
             ) : (
-              <div className="ag-shop">
-                {products.map((p) => (
-                  <ProductCard key={p.id} item={p} whatsapp={wa} />
-                ))}
-              </div>
+              <ShopGrid products={products} whatsapp={wa} />
             )}
           </div>
         </section>

@@ -5,6 +5,7 @@ import { CatalogRow } from "@/components/panel/CatalogRow";
 import { addCatalogItem } from "./actions";
 import { ImageUpload } from "@/components/panel/ImageUpload";
 import { GalleryUpload } from "@/components/panel/GalleryUpload";
+import { ProductFields } from "@/components/panel/ProductFields";
 import type { CatalogItem } from "@/lib/types";
 
 export default async function CatalogoPage() {
@@ -65,6 +66,7 @@ export default async function CatalogoPage() {
           <ImageUpload tenantId={membership.tenant.id} name="image_url" label="foto" />
           <p className="vonn-text-caption text-ink-muted">Más fotos (galería)</p>
           <GalleryUpload tenantId={membership.tenant.id} name="gallery_urls" />
+          <ProductFields />
           <p className="vonn-text-caption text-ink-muted">
             Para que aparezca en la tienda, poné la categoría <strong>Productos</strong>. Si le cargás un precio se puede comprar online; sin precio, el botón consulta por WhatsApp.
           </p>

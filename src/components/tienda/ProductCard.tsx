@@ -22,6 +22,9 @@ export function ProductCard({ item, whatsapp }: { item: CatalogItem; whatsapp: s
       <div className="ag-product__body">
         <h3 className="ag-product__name">{item.name}</h3>
         {item.description && <p className="ag-product__desc">{item.description}</p>}
+        {(item.skin_types?.length ?? 0) > 0 && (
+          <p className="ag-product__skins">{item.skin_types!.join(" · ")}</p>
+        )}
         {hasPrice && <p className="ag-product__price">${Number(item.price).toLocaleString("es-AR")}</p>}
       </div>
       <div className="ag-product__cta">

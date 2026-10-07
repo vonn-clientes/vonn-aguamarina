@@ -55,6 +55,9 @@ export interface CatalogItem {
   active: boolean;
   sold_out?: boolean;
   gallery_urls?: string[];
+  skin_types?: string[];
+  concerns?: string[];
+  product_type?: string | null;
   sort_order: number;
 }
 
