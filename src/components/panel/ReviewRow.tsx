@@ -3,28 +3,25 @@
 import { useTransition } from "react";
 import { deleteReview, setReviewVisible } from "@/app/panel/(dashboard)/opiniones/actions";
 import type { Review } from "@/lib/types";
+import { DeleteButton, Switch } from "./Controls";
 
 export function ReviewRow({ review, itemName }: { review: Review; itemName: string }) {
   const [pending, start] = useTransition();
   return (
-    <div className={`rounded-sm border border-line bg-surface p-4 flex flex-col gap-2 ${pending ? "opacity-50" : ""}`}>
-      <div className="flex items-start justify-between gap-4">
-        <div>
-          <p className="vonn-text-cuerpo font-bold">
-            {review.author} <span className="font-normal text-ink-muted">sobre {itemName}</span>
-          </p>
-          <p aria-label={`${review.rating} estrellas`}>{"★".repeat(review.rating)}{"☆".repeat(5 - review.rating)}</p>
-        </div>
-        <span className={`vonn-text-caption rounded-pill px-3 py-1 ${review.visible ? "bg-primary text-white" : "bg-line text-ink-muted"}`}>
-          {review.visible ? "Visible" : "Oculta"}
-        </span>
+    <div className={`ag-item ${pending ? "opacity-50" : ""}`} style={{ alignItems: "flex-start" }}>
+      <div className="ag-item__main">
+        <p className="ag-item__name">
+          {review.author} <span style={{ fontWeight: 400, color: "#5b7287" }}>sobre {itemName}</span>
+        </p>
+        <p aria-label={`${review.rating} estrellas`} style={{ color: "#2f6fae", fontSize: "1.1rem" }}>{"★".repeat(review.rating)}{"☆".repeat(5 - review.rating)}</p>
+        <p style={{ fontSize: "1rem", color: "#1b2b3a", marginTop: ".25rem" }}>{review.comment}</p>
       </div>
-      <p className="vonn-text-cuerpo">{review.comment}</p>
-      <div className="flex gap-4">
-        <button className="vonn-text-caption text-primary" onClick={() => start(() => setReviewVisible(review.id, !review.visible))}>
-          {review.visible ? "Ocultar" : "Mostrar"}
-        </button>
-        <button className="vonn-text-caption text-accent" onClick={() => start(() => deleteReview(review.id))}>Eliminar</button>
+      <div className="ag-item__ctrl">
+        <div className="flex items-center gap-3">
+          <span className="ag-item__state">{review.visible ? "Visible" : "Oculta"}</span>
+          <Switch checked={review.visible} label="Mostrar opinión en el sitio" onChange={(v) => start(() => setReviewVisible(review.id, v))} />
+        </div>
+        <DeleteButton onConfirm={() => start(() => deleteReview(review.id))} label="Eliminar opinión" />
       </div>
     </div>
   );

@@ -3,14 +3,16 @@
 import { useState, useTransition } from "react";
 import { toggleCatalogItem, deleteCatalogItem, updateCatalogItem, toggleSoldOut } from "@/app/panel/(dashboard)/catalogo/actions";
 import type { CatalogItem } from "@/lib/types";
+import { Switch } from "./Controls";
 import { ImageUpload } from "./ImageUpload";
 import { GalleryUpload } from "./GalleryUpload";
 import { ProductFields } from "./ProductFields";
 import { TreatmentFields } from "./TreatmentFields";
 import { TREATMENT_CATEGORIES } from "./AddItemForm";
+import { DeleteButton, EditButton, SwitchRow } from "./Controls";
 
 const field =
-  "w-full rounded-sm border border-line bg-canvas px-2 py-1 vonn-text-caption outline-none focus:border-primary";
+  "w-full rounded-sm border border-line bg-canvas px-3 py-2 text-base outline-none focus:border-primary";
 
 export function CatalogRow({ item, tenantId }: { item: CatalogItem; tenantId: string }) {
   const [pending, startTransition] = useTransition();
@@ -18,8 +20,7 @@ export function CatalogRow({ item, tenantId }: { item: CatalogItem; tenantId: st
 
   if (editing) {
     return (
-      <tr>
-        <td colSpan={5} className="py-3">
+      <div className="py-4">
           <form
             action={(formData) => startTransition(async () => {
               await updateCatalogItem(item.id, formData);
@@ -46,8 +47,8 @@ export function CatalogRow({ item, tenantId }: { item: CatalogItem; tenantId: st
               className={field}
             />
             <div className="flex gap-3">
-              <button type="submit" className="vonn-text-caption text-primary font-medium">Guardar</button>
-              <button type="button" className="vonn-text-caption text-ink-muted" onClick={() => setEditing(false)}>Cancelar</button>
+              <button type="submit" className="ag-pbtn">Guardar</button>
+              <button type="button" className="ag-pbtn ag-pbtn--ghost" onClick={() => setEditing(false)}>Cancelar</button>
             </div>
             <textarea
               name="description"
@@ -57,62 +58,53 @@ export function CatalogRow({ item, tenantId }: { item: CatalogItem; tenantId: st
               className={`${field} sm:col-span-5`}
             />
             <div className="sm:col-span-5">
-              <p className="vonn-text-caption text-ink-muted mb-1">Foto principal</p>
+              <p className="text-base text-ink-muted mb-1">Foto principal</p>
               <ImageUpload tenantId={tenantId} name="image_url" defaultUrl={item.image_url} label="foto" />
             </div>
             <div className="sm:col-span-5">
-              <p className="vonn-text-caption text-ink-muted mb-1">Más fotos (galería)</p>
+              <p className="text-base text-ink-muted mb-1">Más fotos (galería)</p>
               <GalleryUpload tenantId={tenantId} name="gallery_urls" defaultUrls={item.gallery_urls ?? []} />
             </div>
             {item.category === "Productos" ? <ProductFields item={item} /> : <TreatmentFields item={item} />}
           </form>
-        </td>
-      </tr>
+      </div>
     );
   }
 
+  const price = item.price != null ? `$${item.price.toLocaleString("es-AR")}` : null;
+  const isProduct = item.category === "Productos";
+  const meta = [isProduct ? null : item.category, price, !isProduct && item.duration_minutes ? `${item.duration_minutes} min` : null]
+    .filter(Boolean)
+    .join(" · ");
+
   return (
-    <tr className={pending ? "opacity-50" : ""}>
-      <td className="py-3 pr-4 vonn-text-cuerpo">
+    <div className={`ag-item ${pending ? "opacity-50" : ""}`}>
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      {item.image_url ? <img src={item.image_url} alt="" className="ag-item__img" /> : <span className="ag-item__img" aria-hidden />}
+      <div className="ag-item__main">
+        <p className="ag-item__name">{item.name}</p>
+        {meta && <p className="ag-item__meta">{meta}</p>}
+      </div>
+      <div className="ag-item__ctrl">
         <div className="flex items-center gap-3">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          {item.image_url && <img src={item.image_url} alt="" className="h-10 w-10 rounded-sm object-cover" />}
-          <span>{item.name}</span>
+          <span className="ag-item__state">{item.active ? "Visible" : "Oculto"}</span>
+          <Switch checked={item.active} label={`Mostrar ${item.name} en el sitio`} onChange={(v) => startTransition(() => toggleCatalogItem(item.id, v))} />
         </div>
-      </td>
-      <td className="py-3 pr-4 vonn-text-cuerpo text-ink-muted">{item.category || "—"}</td>
-      <td className="py-3 pr-4 vonn-text-cuerpo">
-        {item.price != null ? `$${item.price.toLocaleString("es-AR")}` : "—"}
-      </td>
-      <td className="py-3 pr-4">
-        <button
-          className="vonn-text-caption text-primary"
-          onClick={() => startTransition(() => toggleCatalogItem(item.id, !item.active))}
-        >
-          {item.active ? "Visible (tocá para ocultar)" : "Oculto (tocá para mostrar)"}
-        </button>
-        {item.category === "Productos" && (
-          <button
-            className="vonn-text-caption text-ink-muted block mt-1"
-            onClick={() => startTransition(() => toggleSoldOut(item.id, !item.sold_out))}
-          >
-            {item.sold_out ? "Agotado (tocá para reponer)" : "Marcar agotado"}
-          </button>
-        )}
-      </td>
-      <td className="py-3">
-        <div className="flex gap-3">
-          <button className="vonn-text-caption text-primary" onClick={() => setEditing(true)}>
-            Editar
-          </button>
-          <button
-            className="vonn-text-caption text-accent"
-            onClick={() => startTransition(() => deleteCatalogItem(item.id))}
-          >
-            Eliminar
-          </button>
+        <div className="flex items-center gap-2">
+          <EditButton onClick={() => setEditing(true)} label={`Editar ${item.name}`} />
+          <DeleteButton onConfirm={() => startTransition(() => deleteCatalogItem(item.id))} label={`Eliminar ${item.name}`} />
         </div>
-      </td>
-    </tr>
+      </div>
+      {isProduct && (
+        <div className="ag-item__sub">
+          <SwitchRow
+            text="Agotado"
+            checked={!!item.sold_out}
+            label={`Marcar ${item.name} como agotado`}
+            onChange={(v) => startTransition(() => toggleSoldOut(item.id, v))}
+          />
+        </div>
+      )}
+    </div>
   );
 }

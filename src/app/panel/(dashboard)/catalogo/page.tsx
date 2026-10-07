@@ -24,22 +24,9 @@ export default async function CatalogoPage() {
       <p className="vonn-text-cuerpo text-ink-muted">{empty}</p>
     ) : (
       <div>
-        <table className="ag-ctable w-full text-left">
-          <thead>
-            <tr className="vonn-text-caption text-ink-muted border-b border-line">
-              <th className="pb-2 font-medium">Nombre</th>
-              <th className="pb-2 font-medium">Categoría</th>
-              <th className="pb-2 font-medium">Precio</th>
-              <th className="pb-2 font-medium">En el sitio</th>
-              <th className="pb-2 font-medium"></th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-line">
-            {list.map((item) => (
-              <CatalogRow key={item.id} item={item} tenantId={membership.tenant.id} />
-            ))}
-          </tbody>
-        </table>
+        {list.map((item) => (
+          <CatalogRow key={item.id} item={item} tenantId={membership.tenant.id} />
+        ))}
       </div>
     );
 
