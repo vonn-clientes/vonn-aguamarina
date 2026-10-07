@@ -38,7 +38,10 @@ export function SofiChat({ whatsapp }: { whatsapp: string | null | undefined }) 
     const next: Msg[] = [...msgs, { role: "user", content: t }];
     setMsgs(next); setText(""); setBusy(true);
     try {
-      const r = await fetch("/api/sofi", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ messages: next, name }) });
+      const [r] = await Promise.all([
+        fetch("/api/sofi", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ messages: next, name }) }),
+        new Promise((res) => setTimeout(res, 1100)), // pausa natural: se ve "escribiendo…"
+      ]);
       const j = await r.json();
       setMsgs([...next, { role: "assistant", content: j.reply || "Uy, se me cruzaron los cables. ¿Me lo repetís? 💙" }]);
       if (Array.isArray(j.mentioned) && j.mentioned.length) setInterest((cur) => [...new Set([...cur, ...j.mentioned])]);
@@ -61,14 +64,14 @@ export function SofiChat({ whatsapp }: { whatsapp: string | null | undefined }) 
       {!open && (
         <button className="ag-sofi-fab" onClick={() => setOpen(true)} aria-label="Hablar con Sofi, asesora virtual">
           <span className="ag-sofi-fab__dot" aria-hidden>✦</span>
-          <span><b>Sofi</b><small>asesora virtual</small></span>
+          <span><b>Sofi</b><small><i className="ag-sofi__on" aria-hidden />En línea · asesora virtual</small></span>
         </button>
       )}
       {open && (
         <section className="ag-sofi" role="dialog" aria-label="Chat con Sofi, asesora virtual de Aguamarina">
           <header>
-            <span className="ag-sofi__avatar" aria-hidden>S</span>
-            <div><b>Sofi</b><small>Asesora virtual · Aguamarina</small></div>
+            <span className="ag-sofi__avatar" aria-hidden>S<i className="ag-sofi__on" /></span>
+            <div><b>Sofi</b><small>{busy ? "escribiendo…" : "En línea · asesora virtual"}</small></div>
             <button onClick={() => setOpen(false)} aria-label="Cerrar chat">×</button>
           </header>
           <div className="ag-sofi__body" aria-live="polite">

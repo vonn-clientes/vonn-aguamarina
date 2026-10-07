@@ -753,3 +753,9 @@ body:has(.ag-stickybar) .ag-sofi-fab { bottom: calc(5.5rem + env(safe-area-inset
 .ag-sofi__form button:disabled { opacity: .45; }
 .ag-sofi__note { padding: .55rem 0 .15rem; font-size: .78rem; color: #6b8296; text-align: center; }
 @media (prefers-reduced-motion: reduce) { .ag-sofi, .ag-sofi-fab { animation: none; transition: none; } .ag-sofi__typing i { animation: none; } }
+
+.ag-sofi__on { display: inline-block; width: 9px; height: 9px; border-radius: 50%; background: #34c76b; box-shadow: 0 0 0 2px #fff; margin-right: 6px; animation: ag-pulse 2s infinite; }
+.ag-sofi__avatar { position: relative; }
+.ag-sofi__avatar .ag-sofi__on { position: absolute; right: -1px; bottom: 0; margin: 0; width: 11px; height: 11px; }
+@keyframes ag-pulse { 0%, 100% { box-shadow: 0 0 0 2px #fff, 0 0 0 4px rgba(52,199,107,.35); } 50% { box-shadow: 0 0 0 2px #fff, 0 0 0 7px rgba(52,199,107,0); } }
+@media (prefers-reduced-motion: reduce) { .ag-sofi__on { animation: none; } }
