@@ -67,8 +67,7 @@ export function SiteHeader({
     <header className="ag-header">
       <div className="ag-header__in">
         <Link href="/" className="ag-brand" aria-label={`${SITE.name}, inicio`}>
-          <Image src="/logo-aguamarina.png" alt="" width={72} height={72} className="ag-brand__mark" priority />
-          <span className="ag-brand__name">{SITE.shortName}</span>
+          <Image src="/logo-aguamarina-oficial.png" alt={SITE.name} width={1200} height={421} className="ag-brand__mark" priority />
         </Link>
 
         <nav className="ag-nav" aria-label="Principal">
@@ -134,12 +133,12 @@ export function Medallion({ priority = false, size = 168 }: { priority?: boolean
   return (
     <Image
       className="ag-medallion"
-      src="/logo-aguamarina.png"
-      alt="Logo de Aguamarina Estética y Bienestar: una cinta de agua con una flor de loto"
-      width={296}
-      height={296}
+      src="/logo-aguamarina-oficial.png"
+      alt="Aguamarina, estética y bienestar"
+      width={1200}
+      height={421}
       priority={priority}
-      style={{ width: size, height: size }}
+      style={{ width: size, height: "auto" }}
     />
   );
 }

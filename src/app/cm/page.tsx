@@ -30,7 +30,7 @@ export default async function CmPage() {
     return (
       <div className="ag ag-cm">
         <main className="ag-cm-login">
-          <Image src="/logo-aguamarina.png" alt="Aguamarina" width={96} height={96} className="ag-cm-logo" />
+          <Image src="/logo-aguamarina-oficial.png" alt="Aguamarina" width={240} height={84} className="ag-cm-logo" />
           <h1>Acceso para redes</h1>
           <p>Links, fotos y textos para publicar.</p>
           <LoginForm />
@@ -48,7 +48,7 @@ export default async function CmPage() {
   return (
     <div className="ag ag-cm">
       <header className="ag-cm-top">
-        <Image src="/logo-aguamarina.png" alt="Aguamarina" width={44} height={44} className="ag-cm-logo ag-cm-logo--sm" />
+        <Image src="/logo-aguamarina-oficial.png" alt="Aguamarina" width={140} height={49} className="ag-cm-logo ag-cm-logo--sm" />
         <form action={logoutCm}>
           <button className="ag-more" type="submit">Salir</button>
         </form>

@@ -13,7 +13,7 @@ export function TreatmentCard({ item }: { item: CatalogItem }) {
           // eslint-disable-next-line @next/next/no-img-element
           <img src={item.image_url} alt={`${item.name} en Aguamarina`} width={640} height={800} loading="lazy" />
         ) : (
-          <Image src="/logo-aguamarina.png" alt="" width={120} height={120} className="ag-tcard__ph" />
+          <Image src="/logo-aguamarina-oficial.png" alt="" width={300} height={105} className="ag-tcard__ph" />
         )}
       </span>
       <span className="ag-tcard__body">

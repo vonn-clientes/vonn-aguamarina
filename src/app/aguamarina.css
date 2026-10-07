@@ -424,3 +424,20 @@
 .ag-promo__note { font-size: 0.875rem; color: var(--soft); margin: 0; }
 .ag-promo .ag-btn { align-self: flex-start; }
 .ag-promo ul { align-content: start; }
+
+/* ---- Logo oficial (horizontal) ---- */
+.ag-brand__mark { width: auto; height: 38px; border-radius: 0; }
+.ag-header__in { height: 64px; }
+.ag-medallion { border-radius: 0; }
+.ag-product__ph, .ag-tcard__ph { width: 60%; height: auto; border-radius: 0; opacity: 0.9; }
+.ag-cm-logo { border-radius: 0; height: auto; width: 220px; }
+.ag-cm-logo--sm { width: 130px; }
+/* En la portada, el logo va sobre una tarjeta blanca (como en las piezas de Instagram) */
+.ag-hero__logo::before { display: none; }
+.ag-hero__logo .ag-medallion { background: #fff; border-radius: 28px; padding: clamp(1.25rem, 3vw, 2.25rem); box-shadow: 0 24px 60px rgba(0,0,0,0.28); height: auto !important; }
+@media (max-width: 760px) {
+  .ag-hero__logo .ag-medallion { width: min(300px, 82vw) !important; height: auto !important; }
+  .ag-brand__mark { height: 32px; }
+}
+.ag .ag-brand__mark { width: auto; height: 38px; max-width: none; }
+@media (max-width: 760px) { .ag .ag-brand__mark { height: 34px; } }

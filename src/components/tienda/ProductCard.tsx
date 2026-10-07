@@ -15,7 +15,7 @@ export function ProductCard({ item, whatsapp }: { item: CatalogItem; whatsapp: s
           // eslint-disable-next-line @next/next/no-img-element
           <img src={item.image_url} alt={item.name} width={640} height={640} loading="lazy" />
         ) : (
-          <Image src="/logo-aguamarina.png" alt="" width={120} height={120} className="ag-product__ph" />
+          <Image src="/logo-aguamarina-oficial.png" alt="" width={300} height={105} className="ag-product__ph" />
         )}
         {soldOut && <span className="ag-product__tag">Agotado</span>}
       </div>

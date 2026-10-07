@@ -62,8 +62,8 @@ export function businessJsonLd(content: SiteContent | null, services: CatalogIte
     "@id": `${SITE.url}/#negocio`,
     name: SITE.name,
     url: SITE.url,
-    image: `${SITE.url}/logo-aguamarina.png`,
-    logo: `${SITE.url}/logo-aguamarina.png`,
+    image: `${SITE.url}/logo-aguamarina-oficial.png`,
+    logo: `${SITE.url}/logo-aguamarina-oficial.png`,
     description:
       "Gabinete de estética en Concepción del Uruguay: tratamientos faciales y corporales, aparatología, manicuría y maquillaje, con atención solo con turno previo.",
     telephone: phone.length > 4 ? phone : undefined,
