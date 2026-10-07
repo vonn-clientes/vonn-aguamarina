@@ -97,3 +97,5 @@
 .ag-panel .ag-pcard [role="group"] { align-self: start; flex-wrap: wrap; }
 .ag-panel .ag-pcard [role="group"] button { min-height: 44px; height: auto; }
 .ag-panel .ag-pcard textarea, .ag-panel .ag-pcard input, .ag-panel .ag-pcard select { max-width: 100%; }
+.ag-panel .ag-pcard [class*="col-span-5"] { grid-column: 1 / -1 !important; }
+.ag-panel .ag-pcard { grid-auto-columns: minmax(0, 1fr); }
