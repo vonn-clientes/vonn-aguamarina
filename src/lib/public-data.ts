@@ -1,5 +1,5 @@
 import { createClient } from "@supabase/supabase-js";
-import type { Tenant, SiteContent, CatalogItem } from "@/lib/types";
+import type { Tenant, SiteContent, CatalogItem, Promo } from "@/lib/types";
 import { SITE } from "@/lib/site";
 
 // Lectura del contenido público. A propósito NO usa las cookies de sesión
@@ -12,6 +12,7 @@ export interface PublicSite {
   content: SiteContent | null;
   services: CatalogItem[]; // todo lo que no es producto
   products: CatalogItem[];
+  promos: Promo[]; // activas y dentro de fecha
 }
 
 export const PRODUCT_CATEGORY = "Productos";
@@ -36,7 +37,7 @@ export async function getPublicSite(): Promise<PublicSite | null> {
     .maybeSingle();
   if (!tenant) return null;
 
-  const [{ data: content }, { data: catalog }] = await Promise.all([
+  const [{ data: content }, { data: catalog }, { data: promoRows }] = await Promise.all([
     supabase.from("site_content").select("*").eq("tenant_id", tenant.id).maybeSingle(),
     supabase
       .from("catalog_items")
@@ -44,7 +45,18 @@ export async function getPublicSite(): Promise<PublicSite | null> {
       .eq("tenant_id", tenant.id)
       .eq("active", true)
       .order("sort_order", { ascending: true }),
+    supabase
+      .from("promos")
+      .select("*")
+      .eq("tenant_id", tenant.id)
+      .eq("active", true)
+      .order("sort_order", { ascending: true }),
   ]);
+  // Hora de Argentina: la promo vale hasta el final de su último día.
+  const today = new Date().toLocaleDateString("en-CA", { timeZone: "America/Argentina/Buenos_Aires" });
+  const promos = ((promoRows as Promo[]) ?? []).filter(
+    (x) => (!x.starts_on || x.starts_on <= today) && (!x.ends_on || x.ends_on >= today),
+  );
 
   const items = (catalog as CatalogItem[]) ?? [];
   return {
@@ -52,5 +64,6 @@ export async function getPublicSite(): Promise<PublicSite | null> {
     content: (content as SiteContent) ?? null,
     services: items.filter((i) => i.category !== PRODUCT_CATEGORY),
     products: items.filter((i) => i.category === PRODUCT_CATEGORY),
+    promos,
   };
 }

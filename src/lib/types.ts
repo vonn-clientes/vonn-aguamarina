@@ -112,3 +112,17 @@ export interface SupportTicket {
   status: "abierto" | "en_progreso" | "resuelto";
   created_at: string;
 }
+
+export interface Promo {
+  id: string;
+  tenant_id: string;
+  title: string;
+  items: string[];
+  note: string | null;
+  price: number | null;
+  image_url: string | null;
+  starts_on: string | null; // "YYYY-MM-DD"
+  ends_on: string | null;
+  active: boolean;
+  sort_order: number;
+}

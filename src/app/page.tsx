@@ -41,7 +41,7 @@ const CREDENTIALS = ["Cosmetología y cosmiatría", "Esteticista", "Maquilladora
 export default async function Home() {
   const site = await getPublicSite();
   if (!site) notFound();
-  const { content, services, products } = site;
+  const { content, services, products, promos } = site;
   const groups = groupByCategory(services);
   const wa = content?.whatsapp_number ?? null;
 
@@ -118,6 +118,38 @@ export default async function Home() {
             ))}
           </div>
         </section>
+
+        {/* ---- Promociones ---- */}
+        {promos.length > 0 && (
+          <section className="ag-section" id="promociones" aria-labelledby="t-promos">
+            <div className="ag-wrap">
+              <div className="ag-head ag-rise">
+                <h2 className="ag-h2" id="t-promos">
+                  Promociones
+                </h2>
+                <p className="ag-lead">Combos armados para resultados más completos.</p>
+              </div>
+              <div className="ag-promos">
+                {promos.map((p) => (
+                  <article className="ag-promo ag-rise" key={p.id}>
+                    <h3>{p.title}</h3>
+                    <p className="ag-promo__q">¿Qué incluye?</p>
+                    <ul>
+                      {p.items.map((i) => (
+                        <li key={i}>{i}</li>
+                      ))}
+                    </ul>
+                    {p.price != null && <p className="ag-promo__price">${Number(p.price).toLocaleString("es-AR")}</p>}
+                    {p.note && <p className="ag-promo__note">{p.note}</p>}
+                    <TurnoButton whatsapp={wa} text={`Hola! Quiero consultar por el ${p.title}`}>
+                      Quiero este combo
+                    </TurnoButton>
+                  </article>
+                ))}
+              </div>
+            </div>
+          </section>
+        )}
 
         <Advice whatsapp={wa} />
 

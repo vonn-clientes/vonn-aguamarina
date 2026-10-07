@@ -41,7 +41,7 @@ export default async function CmPage() {
 
   const site = await getPublicSite();
   if (!site) notFound();
-  const { content, services, products } = site;
+  const { content, services, products, promos } = site;
   const groups = groupByCategory(services);
   const wa = content?.whatsapp_number ?? null;
 
@@ -93,6 +93,27 @@ export default async function CmPage() {
             ))}
           </ul>
         </section>
+
+        {promos.length > 0 && (
+          <section>
+            <h2>Promociones</h2>
+            <ul className="ag-cm-list">
+              {promos.map((p) => (
+                <li key={p.id} className="ag-cm-item">
+                  <div>
+                    <strong>{p.title}</strong>
+                    <span>{p.items.join(" · ")}</span>
+                  </div>
+                  <div className="ag-cm-actions">
+                    <CopyButton text={utm("/#promociones", "story", slugify(p.title))} label="Link para historia" />
+                    <CopyButton text={utm("/#promociones", "post", slugify(p.title))} label="Link para post" />
+                    <CopyButton text={`${p.title}\n${p.items.map((i) => `• ${i}`).join("\n")}`} label="Copiar texto" />
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
 
         {groups.map(([category, items]) => (
           <section key={category}>

@@ -3,6 +3,7 @@
 // y aparece sola en /cm.
 export const CM_SECTIONS: { name: string; path: string; slug: string; onlyWithProducts?: boolean }[] = [
   { name: "Todos los tratamientos", path: "/#tratamientos", slug: "tratamientos" },
+  { name: "Todas las promociones", path: "/#promociones", slug: "promociones" },
   { name: "Conocé a Ingrid", path: "/#ingrid", slug: "ingrid" },
   { name: "Tu primera visita, paso a paso", path: "/#turnos", slug: "primera-visita" },
   { name: "Políticas del gabinete (cancelaciones, packs)", path: "/#politicas", slug: "politicas" },

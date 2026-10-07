@@ -409,3 +409,18 @@
 .ag-policies li { background: var(--alt); border-radius: 22px; padding: 1.5rem; }
 .ag-policies h3 { font-size: 1.125rem; font-weight: 600; margin: 0 0 0.4rem; letter-spacing: -0.01em; }
 .ag-policies p { margin: 0; color: var(--soft); font-size: 1rem; line-height: 1.5; }
+
+/* ---- Promociones ---- */
+.ag-promos { display: grid; gap: 12px; grid-template-columns: 1fr; max-width: 62rem; margin: 0 auto; }
+@media (min-width: 640px) { .ag-promos { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 980px) { .ag-promos { grid-template-columns: repeat(3, 1fr); } }
+.ag-promo { background: linear-gradient(170deg, var(--foam), #fff 70%); border: 1px solid #d5e6e9; border-radius: 24px; padding: 1.75rem 1.5rem; display: flex; flex-direction: column; gap: 0.5rem; }
+.ag-promo h3 { font-size: 1.375rem; font-weight: 600; letter-spacing: -0.02em; margin: 0; color: var(--deep); }
+.ag-promo__q { margin: 0; color: var(--soft); font-size: 0.9375rem; font-style: italic; }
+.ag-promo ul { list-style: none; margin: 0.25rem 0 0.75rem; padding: 0; display: grid; gap: 0.35rem; flex: 1; }
+.ag-promo li { padding-left: 1.25rem; position: relative; line-height: 1.4; }
+.ag-promo li::before { content: ""; position: absolute; left: 0; top: 0.55em; width: 7px; height: 7px; border-radius: 50%; background: var(--accent); }
+.ag-promo__price { font-size: 1.25rem; font-weight: 600; margin: 0; }
+.ag-promo__note { font-size: 0.875rem; color: var(--soft); margin: 0; }
+.ag-promo .ag-btn { align-self: flex-start; }
+.ag-promo ul { align-content: start; }
