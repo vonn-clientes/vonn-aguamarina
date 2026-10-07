@@ -9,22 +9,12 @@ export type CheckoutProduct = { id: string; name: string; price: number; image_u
 
 const money = (n: number) => `$${n.toLocaleString("es-AR")}`;
 
-export function Checkout({
-  products,
-  alias,
-  holder,
-}: {
-  products: CheckoutProduct[];
-  alias: string;
-  holder: string | null;
-}) {
+export function Checkout({ products }: { products: CheckoutProduct[] }) {
   const cart = useCart();
   const [name, setName] = useState("");
-  const [dni, setDni] = useState("");
   const [phone, setPhone] = useState("");
   const [website, setWebsite] = useState("");
   const [error, setError] = useState<string | null>(null);
-  const [copied, setCopied] = useState(false);
   const [done, setDone] = useState<{ code: string; total: number; waUrl: string } | null>(null);
   const [pending, startTransition] = useTransition();
 
@@ -38,13 +28,13 @@ export function Checkout({
       <div className="ag-co-done">
         <h2 className="ag-h2">¡Casi listo!</h2>
         <p className="ag-lead">
-          Guardamos tu pedido #{done.code}. Último paso: mandanos el detalle y el comprobante de la transferencia por
-          WhatsApp para que Ingrid lo confirme.
+          Guardamos tu pedido #{done.code}. Último paso: mandanos el detalle por WhatsApp. Ingrid confirma que
+          esté todo disponible y te pasa cómo pagar.
         </p>
         <a className="ag-btn" href={done.waUrl} target="_blank" rel="noopener noreferrer">
           Terminar la compra por WhatsApp
         </a>
-        <p className="ag-co-note">Se abre un mensaje con tu pedido ya escrito. Adjuntá ahí la captura o el PDF del comprobante.</p>
+        <p className="ag-co-note">Se abre un mensaje con tu pedido ya escrito. Solo tenés que enviarlo.</p>
         <Link className="ag-more" href="/tienda">
           Seguir mirando la tienda
         </Link>
@@ -64,16 +54,6 @@ export function Checkout({
     );
   }
 
-  async function copyAlias() {
-    try {
-      await navigator.clipboard.writeText(alias);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    } catch {
-      /* si no se puede copiar, el alias queda visible para copiarlo a mano */
-    }
-  }
-
   function submit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
@@ -81,7 +61,6 @@ export function Checkout({
       const res = await placeOrder({
         items: lines.map((l) => ({ id: l.id, qty: l.qty })),
         name,
-        dni,
         phone,
         website,
       });
@@ -132,10 +111,6 @@ export function Checkout({
           <input className="ag-in" value={name} onChange={(e) => setName(e.target.value)} autoComplete="name" required />
         </label>
         <label className="ag-lab">
-          DNI
-          <input className="ag-in" value={dni} onChange={(e) => setDni(e.target.value)} inputMode="numeric" autoComplete="off" required />
-        </label>
-        <label className="ag-lab">
           WhatsApp
           <input className="ag-in" value={phone} onChange={(e) => setPhone(e.target.value)} inputMode="tel" autoComplete="tel" placeholder="Ej: 3442 123456" required />
         </label>
@@ -151,30 +126,18 @@ export function Checkout({
       </section>
 
       <section className="ag-co__box" aria-labelledby="co-pago">
-        <h2 className="ag-co__h" id="co-pago">Pagá por transferencia</h2>
-        <ol className="ag-co__steps">
-          <li>Abrí tu app del banco o billetera.</li>
-          <li>
-            Transferí <strong>{money(total)}</strong> a este alias:
-          </li>
-        </ol>
-        <div className="ag-alias">
-          <div>
-            <p className="ag-alias__v">{alias}</p>
-            {holder && <p className="ag-alias__h">Titular: {holder}</p>}
-          </div>
-          <button type="button" className="ag-btn ag-btn--ghost ag-btn--small" onClick={copyAlias}>
-            {copied ? "¡Copiado!" : "Copiar alias"}
-          </button>
-        </div>
-        <p className="ag-co-note">Cuando termines, tocá el botón. Guardamos tu pedido y te llevamos a WhatsApp para enviar el comprobante.</p>
+        <h2 className="ag-co__h" id="co-pago">Terminá tu compra por WhatsApp</h2>
+        <p className="ag-co-note">
+          Te llevamos a WhatsApp con tu pedido ya escrito. Ingrid confirma la disponibilidad, te pasa cómo pagar y
+          coordinan el retiro.
+        </p>
         {error && (
           <p className="ag-co-error" role="alert">
             {error}
           </p>
         )}
         <button type="submit" className="ag-btn ag-co__go" disabled={pending}>
-          {pending ? "Guardando tu pedido…" : "Ya transferí"}
+          {pending ? "Guardando tu pedido…" : "Terminar la compra por WhatsApp"}
         </button>
       </section>
     </form>

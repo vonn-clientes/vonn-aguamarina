@@ -40,7 +40,7 @@ export function PedidoCard({ order }: { order: PedidoConItems }) {
         ))}
       </ul>
       <p className="vonn-text-cuerpo font-bold flex justify-between border-t border-line pt-2">
-        <span>Total (transferencia)</span>
+        <span>Total</span>
         <span>${Number(order.total).toLocaleString("es-AR")}</span>
       </p>
     </div>

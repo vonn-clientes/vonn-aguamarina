@@ -9,7 +9,7 @@ import { ShopGrid } from "@/components/tienda/ShopGrid";
 export const revalidate = 60;
 
 const TITLE = `Tienda de cuidado de la piel en ${SITE.city}`;
-const DESCRIPTION = `Productos de cuidado facial y corporal de Aguamarina Estética y Bienestar, en ${SITE.city}. Comprás online, pagás por transferencia y retirás en el gabinete.`;
+const DESCRIPTION = `Productos de cuidado facial y corporal de Aguamarina Estética y Bienestar, en ${SITE.city}. Elegís online, coordinás el pago por WhatsApp y retirás en el gabinete.`;
 
 export const metadata: Metadata = {
   title: TITLE,
@@ -43,7 +43,7 @@ export default async function TiendaPage() {
         <section className="ag-svc-hero">
           <div className="ag-wrap">
             <h1 className="ag-h1">Tienda</h1>
-            <p className="ag-lead">Productos para cuidar tu piel en casa. Pagás por transferencia y retirás en el gabinete.</p>
+            <p className="ag-lead">Productos para cuidar tu piel en casa. Elegís, nos escribís por WhatsApp y coordinamos el pago y el retiro.</p>
           </div>
         </section>
 
@@ -51,8 +51,8 @@ export default async function TiendaPage() {
           <div className="ag-wrap">
             <ul className="ag-howto" aria-label="Cómo comprar">
               <li><strong>Elegís</strong><span>Sumás al carrito lo que necesites.</span></li>
-              <li><strong>Pagás por transferencia</strong><span>Con el alias y el total a la vista.</span></li>
-              <li><strong>Retirás en el gabinete</strong><span>Te avisamos por WhatsApp cuando esté listo.</span></li>
+              <li><strong>Terminás por WhatsApp</strong><span>Se abre el chat con tu pedido ya escrito.</span></li>
+              <li><strong>Pagás y retirás</strong><span>Ingrid te pasa cómo pagar y coordinan el retiro.</span></li>
               <li><strong>Consultás cuando quieras</strong><span>Dudas de uso o tipo de piel, por WhatsApp.</span></li>
             </ul>
             {products.length === 0 ? (

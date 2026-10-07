@@ -37,7 +37,7 @@ export const INTAKE_SECTIONS: { title: string; intro?: string; questions: Questi
         label: "¿Cómo preferís vender los productos?",
         options: [
           "Solo mostrarlos: que consulten precio y compren todo por WhatsApp",
-          "Con carrito: que la persona arme su pedido, pague por transferencia y me mande la confirmación por WhatsApp para prepararlo y tenerlo listo en el gabinete",
+          "Con carrito: que la persona arme su pedido y lo termine por WhatsApp, donde yo confirmo disponibilidad, paso el pago y coordinamos el retiro",
         ],
         help: "La segunda opción ya está armada en la web. Con la primera, los productos se ven pero sin carrito ni precio.",
       },

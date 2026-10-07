@@ -30,7 +30,7 @@ export default async function CarritoPage() {
           <h1 className="ag-h2" style={{ textAlign: "center", marginBottom: "2.5rem" }}>
             Tu carrito
           </h1>
-          <Checkout products={buyable} alias={content?.transfer_alias || "alias.ejemplo"} holder={content?.transfer_holder ?? null} />
+          <Checkout products={buyable} />
         </div>
       </main>
       <SiteFooter content={content} />

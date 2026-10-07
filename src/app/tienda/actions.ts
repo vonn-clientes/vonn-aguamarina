@@ -11,7 +11,6 @@ import { waDigits } from "@/lib/seo";
 type Input = {
   items: { id: string; qty: number }[];
   name: string;
-  dni: string;
   phone: string;
   website?: string; // trampa para robots: una persona real la deja vacía
 };
@@ -24,10 +23,8 @@ export async function placeOrder(input: Input): Promise<Result> {
   if (input.website) return { ok: false, error: "No pudimos procesar el pedido." };
 
   const name = input.name.trim().replace(/\s+/g, " ");
-  const dni = input.dni.replace(/\D/g, "");
   const phone = input.phone.replace(/[^\d+]/g, "");
   if (name.length < 5 || !name.includes(" ")) return { ok: false, error: "Escribí tu nombre y apellido completos." };
-  if (dni.length < 7 || dni.length > 9) return { ok: false, error: "Revisá tu DNI: tiene que tener 7 u 8 números." };
   if (phone.replace(/\D/g, "").length < 8) return { ok: false, error: "Revisá tu WhatsApp: falta algún número." };
 
   const wanted = new Map<string, number>();
@@ -69,7 +66,6 @@ export async function placeOrder(input: Input): Promise<Result> {
     tenant_id: tenant.id,
     customer_name: name,
     customer_phone: phone,
-    customer_dni: dni,
     payment_method: "transferencia",
     status: "pendiente",
     total,
@@ -91,26 +87,24 @@ export async function placeOrder(input: Input): Promise<Result> {
 
   const { data: content } = await supabase
     .from("site_content")
-    .select("whatsapp_number,transfer_alias,transfer_holder")
+    .select("whatsapp_number")
     .eq("tenant_id", tenant.id)
     .maybeSingle();
 
   const message = [
-    "Hola! Hice una compra en la tienda de Aguamarina.",
+    "Hola! Quiero comprar estos productos de la tienda de Aguamarina.",
     "",
     `Pedido #${code}`,
     `Nombre: ${name}`,
-    `DNI: ${dni}`,
     `WhatsApp: ${phone}`,
     "",
     "Productos:",
     ...lines.map((l) => `- ${l.qty} x ${l.name}: ${money(l.price * l.qty)}`),
     "",
     `Total: ${money(total)}`,
-    `Pago: transferencia bancaria al alias ${content?.transfer_alias ?? ""}${content?.transfer_holder ? ` (titular: ${content.transfer_holder})` : ""}`,
     "Retiro en el gabinete (Lorenzo Sartorio 784).",
     "",
-    "Te mando el comprobante de la transferencia por este chat.",
+    "¿Me confirmás que está todo disponible y cómo te lo pago? Gracias!",
   ].join("\n");
 
   const wa = waDigits(content?.whatsapp_number);
