@@ -41,6 +41,8 @@ export const INTAKE_SECTIONS: { title: string; intro?: string; questions: Questi
         ],
         help: "La segunda opción ya está armada en la web. Con la primera, los productos se ven pero sin carrito ni precio.",
       },
+      { key: "tienda_envios", type: "long", label: "¿Hacés envíos o solo retiro en el gabinete?", help: "Por ejemplo: envío dentro de la ciudad a coordinar por WhatsApp, o solo retiro." },
+      { key: "tienda_cambios", type: "long", label: "¿Qué pasa si alguien quiere cambiar o devolver un producto?", help: "Plazo y condiciones, para dejarlo claro en la tienda." },
       { key: "tienda_precios", type: "long", label: "¿Querés mostrar el precio de cada producto en la web?", help: "Si sí, los precios se cargan en la sección de cada producto más abajo." },
     ],
   },

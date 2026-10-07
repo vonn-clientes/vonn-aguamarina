@@ -49,6 +49,12 @@ export default async function TiendaPage() {
 
         <section className="ag-section ag-section--alt" aria-label="Productos">
           <div className="ag-wrap">
+            <ul className="ag-howto" aria-label="Cómo comprar">
+              <li><strong>Elegís</strong><span>Sumás al carrito lo que necesites.</span></li>
+              <li><strong>Pagás por transferencia</strong><span>Con el alias y el total a la vista.</span></li>
+              <li><strong>Retirás en el gabinete</strong><span>Te avisamos por WhatsApp cuando esté listo.</span></li>
+              <li><strong>Consultás cuando quieras</strong><span>Dudas de uso o tipo de piel, por WhatsApp.</span></li>
+            </ul>
             {products.length === 0 ? (
               <p className="ag-lead" style={{ textAlign: "center" }}>
                 Estamos preparando la tienda. Mientras tanto, escribinos y te asesoramos.

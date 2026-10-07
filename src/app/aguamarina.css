@@ -603,3 +603,11 @@
 .ag-gbadge { display: inline-flex; align-items: center; gap: 0.6rem; margin-top: 1.25rem; padding: 0.55rem 1rem; border-radius: 980px; background: #fff; box-shadow: 0 1px 0 rgba(0,0,0,0.05), 0 8px 24px -12px rgba(47,111,174,0.35); color: var(--ink); text-decoration: none; font-size: 0.9375rem; font-weight: 500; transition: transform 0.25s var(--ease); }
 .ag-gbadge:hover { transform: translateY(-2px); }
 @media (max-width: 760px) { .ag-gbadge { margin-inline: auto; } .ag-hero__copy { display: flex; flex-direction: column; align-items: center; } }
+
+/* Tienda: cómo comprar */
+.ag .ag-howto{list-style:none;margin:0 0 28px;padding:0;display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.ag .ag-howto li{background:#fff;border:1px solid rgba(21,60,97,.12);border-radius:14px;padding:14px 16px;display:flex;flex-direction:column;gap:4px}
+.ag .ag-howto strong{color:var(--deep);font-size:15px}
+.ag .ag-howto span{color:#4a5b6b;font-size:14px;line-height:1.4}
+@media (max-width:900px){.ag .ag-howto{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:420px){.ag .ag-howto{grid-template-columns:1fr}}
