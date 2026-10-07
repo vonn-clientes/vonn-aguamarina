@@ -6,7 +6,7 @@ export function ProductFields({ item }: { item?: CatalogItem }) {
   const box = "flex flex-wrap gap-x-4 gap-y-1";
   const lab = "flex items-center gap-1.5 vonn-text-caption";
   return (
-    <div className="flex flex-col gap-3 rounded-sm border border-line p-3">
+    <div className="flex flex-col gap-3 rounded-sm border border-line p-3 sm:col-span-5">
       <p className="vonn-text-caption text-ink-muted">
         Solo para productos: así los clientes pueden filtrar la tienda. «Todo tipo de piel» hace que aparezca con cualquier filtro de piel.
       </p>

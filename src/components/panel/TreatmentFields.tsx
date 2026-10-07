@@ -5,7 +5,7 @@ const area = "w-full rounded-sm border border-line bg-canvas px-2 py-1 vonn-text
 // Solo para tratamientos (no productos): beneficios y datos útiles, una línea por ítem.
 export function TreatmentFields({ item }: { item?: CatalogItem }) {
   return (
-    <div className="grid gap-3 sm:grid-cols-2">
+    <div className="grid gap-3 sm:grid-cols-2 sm:col-span-5">
       <label className="vonn-text-caption text-ink-muted flex flex-col gap-1">
         Beneficios (uno por línea)
         <textarea name="benefits" rows={4} defaultValue={item?.benefits?.join("\n")} className={area} placeholder={"Tensa y tonifica\nReduce la flacidez"} />
