@@ -12,10 +12,10 @@ function slug(text: string): string {
     .replace(/^-+|-+$/g, "");
 }
 
-// "Hifu 7D" -> "hifu-7d-aguamarina-concepcion-del-uruguay-k3f9a2.jpg"
+// "Hifu 7D" -> "hifu-7d-aguamarina-concepcion-del-uruguay-k3f9a2.webp"
 // Google lee el nombre del archivo: palabra clave + marca + ciudad, y un sufijo corto
 // para que dos fotos del mismo tratamiento no se pisen.
-export function seoImageFileName(hint: string | null | undefined, ext = "jpg"): string {
+export function seoImageFileName(hint: string | null | undefined, ext = "webp"): string {
   const base = slug(hint ?? "").slice(0, 60).replace(/-+$/g, "");
   const suffix = Math.random().toString(36).slice(2, 8);
   const parts = [base || "estetica-y-bienestar", "aguamarina", CITY, suffix];

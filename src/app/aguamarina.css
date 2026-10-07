@@ -174,7 +174,8 @@
 
 
 /* ---- Movimiento: aparecer al scrollear, sin JS y sin esconder contenido a los buscadores ---- */
-@keyframes ag-rise { from { opacity: 0; transform: translateY(26px); } to { opacity: 1; transform: none; } }
+/* Solo sube (sin transparencia): así el texto siempre tiene el contraste completo, también cuando Google lo mide. */
+@keyframes ag-rise { from { transform: translateY(26px); } to { transform: none; } }
 @supports (animation-timeline: view()) {
   @media (prefers-reduced-motion: no-preference) {
     .ag-rise { animation: ag-rise 1s var(--ease) both; animation-timeline: view(); animation-range: entry 0% entry 45%; }

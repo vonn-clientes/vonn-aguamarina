@@ -4,18 +4,18 @@ import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { nameFromForm, seoImageFileName } from "@/lib/seo-image";
 
-// Subida de fotos desde el panel. La foto se achica en el navegador (máx. 1400 px)
+// Subida de fotos desde el panel. La foto se achica en el navegador (máx. 1200 px, formato WebP)
 // antes de subirla, así las fotos del celular pesan poco y la web carga rápido.
 // Guarda la dirección final en un campo oculto del formulario.
 async function shrink(file: File): Promise<Blob> {
   const bitmap = await createImageBitmap(file);
-  const scale = Math.min(1, 1400 / Math.max(bitmap.width, bitmap.height));
+  const scale = Math.min(1, 1200 / Math.max(bitmap.width, bitmap.height));
   const canvas = document.createElement("canvas");
   canvas.width = Math.round(bitmap.width * scale);
   canvas.height = Math.round(bitmap.height * scale);
   canvas.getContext("2d")!.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
   return new Promise((resolve, reject) =>
-    canvas.toBlob((b) => (b ? resolve(b) : reject(new Error("No se pudo procesar la foto"))), "image/jpeg", 0.85)
+    canvas.toBlob((b) => (b ? resolve(b) : reject(new Error("No se pudo procesar la foto"))), "image/webp", 0.8)
   );
 }
 
@@ -45,7 +45,7 @@ export function ImageUpload({
       const blob = await shrink(file);
       const supabase = createClient();
       const path = `${tenantId}/${seoImageFileName(nameFromForm(input, seoHint))}`;
-      const { error } = await supabase.storage.from("aguamarina-media").upload(path, blob, { contentType: "image/jpeg" });
+      const { error } = await supabase.storage.from("aguamarina-media").upload(path, blob, { contentType: "image/webp" });
       if (error) throw error;
       setUrl(supabase.storage.from("aguamarina-media").getPublicUrl(path).data.publicUrl);
       setState("idle");

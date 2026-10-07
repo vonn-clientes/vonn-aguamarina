@@ -67,7 +67,7 @@ export function SiteHeader({
     <header className="ag-header">
       <div className="ag-header__in">
         <Link href="/" className="ag-brand" aria-label={`${SITE.name}, inicio`}>
-          <Image src="/logo-aguamarina-oficial.png" alt={SITE.name} width={1200} height={421} className="ag-brand__mark" priority />
+          <Image src="/logo-aguamarina-oficial.png" alt={SITE.name} width={1200} height={421} sizes="140px" className="ag-brand__mark" priority />
         </Link>
 
         <nav className="ag-nav" aria-label="Principal">
@@ -138,6 +138,7 @@ export function Medallion({ priority = false, size = 168 }: { priority?: boolean
       width={1200}
       height={421}
       priority={priority}
+      sizes={`(max-width: 760px) 320px, ${Math.max(size, 320)}px`}
       style={{ width: size, height: "auto" }}
     />
   );
