@@ -50,7 +50,7 @@ export default async function CajaPage({ searchParams }: { searchParams: Promise
         <Link href={`/panel/agenda/caja?m=${addMonths(ym, -1)}`} aria-label="Mes anterior">
           ‹
         </Link>
-        <Link href="/panel/agenda/caja" className="grow" style={{ textTransform: "capitalize" }}>
+        <Link href="/panel/agenda/caja" className="grow">
           {fmtMonth(ym)}
         </Link>
         <Link href={`/panel/agenda/caja?m=${addMonths(ym, 1)}`} aria-label="Mes siguiente">
