@@ -9,6 +9,7 @@ type Ctx = { sb: SupabaseClient; tenantId: string };
 
 const str = (v: unknown) => (typeof v === "string" ? v.trim() : "");
 const num = (v: unknown) => {
+  if (v === null || v === undefined || (typeof v === "string" && !v.trim())) return null;
   const n = typeof v === "number" ? v : Number(String(v ?? "").replace(/\./g, "").replace(",", "."));
   return Number.isFinite(n) && n >= 0 ? n : null;
 };
@@ -100,7 +101,7 @@ export async function runTool(name: string, a: Record<string, unknown>, c: Ctx):
       const args = {
         client_id: client?.id ?? null, client_name: client?.full_name ?? who, client_phone: client?.phone ?? (str(a.telefono) || null),
         catalog_item_id: item?.id ?? null, service_name: item?.name ?? service, date, time,
-        duration_min: Math.max(5, Math.min(600, num(a.duracion_min) ?? item?.duration_minutes ?? 60)),
+        duration_min: Math.max(5, Math.min(600, (num(a.duracion_min) || item?.duration_minutes) ?? 60)),
         price: num(a.precio) ?? item?.price ?? null, notes: str(a.notas) || null,
       };
       const label = `Turno: ${args.client_name}${client ? "" : " (clienta nueva)"} · ${args.service_name} · ${fmtDayLong(date)} ${time} hs · ${args.duration_min} min${args.price ? ` · ${money(args.price as number)}` : ""}`;
