@@ -16,10 +16,10 @@ function limited(ip: string) {
 }
 
 type Provider = { base: string; key: string; model: string };
-// Hasta dos proveedores de IA gratuitos compatibles con el formato OpenAI (Groq, Google Gemini, OpenRouter, etc.).
+// Hasta tres proveedores/modelos de IA gratuitos compatibles con el formato OpenAI (Groq, Google Gemini, OpenRouter, etc.).
 function providers(): Provider[] {
   const out: Provider[] = [];
-  for (const s of ["", "_2"]) {
+  for (const s of ["", "_2", "_3"]) {
     const key = process.env[`SOFI_API_KEY${s}`];
     const base = process.env[`SOFI_BASE_URL${s}`];
     const model = process.env[`SOFI_MODEL${s}`];

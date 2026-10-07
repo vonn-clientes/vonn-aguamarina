@@ -16,6 +16,8 @@ export function SofiChat({ whatsapp }: { whatsapp: string | null | undefined }) 
   const [text, setText] = useState("");
   const [busy, setBusy] = useState(false);
   const end = useRef<HTMLDivElement>(null);
+  const [noImg, setNoImg] = useState(false);
+  const face = noImg ? "S" : <img src="/sofi.png" alt="" onError={() => setNoImg(true)} />;
 
   useEffect(() => {
     // Link directo desde Instagram: /?sofi=1 abre el chat.
@@ -63,14 +65,14 @@ export function SofiChat({ whatsapp }: { whatsapp: string | null | undefined }) 
     <>
       {!open && (
         <button className="ag-sofi-fab" onClick={() => setOpen(true)} aria-label="Hablar con Sofi, asesora virtual">
-          <span className="ag-sofi-fab__dot" aria-hidden>✦</span>
+          <span className="ag-sofi-fab__dot" aria-hidden>{face}</span>
           <span><b>Sofi</b><small><i className="ag-sofi__on" aria-hidden />En línea · asesora virtual</small></span>
         </button>
       )}
       {open && (
         <section className="ag-sofi" role="dialog" aria-label="Chat con Sofi, asesora virtual de Aguamarina">
           <header>
-            <span className="ag-sofi__avatar" aria-hidden>S<i className="ag-sofi__on" /></span>
+            <span className="ag-sofi__avatar" aria-hidden>{face}<i className="ag-sofi__on" /></span>
             <div><b>Sofi</b><small>{busy ? "escribiendo…" : "En línea · asesora virtual"}</small></div>
             <button onClick={() => setOpen(false)} aria-label="Cerrar chat">×</button>
           </header>
@@ -86,7 +88,7 @@ export function SofiChat({ whatsapp }: { whatsapp: string | null | undefined }) 
             <div ref={end} />
           </div>
           <div className="ag-sofi__foot">
-          {msgs.length > 0 && (
+          {(interest.length > 0 || msgs.filter((m) => m.role === "user").length >= 3) && (
             <a className="ag-sofi__wa" href={wa} target="_blank" rel="noopener noreferrer">
               Pedir turno por WhatsApp{interest.length ? ` · ${interest.length === 1 ? interest[0] : `${interest.length} elegidos`}` : ""}
             </a>
