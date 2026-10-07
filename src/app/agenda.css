@@ -212,3 +212,13 @@ main.ag-g-wrap > * + * { margin-top: 0; }
 .ag-g-title::first-letter { text-transform: uppercase; }
 .ag-g-daynav .grow { text-transform: none; }
 .ag-g-daynav .grow::first-letter { text-transform: uppercase; }
+
+/* Celular angosto: que entren los 5 botones de la barra y los campos de fecha y hora */
+.ag-g-nav a { min-width: 0; }
+@media (max-width: 480px) {
+  .ag-g-nav { gap: 0.3rem; }
+  .ag-g-nav a { padding: 8px 2px; font-size: 0.8125rem; min-height: 44px; }
+}
+.ag-g-field, .ag-g-row2 > *, .ag-g-row3 > * { min-width: 0; }
+.ag-g-field input, .ag-g-field select { min-width: 0; max-width: 100%; }
+.ag-g-field input[type="date"], .ag-g-field input[type="time"] { -webkit-appearance: none; appearance: none; }

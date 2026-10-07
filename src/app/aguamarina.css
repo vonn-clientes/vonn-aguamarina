@@ -696,3 +696,6 @@ html { scroll-padding-top: 0; }
 
 /* Marco de la foto de Ingrid: el logo se ve entero, no recortado */
 .ag-meet__ph img { width: 62%; max-width: 15rem; height: auto; aspect-ratio: auto; object-fit: contain; border-radius: 0; }
+
+/* En las páginas con barra de turno abajo, el WhatsApp flotante sube para no taparla */
+body:has(.ag-stickybar) .ag-wafloat { bottom: calc(5.5rem + env(safe-area-inset-bottom)); }
