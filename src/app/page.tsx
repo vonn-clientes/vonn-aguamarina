@@ -146,17 +146,30 @@ export default async function Home() {
 
         {/* ---- Ingrid ---- */}
         <section className="ag-section ag-section--deep" id="ingrid" aria-labelledby="t-ingrid">
-          <div className="ag-wrap ag-about ag-rise">
-            <Medallion size={112} />
-            <h2 className="ag-h2" id="t-ingrid">
-              {SITE.owner}, profesional matriculada.
-            </h2>
-            {content?.about_text && <p className="ag-lead">{content.about_text}</p>}
-            <ul className="ag-creds">
-              {CREDENTIALS.map((c) => (
-                <li key={c}>{c}</li>
-              ))}
-            </ul>
+          <div className="ag-wrap ag-meet ag-rise">
+            <div className="ag-meet__photo">
+              {content?.about_image_url ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={content.about_image_url} alt={`${SITE.owner}, profesional matriculada`} width={560} height={700} />
+              ) : (
+                <Medallion size={220} />
+              )}
+            </div>
+            <div className="ag-meet__text">
+              <p className="ag-kicker ag-kicker--light">Conocé a la profesional</p>
+              <h2 className="ag-h2" id="t-ingrid">
+                {SITE.owner}
+              </h2>
+              {content?.about_text && <p className="ag-lead">{content.about_text}</p>}
+              <ul className="ag-creds">
+                {CREDENTIALS.map((c) => (
+                  <li key={c}>{c}</li>
+                ))}
+              </ul>
+              <TurnoButton whatsapp={wa} tone="light" text="Hola Ingrid! Quiero sacar un turno">
+                Sacar turno con Ingrid
+              </TurnoButton>
+            </div>
           </div>
         </section>
 

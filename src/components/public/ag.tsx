@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { SITE } from "@/lib/site";
+import { SITE, MAPS_LINK } from "@/lib/site";
 import { waLink, phoneDisplay } from "@/lib/seo";
 import type { SiteContent } from "@/lib/types";
 import { MobileMenu, type NavItem } from "./menu";
@@ -58,7 +58,7 @@ export function SiteHeader({
   const nav: NavItem[] = [
     { href: "/#tratamientos", label: "Tratamientos" },
     ...(showProducts ? [{ href: "/#productos", label: "Productos" }] : []),
-    { href: "/#ingrid", label: "Ingrid" },
+    { href: "/#ingrid", label: "Conocé a Ingrid" },
     { href: "/#preguntas", label: "Preguntas" },
     { href: "/#donde", label: "Contacto" },
   ];
@@ -88,48 +88,41 @@ export function SiteHeader({
 }
 
 export function SiteFooter({ content }: { content: SiteContent | null }) {
+  const wa = content?.whatsapp_number ?? null;
   return (
     <footer className="ag-footer">
       <div className="ag-wrap">
-        <div className="ag-footer__grid">
+        <div className="ag-footer__top">
           <div>
             <p className="ag-footer__name">{SITE.name}</p>
             <p>{SITE.tagline} en {SITE.city}.</p>
+            <address style={{ fontStyle: "normal" }}>
+              {SITE.street}, {SITE.city}, {SITE.region}
+            </address>
             <p>Atención solo con turno previo.</p>
           </div>
-          <div>
-            <h2>Contacto</h2>
-            <ul>
-              <li>
-                <a href={waLink(content?.whatsapp_number)} target="_blank" rel="noopener noreferrer">
-                  WhatsApp {phoneDisplay(content?.whatsapp_number)}
-                </a>
-              </li>
-              {content?.instagram_url && (
-                <li>
-                  <a href={content.instagram_url} target="_blank" rel="noopener noreferrer">
-                    Instagram @aguamarinaesteticaybienestar
-                  </a>
-                </li>
-              )}
-            </ul>
-          </div>
-          <div>
-            <h2>Dónde estamos</h2>
-            <address style={{ fontStyle: "normal" }}>
-              {SITE.street}
-              <br />
-              {SITE.city}, {SITE.region}
-            </address>
+          <div className="ag-footer__actions">
+            <a className="ag-btn" href={waLink(wa, "Hola! Quiero sacar un turno")} target="_blank" rel="noopener noreferrer">
+              <WhatsappIcon />
+              {phoneDisplay(wa)}
+            </a>
+            {content?.instagram_url && (
+              <a className="ag-btn ag-btn--ghost" href={content.instagram_url} target="_blank" rel="noopener noreferrer">
+                Instagram
+              </a>
+            )}
+            <a className="ag-btn ag-btn--ghost" href={MAPS_LINK} target="_blank" rel="noopener noreferrer">
+              Cómo llegar
+            </a>
           </div>
         </div>
-        <p className="ag-footer__legal">
-          © {new Date().getFullYear()} {SITE.name}. Sitio creado y mantenido por{" "}
-          <a href="https://www.vonn.com.ar" target="_blank" rel="noopener noreferrer">
-            VONN
+        <div className="ag-footer__bottom">
+          <p>© {new Date().getFullYear()} {SITE.name}</p>
+          <a className="ag-made" href="https://www.vonn.com.ar" target="_blank" rel="noopener noreferrer" aria-label="Sitio creado con VONN. Ir a vonn.com.ar">
+            <span>Creado con</span>
+            <Image src="/logo/vonn-logo-light.svg" alt="VONN" width={110} height={32} />
           </a>
-          .
-        </p>
+        </div>
       </div>
     </footer>
   );
