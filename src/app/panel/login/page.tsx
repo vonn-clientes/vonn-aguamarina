@@ -16,16 +16,18 @@ export default function LoginPage() {
         <div>
           <h1 className="vonn-text-subtitulo">Entrar al panel</h1>
           <p className="vonn-text-caption text-ink-muted mt-1">
-            Con el email y contraseña que te dio VONN.
+            Con tu usuario y contraseña.
           </p>
         </div>
         <form action={formAction} className="flex flex-col gap-4">
           <div className="flex flex-col gap-1">
-            <label className="vonn-text-caption" htmlFor="email">Email</label>
+            <label className="vonn-text-caption" htmlFor="email">Usuario</label>
             <input
               id="email"
               name="email"
-              type="email"
+              type="text"
+              autoCapitalize="none"
+              autoComplete="username"
               required
               className="rounded-sm border border-line bg-canvas px-4 py-3 vonn-text-cuerpo outline-none focus:border-primary"
             />
@@ -36,6 +38,7 @@ export default function LoginPage() {
               id="password"
               name="password"
               type="password"
+              autoComplete="current-password"
               required
               className="rounded-sm border border-line bg-canvas px-4 py-3 vonn-text-cuerpo outline-none focus:border-primary"
             />

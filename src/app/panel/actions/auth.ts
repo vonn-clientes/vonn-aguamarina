@@ -11,17 +11,19 @@ export async function login(_prev: LoginState, formData: FormData): Promise<Logi
     return { error: "Todavía no hay un proyecto de Supabase conectado (falta el .env.local)." };
   }
 
-  const email = String(formData.get("email") || "");
+  // Se puede entrar con un usuario simple (ej. "aguamarina") o con un email completo.
+  const raw = String(formData.get("email") || "").trim().toLowerCase();
+  const email = raw.includes("@") ? raw : `${raw}@aguamarina.vonn.com.ar`;
   const password = String(formData.get("password") || "");
 
   const supabase = await createClient();
   const { error } = await supabase.auth.signInWithPassword({ email, password });
 
   if (error) {
-    return { error: "Email o contraseña incorrectos." };
+    return { error: "Usuario o contraseña incorrectos." };
   }
 
-  redirect("/panel");
+  redirect("/panel/agenda");
 }
 
 export async function logout() {
