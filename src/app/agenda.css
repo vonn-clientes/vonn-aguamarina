@@ -224,3 +224,4 @@ main.ag-g-wrap > * + * { margin-top: 0; }
 .ag-g-field input[type="date"], .ag-g-field input[type="time"] { -webkit-appearance: none; appearance: none; }
 .ag-t__when { text-transform: none; }
 .ag-t__when::first-letter { text-transform: uppercase; }
+.ag-g-stats > * { min-width: 0; }

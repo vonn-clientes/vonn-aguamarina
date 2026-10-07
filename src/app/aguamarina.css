@@ -699,3 +699,18 @@ html { scroll-padding-top: 0; }
 
 /* En las páginas con barra de turno abajo, el WhatsApp flotante sube para no taparla */
 body:has(.ag-stickybar) .ag-wafloat { bottom: calc(5.5rem + env(safe-area-inset-bottom)); }
+
+/* ===== /cm con estética Aguamarina ===== */
+.ag-cm { background: #f3f8fc; }
+.ag-cm-top { background: transparent; }
+.ag-cm-main h1 { font-family: var(--font-lobster, "Lobster", cursive); font-weight: 400; color: var(--deep); letter-spacing: 0; font-size: clamp(2rem, 6vw, 2.75rem); }
+.ag-cm-main h2 { font-family: var(--font-lobster, "Lobster", cursive); font-weight: 400; color: var(--deep); font-size: 1.6rem; margin: 2.75rem 0 1rem; }
+.ag-cm-main .ag-lead { color: #3d5a73; }
+.ag-cm-list { gap: 1rem; }
+.ag-cm-list li { border-radius: 24px; padding: 1.25rem 1.35rem; box-shadow: 0 1px 2px rgba(21,60,97,.05), 0 8px 22px rgba(21,60,97,.06); }
+.ag-cm-list strong { color: var(--deep); font-size: 1.0625rem; }
+.ag-cm-list span { color: #5b7287; font-size: 0.9375rem; }
+.ag-cm-actions { gap: .6rem; }
+.ag-cm .ag-more, .ag-cm-actions button { min-height: 44px; padding: 0 1.1rem; border-radius: 999px; background: #e8f1f9; color: #153c61; font-weight: 600; border: 0; font-size: .95rem; display: inline-flex; align-items: center; }
+.ag-cm-top .ag-more { background: #fff; }
+.ag-cm-login h1 { font-family: var(--font-lobster, "Lobster", cursive); font-weight: 400; color: var(--deep); }
