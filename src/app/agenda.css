@@ -198,3 +198,11 @@ details.ag-g-more form { gap: 1rem; margin-top: 0.6rem; }
 .ag-g-picked { padding: 1.1rem 1.2rem; }
 .ag-g-err, .ag-g-ok { padding: 0.9rem 1.1rem; margin-bottom: 1.25rem; }
 main.ag-g-wrap > * + * { margin-top: 0; }
+
+/* Clientes con deuda */
+.ag-g-debtbtn { width: 100%; margin-bottom: 1.25rem; min-height: 52px; background: #fff4dc; color: #7a5200; box-shadow: none; font-weight: 600; }
+.ag-g-debtbtn:hover { background: #ffeac2; }
+.ag-g-debtor { flex-wrap: wrap; }
+.ag-g-debtor__main { flex: 1 1 14rem; min-width: 0; text-decoration: none; display: grid; gap: 0.3rem; }
+.ag-g-debtor__main strong { display: block; }
+.ag-g-debtor__side { display: flex; align-items: center; gap: 0.8rem; }

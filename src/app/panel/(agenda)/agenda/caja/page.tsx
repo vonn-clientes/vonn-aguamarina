@@ -79,6 +79,12 @@ export default async function CajaPage({ searchParams }: { searchParams: Promise
         </div>
       </div>
 
+      {porCobrar > 0 && (
+        <Link href="/panel/agenda/clientes/deudas" className="ag-g-btn ag-g-debtbtn">
+          Ver quién debe y desde cuándo
+        </Link>
+      )}
+
       {porMetodo.size > 0 && (
         <p className="ag-g-hint" style={{ marginBottom: "1rem" }}>
           Cobrado por medio: {[...porMetodo.entries()].map(([k, v]) => `${k} ${money(v)}`).join(" · ")}

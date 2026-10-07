@@ -34,6 +34,10 @@ export default async function ClientesPage({ searchParams }: { searchParams: Pro
         </Link>
       </div>
 
+      <Link href="/panel/agenda/clientes/deudas" className="ag-g-btn ag-g-debtbtn">
+        Ver clientes con deuda
+      </Link>
+
       <form className="ag-g-search" role="search">
         <input name="q" defaultValue={q} placeholder="Buscar por nombre o teléfono" aria-label="Buscar cliente" />
         <button className="ag-g-btn">Buscar</button>
