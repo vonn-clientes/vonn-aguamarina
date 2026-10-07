@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { slugify, waLink } from "@/lib/seo";
+import { seoAlt } from "@/lib/seo-image";
 import type { CatalogItem } from "@/lib/types";
 import { AddToCart } from "./AddToCart";
 
@@ -14,7 +15,7 @@ export function ProductCard({ item, whatsapp }: { item: CatalogItem; whatsapp: s
       <div className="ag-product__img">
         {item.image_url ? (
           // eslint-disable-next-line @next/next/no-img-element
-          <img src={item.image_url} alt={item.name} width={640} height={640} loading="lazy" />
+          <img src={item.image_url} alt={seoAlt(item.name, "producto")} width={640} height={640} loading="lazy" />
         ) : (
           <Image src="/logo-aguamarina-oficial.png" alt="" width={300} height={105} className="ag-product__ph" />
         )}

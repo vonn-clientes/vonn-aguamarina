@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
+import { nameFromForm, seoImageFileName } from "@/lib/seo-image";
 
 // Subida de fotos desde el panel. La foto se achica en el navegador (máx. 1400 px)
 // antes de subirla, así las fotos del celular pesan poco y la web carga rápido.
@@ -23,23 +24,27 @@ export function ImageUpload({
   name,
   defaultUrl,
   label = "Foto",
+  seoHint,
 }: {
   tenantId: string;
   name: string;
   defaultUrl?: string | null;
   label?: string;
+  // Texto para el nombre del archivo cuando el formulario no tiene un campo "name".
+  seoHint?: string;
 }) {
   const [url, setUrl] = useState(defaultUrl ?? "");
   const [state, setState] = useState<"idle" | "uploading" | "error">("idle");
 
   async function onPick(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0];
+    const input = e.target;
+    const file = input.files?.[0];
     if (!file) return;
     setState("uploading");
     try {
       const blob = await shrink(file);
       const supabase = createClient();
-      const path = `${tenantId}/${crypto.randomUUID()}.jpg`;
+      const path = `${tenantId}/${seoImageFileName(nameFromForm(input, seoHint))}`;
       const { error } = await supabase.storage.from("aguamarina-media").upload(path, blob, { contentType: "image/jpeg" });
       if (error) throw error;
       setUrl(supabase.storage.from("aguamarina-media").getPublicUrl(path).data.publicUrl);

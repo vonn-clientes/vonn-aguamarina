@@ -33,7 +33,7 @@ export default async function ContenidoPage() {
         </div>
         <div className="flex flex-col gap-1">
           <span className={label}>Foto de la profesional (sección "Conocé a Ingrid")</span>
-          <ImageUpload tenantId={membership.tenant.id} name="about_image_url" defaultUrl={content?.about_image_url} label="foto" />
+          <ImageUpload tenantId={membership.tenant.id} name="about_image_url" defaultUrl={content?.about_image_url} label="foto" seoHint="Ingrid Schultheis cosmetologa" />
         </div>
         <div className="flex flex-col gap-1">
           <label className={label} htmlFor="address">Dirección</label>

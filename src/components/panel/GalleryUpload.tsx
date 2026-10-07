@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
+import { nameFromForm, seoImageFileName } from "@/lib/seo-image";
 
 // Galería de fotos de un tratamiento o producto: se pueden subir varias a la vez.
 // Cada foto se achica en el navegador (máx. 1600 px) antes de subirse.
@@ -30,7 +31,8 @@ export function GalleryUpload({
   const [state, setState] = useState<"idle" | "uploading" | "error">("idle");
 
   async function onPick(e: React.ChangeEvent<HTMLInputElement>) {
-    const files = Array.from(e.target.files ?? []).slice(0, 12);
+    const input = e.target;
+    const files = Array.from(input.files ?? []).slice(0, 12);
     if (files.length === 0) return;
     setState("uploading");
     try {
@@ -38,7 +40,7 @@ export function GalleryUpload({
       const added: string[] = [];
       for (const file of files) {
         const blob = await shrink(file);
-        const path = `${tenantId}/${crypto.randomUUID()}.jpg`;
+        const path = `${tenantId}/${seoImageFileName(nameFromForm(input))}`;
         const { error } = await supabase.storage.from("aguamarina-media").upload(path, blob, { contentType: "image/jpeg" });
         if (error) throw error;
         added.push(supabase.storage.from("aguamarina-media").getPublicUrl(path).data.publicUrl);
@@ -48,7 +50,7 @@ export function GalleryUpload({
     } catch {
       setState("error");
     }
-    e.target.value = "";
+    input.value = "";
   }
 
   return (

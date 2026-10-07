@@ -13,6 +13,7 @@ import {
   waLink,
   websiteJsonLd,
 } from "@/lib/seo";
+import { seoAlt } from "@/lib/seo-image";
 import { Advice, JsonLd, Medallion, SiteFooter, SiteHeader, TurnoButton } from "@/components/public/ag";
 import { ProductCard } from "@/components/tienda/ProductCard";
 import { TreatmentCard } from "@/components/public/TreatmentCard";
@@ -174,7 +175,7 @@ export default async function Home() {
             {content?.about_image_url && (
               <div className="ag-meet__photo">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={content.about_image_url} alt={`${SITE.owner}, profesional matriculada`} width={560} height={700} />
+                <img src={content.about_image_url} alt={seoAlt(SITE.owner, "perfil")} width={560} height={700} />
               </div>
             )}
             <div className="ag-meet__text">

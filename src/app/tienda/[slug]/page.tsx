@@ -5,6 +5,7 @@ import { notFound } from "next/navigation";
 import { getPublicSite } from "@/lib/public-data";
 import { SITE } from "@/lib/site";
 import { breadcrumbJsonLd, slugify, trimDescription, waLink } from "@/lib/seo";
+import { seoAlt } from "@/lib/seo-image";
 import { Advice, JsonLd, SiteFooter, SiteHeader } from "@/components/public/ag";
 import { AddToCart } from "@/components/tienda/AddToCart";
 import { Reviews, Stars } from "@/components/public/Reviews";
@@ -89,7 +90,7 @@ export default async function ProductPage(props: PageProps<"/tienda/[slug]">) {
           <div className="ag-pdp__img">
             {photos[0] ? (
               // eslint-disable-next-line @next/next/no-img-element
-              <img src={photos[0]} alt={item.name} width={900} height={900} />
+              <img src={photos[0]} alt={seoAlt(item.name, "producto")} width={900} height={900} />
             ) : (
               <Image src="/logo-aguamarina-oficial.png" alt="" width={300} height={105} className="ag-product__ph" />
             )}
@@ -115,7 +116,7 @@ export default async function ProductPage(props: PageProps<"/tienda/[slug]">) {
               <div className="ag-pdp__thumbs">
                 {photos.slice(1).map((src, i) => (
                   // eslint-disable-next-line @next/next/no-img-element
-                  <img key={src} src={src} alt={`${item.name}, foto ${i + 2}`} width={300} height={300} loading="lazy" />
+                  <img key={src} src={src} alt={seoAlt(item.name, "producto", i + 2)} width={300} height={300} loading="lazy" />
                 ))}
               </div>
             )}

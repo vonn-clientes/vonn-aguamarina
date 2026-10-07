@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { getPublicSite } from "@/lib/public-data";
 import { SITE } from "@/lib/site";
 import { breadcrumbJsonLd, serviceJsonLd, slugify, trimDescription } from "@/lib/seo";
+import { seoAlt } from "@/lib/seo-image";
 import { Advice, JsonLd, SiteFooter, SiteHeader, TurnoButton } from "@/components/public/ag";
 import { TreatmentCard } from "@/components/public/TreatmentCard";
 import { Reviews, Stars } from "@/components/public/Reviews";
@@ -127,7 +128,7 @@ export default async function ServicePage(props: PageProps<"/tratamientos/[slug]
               <img
                 key={src}
                 src={src}
-                alt={`${item.name} en Aguamarina, foto ${i + 1}`}
+                alt={seoAlt(item.name, "tratamiento", i + 1)}
                 width={1200}
                 height={900}
                 loading={i === 0 ? "eager" : "lazy"}
