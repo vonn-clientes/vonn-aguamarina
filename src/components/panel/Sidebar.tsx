@@ -8,6 +8,7 @@ import type { BusinessMode } from "@/lib/types";
 
 const baseLinks = [
   { href: "/panel", label: "Inicio" },
+  { href: "/panel/agenda", label: "Agenda y cuentas" },
   { href: "/panel/contenido", label: "Editor del sitio" },
   { href: "/panel/catalogo", label: "Catálogo" },
   { href: "/panel/promos", label: "Promociones" },
