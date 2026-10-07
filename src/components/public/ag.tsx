@@ -147,7 +147,7 @@ export function Medallion({ priority = false, size = 168 }: { priority?: boolean
 // Bloque de asesoramiento: para quien no sabe qué tratamiento o producto necesita.
 export function Advice({ whatsapp, topic = "mi piel y mi cuerpo" }: { whatsapp: string | null | undefined; topic?: string }) {
   return (
-    <section className="ag-section ag-advice" aria-labelledby="t-asesoramiento">
+    <section className="ag-section ag-advice" id="asesoramiento" aria-labelledby="t-asesoramiento">
       <div className="ag-wrap ag-rise">
         <div className="ag-advice__box">
           <h2 className="ag-h2" id="t-asesoramiento">

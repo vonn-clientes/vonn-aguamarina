@@ -46,21 +46,27 @@ export default async function Home() {
 
       <main id="contenido">
         {/* ---- Portada ---- */}
-        <section className="ag-hero">
-          <div className="ag-wrap">
-            <Medallion priority size={260} />
-            <p className="ag-hero__place">{SITE.city}, {SITE.region}</p>
-            <h1 className="ag-h1 ag-h1--hero">
-              {content?.hero_title || "Tratamientos faciales y corporales, aparatología, manicura y maquillaje"}
-            </h1>
-            {content?.hero_subtitle && <p className="ag-lead">{content.hero_subtitle}</p>}
-            <div className="ag-actions">
-              <TurnoButton whatsapp={wa} />
-              <Link className="ag-more" href="/#tratamientos">
-                Ver tratamientos
-              </Link>
+        <section className="ag-hero ag-hero--water">
+          <div className="ag-wrap ag-hero__grid">
+            <div className="ag-hero__copy">
+              <h1 className="ag-hero__title">Estética y bienestar para tu piel y tu cuerpo.</h1>
+              <p className="ag-hero__lead">
+                {content?.hero_title || "Tratamientos faciales y corporales, aparatología, manicura y maquillaje"}
+              </p>
+              <div className="ag-actions">
+                <TurnoButton whatsapp={wa} tone="light">Sacar turno</TurnoButton>
+                <Link className="ag-hero__link" href="/#tratamientos">
+                  Ver tratamientos
+                </Link>
+              </div>
+            </div>
+            <div className="ag-hero__logo">
+              <Medallion priority size={300} />
             </div>
           </div>
+          <svg className="ag-hero__wave" viewBox="0 0 1440 90" preserveAspectRatio="none" aria-hidden="true">
+            <path d="M0 40c240 50 480 50 720 20s480-40 720 0v30H0z" fill="#fff" />
+          </svg>
         </section>
 
         <div className="ag-wrap">

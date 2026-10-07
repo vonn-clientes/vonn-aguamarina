@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { waLink } from "@/lib/seo";
+import { slugify, waLink } from "@/lib/seo";
 import type { CatalogItem } from "@/lib/types";
 import { AddToCart } from "./AddToCart";
 
@@ -9,7 +9,7 @@ export function ProductCard({ item, whatsapp }: { item: CatalogItem; whatsapp: s
   const hasPrice = item.price != null;
   const soldOut = !!item.sold_out;
   return (
-    <article className="ag-product ag-rise">
+    <article className="ag-product ag-rise" id={slugify(item.name)}>
       <div className="ag-product__img">
         {item.image_url ? (
           // eslint-disable-next-line @next/next/no-img-element
