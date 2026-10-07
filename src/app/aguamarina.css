@@ -783,3 +783,13 @@ body:has(.ag-stickybar) .ag-sofi-fab { bottom: calc(5.5rem + env(safe-area-inset
 .ag .ag-rc__dots button::after { content: ""; position: absolute; inset: 50% auto auto 50%; width: 9px; height: 9px; margin: -4.5px 0 0 -4.5px; border-radius: 50%; background: #c3d5e6; transition: background .3s, transform .3s; }
 .ag .ag-rc__dots button.on::after { background: var(--accent); transform: scale(1.35); }
 @media (prefers-reduced-motion: reduce) { .ag .ag-rc__card { transition: none; } }
+
+/* Chat a pantalla completa en el celular: sigue al teclado y deja el encabezado siempre visible */
+html.ag-chat-open, html.ag-chat-open body { background: #f3f8fc !important; overflow: hidden; overscroll-behavior: none; }
+@media (max-width: 639px) {
+  .ag-sofi, .ag-ps { top: var(--ag-vvt, 0px); bottom: auto; height: var(--ag-vvh, 100dvh); max-height: none; border-radius: 0; animation: none; }
+  .ag-sofi header, .ag-ps header { padding-top: max(.85rem, env(safe-area-inset-top)); flex-shrink: 0; }
+  .ag-sofi__foot { padding-bottom: calc(.5rem + env(safe-area-inset-bottom)); flex-shrink: 0; }
+  .ag-sofi__body, .ag-ps__body { overscroll-behavior: contain; min-height: 0; }
+  .ag-sofi input, .ag-ps textarea { font-size: 16px; }
+}

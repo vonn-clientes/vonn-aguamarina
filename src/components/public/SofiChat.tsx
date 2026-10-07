@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { useKeyboardFit } from "@/lib/use-keyboard-fit";
 import { waLink } from "@/lib/seo";
 
 type Msg = { role: "user" | "assistant"; content: string; card?: "vonn" };
@@ -15,6 +16,7 @@ export function SofiChat({ whatsapp }: { whatsapp: string | null | undefined }) 
   const [interest, setInterest] = useState<string[]>([]);
   const [text, setText] = useState("");
   const [busy, setBusy] = useState(false);
+  useKeyboardFit(open);
   const end = useRef<HTMLDivElement>(null);
   const [noImg, setNoImg] = useState(false);
   const face = noImg ? "S" : <img src="/sofi.png" alt="" onError={() => setNoImg(true)} />;

@@ -260,3 +260,13 @@ main.ag-g-wrap > * + * { margin-top: 0; }
 .ag-ps__form textarea { flex: 1; resize: none; max-height: 120px; min-height: 48px; padding: .8rem 1rem; border: 1px solid #bcd3e8; border-radius: 24px; font: inherit; font-size: 1rem; color: #1b2b3a; background: #f8fbfd; }
 .ag-ps__form button { width: 48px; height: 48px; border-radius: 50%; border: 0; background: #2a639c; color: #fff; font-size: 1.1rem; cursor: pointer; } .ag-ps__form button:disabled { opacity: .45; }
 @media (prefers-reduced-motion: reduce) { .ag-ps, .ag-ps__typing i { animation: none; } }
+
+/* Chat a pantalla completa en el celular: sigue al teclado y deja el encabezado siempre visible */
+html.ag-chat-open, html.ag-chat-open body { background: #f3f8fc !important; overflow: hidden; overscroll-behavior: none; }
+@media (max-width: 639px) {
+  .ag-sofi, .ag-ps { top: var(--ag-vvt, 0px); bottom: auto; height: var(--ag-vvh, 100dvh); max-height: none; border-radius: 0; animation: none; }
+  .ag-sofi header, .ag-ps header { padding-top: max(.85rem, env(safe-area-inset-top)); flex-shrink: 0; }
+  .ag-sofi__foot { padding-bottom: calc(.5rem + env(safe-area-inset-bottom)); flex-shrink: 0; }
+  .ag-sofi__body, .ag-ps__body { overscroll-behavior: contain; min-height: 0; }
+  .ag-sofi input, .ag-ps textarea { font-size: 16px; }
+}

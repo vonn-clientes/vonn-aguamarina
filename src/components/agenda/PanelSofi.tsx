@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { useKeyboardFit } from "@/lib/use-keyboard-fit";
 import { useRouter } from "next/navigation";
 
 type Pending = { kind: string; args: Record<string, unknown>; label: string; state?: "idle" | "busy" | "done" | "skipped" };
@@ -22,6 +23,7 @@ export function PanelSofi() {
   const [text, setText] = useState("");
   const [busy, setBusy] = useState(false);
   const [copied, setCopied] = useState<number | null>(null);
+  useKeyboardFit(open);
   const end = useRef<HTMLDivElement>(null);
   const input = useRef<HTMLTextAreaElement>(null);
 
@@ -102,7 +104,7 @@ export function PanelSofi() {
             <span className="ag-ps__av">S</span>
             <div>
               <b>Sofi</b>
-              <small>Tu asistente del gabinete</small>
+              <small>{busy ? "escribiendo…" : "En línea · tu asistente"}</small>
             </div>
             <button onClick={() => setOpen(false)} aria-label="Cerrar">×</button>
           </header>
