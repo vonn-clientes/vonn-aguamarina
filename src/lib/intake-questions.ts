@@ -29,6 +29,22 @@ export const INTAKE_SECTIONS: { title: string; intro?: string; questions: Questi
     ],
   },
   {
+    title: "Tienda de productos",
+    questions: [
+      {
+        key: "tienda_modo",
+        type: "choice",
+        label: "¿Cómo preferís vender los productos?",
+        options: [
+          "Solo mostrarlos: que consulten precio y compren todo por WhatsApp",
+          "Con carrito: que la persona arme su pedido, pague por transferencia y me mande la confirmación por WhatsApp para prepararlo y tenerlo listo en el gabinete",
+        ],
+        help: "La segunda opción ya está armada en la web. Con la primera, los productos se ven pero sin carrito ni precio.",
+      },
+      { key: "tienda_precios", type: "long", label: "¿Querés mostrar el precio de cada producto en la web?", help: "Si sí, los precios se cargan en la sección de cada producto más abajo." },
+    ],
+  },
+  {
     title: "Promos, packs y vouchers",
     questions: [
       { key: "vouchers", type: "long", label: "¿Cómo funcionan los vouchers?", help: "¿Se pueden regalar? ¿Cómo se compran? ¿Para qué tratamientos sirven?" },

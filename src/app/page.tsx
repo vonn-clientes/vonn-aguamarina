@@ -24,7 +24,7 @@ export const revalidate = 60;
 
 const CATEGORY_HEADLINES: Record<string, string> = {
   Faciales: "Tu piel, bien cuidada.",
-  Corporales: "Aparatología para tu cuerpo.",
+  Corporales: "Tu cuerpo, en equilibrio.",
   "Manos y estilo": "Manos, maquillaje y peinados.",
 };
 
@@ -69,7 +69,7 @@ export default async function Home() {
               </div>
             </div>
             <div className="ag-hero__logo">
-              <Medallion priority size={400} />
+              <Medallion priority size={400} variant="white" />
             </div>
           </div>
           <svg className="ag-hero__wave" viewBox="0 0 1440 90" preserveAspectRatio="none" aria-hidden="true">
@@ -77,31 +77,14 @@ export default async function Home() {
           </svg>
         </section>
 
-        <div className="ag-wrap">
-          <div className="ag-facts">
-            <p>
-              <strong>Profesional matriculada</strong>
-              {SITE.owner}
-            </p>
-            <p>
-              <strong>Solo con turno previo</strong>
-              Te esperamos con tiempo para vos
-            </p>
-            <p>
-              <strong>{SITE.city}</strong>
-              {SITE.street}
-            </p>
-          </div>
-        </div>
-
         {/* ---- Tratamientos ---- */}
-        <section className="ag-section ag-section--tiles" id="tratamientos" aria-labelledby="t-tratamientos" style={{ paddingTop: 0 }}>
+        <section className="ag-section ag-section--tiles" id="tratamientos" aria-labelledby="t-tratamientos">
           <div className="ag-wrap">
             <div className="ag-head ag-rise">
               <h2 className="ag-h2" id="t-tratamientos">
                 Tratamientos
               </h2>
-              <p className="ag-lead">Elegí una categoría y mirá cada tratamiento en detalle.</p>
+              <p className="ag-lead">Faciales, corporales, manos y estilo.</p>
             </div>
             {groups.map(([category, items]) => (
               <article className="ag-cat" key={category} id={slugify(category)}>
@@ -205,6 +188,57 @@ export default async function Home() {
           </div>
         </section>
 
+        {/* ---- Dónde estamos ---- */}
+        <section className="ag-section" id="donde" aria-labelledby="t-donde">
+          <div className="ag-wrap ag-where">
+            <div className="ag-rise">
+              <h2 className="ag-h2" id="t-donde">
+                Dónde estamos
+              </h2>
+              <dl>
+                <div>
+                  <dt>Dirección</dt>
+                  <dd>
+                    <address style={{ fontStyle: "normal" }}>{FULL_ADDRESS}</address>
+                  </dd>
+                </div>
+                <div>
+                  <dt>Atención</dt>
+                  <dd>Con turno previo, por WhatsApp</dd>
+                </div>
+                <div>
+                  <dt>WhatsApp</dt>
+                  <dd>
+                    <a href={waLink(wa)} target="_blank" rel="noopener noreferrer">
+                      {phoneDisplay(wa)}
+                    </a>
+                  </dd>
+                </div>
+                {content?.instagram_url && (
+                  <div>
+                    <dt>Instagram</dt>
+                    <dd>
+                      <a href={content.instagram_url} target="_blank" rel="noopener noreferrer">
+                        @aguamarinaesteticaybienestar
+                      </a>
+                    </dd>
+                  </div>
+                )}
+              </dl>
+              <a className="ag-btn" href={MAPS_LINK} target="_blank" rel="noopener noreferrer">
+                Cómo llegar
+              </a>
+            </div>
+            <iframe
+              className="ag-map"
+              title={`Mapa de ${SITE.name}, ${FULL_ADDRESS}`}
+              src={MAPS_EMBED_URL}
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+            />
+          </div>
+        </section>
+
         {/* ---- Cómo sacar turno ---- */}
         <section className="ag-section" id="turnos" aria-labelledby="t-turnos">
           <div className="ag-wrap">
@@ -276,56 +310,6 @@ export default async function Home() {
           </div>
         </section>
 
-        {/* ---- Dónde estamos ---- */}
-        <section className="ag-section" id="donde" aria-labelledby="t-donde">
-          <div className="ag-wrap ag-where">
-            <div className="ag-rise">
-              <h2 className="ag-h2" id="t-donde">
-                Dónde estamos
-              </h2>
-              <dl>
-                <div>
-                  <dt>Dirección</dt>
-                  <dd>
-                    <address style={{ fontStyle: "normal" }}>{FULL_ADDRESS}</address>
-                  </dd>
-                </div>
-                <div>
-                  <dt>Atención</dt>
-                  <dd>Solo con turno previo</dd>
-                </div>
-                <div>
-                  <dt>WhatsApp</dt>
-                  <dd>
-                    <a href={waLink(wa)} target="_blank" rel="noopener noreferrer">
-                      {phoneDisplay(wa)}
-                    </a>
-                  </dd>
-                </div>
-                {content?.instagram_url && (
-                  <div>
-                    <dt>Instagram</dt>
-                    <dd>
-                      <a href={content.instagram_url} target="_blank" rel="noopener noreferrer">
-                        @aguamarinaesteticaybienestar
-                      </a>
-                    </dd>
-                  </div>
-                )}
-              </dl>
-              <a className="ag-btn" href={MAPS_LINK} target="_blank" rel="noopener noreferrer">
-                Cómo llegar
-              </a>
-            </div>
-            <iframe
-              className="ag-map"
-              title={`Mapa de ${SITE.name}, ${FULL_ADDRESS}`}
-              src={MAPS_EMBED_URL}
-              loading="lazy"
-              referrerPolicy="no-referrer-when-downgrade"
-            />
-          </div>
-        </section>
       </main>
 
       <SiteFooter content={content} />

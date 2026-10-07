@@ -27,6 +27,15 @@ const sans = localFont({
   fallback: ["system-ui", "sans-serif"],
 });
 
+// Lobster: la tipografía más parecida a la del logo, solo para títulos grandes.
+const script = localFont({
+  src: [{ path: "../../node_modules/@fontsource/lobster/files/lobster-latin-400-normal.woff2", weight: "400" }],
+  display: "swap",
+  variable: "--font-ag-script",
+  adjustFontFallback: "Arial",
+  fallback: ["cursive"],
+});
+
 const DESCRIPTION =
   "Gabinete de estética en Concepción del Uruguay: tratamientos faciales y corporales, aparatología, manicuría y maquillaje. Atención solo con turno previo.";
 
@@ -67,7 +76,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="es-AR" className={`h-full antialiased ${sans.variable}`}>
+    <html lang="es-AR" className={`h-full antialiased ${sans.variable} ${script.variable}`}>
       <body className="min-h-full flex flex-col">{children}</body>
     </html>
   );

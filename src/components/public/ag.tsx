@@ -129,11 +129,11 @@ export function SiteFooter({ content }: { content: SiteContent | null }) {
   );
 }
 
-export function Medallion({ priority = false, size = 168 }: { priority?: boolean; size?: number }) {
+export function Medallion({ priority = false, size = 168, variant = "color" }: { priority?: boolean; size?: number; variant?: "color" | "white" }) {
   return (
     <Image
       className="ag-medallion"
-      src="/logo-aguamarina-oficial.png"
+      src={variant === "white" ? "/logo-aguamarina-blanco.png" : "/logo-aguamarina-oficial.png"}
       alt="Aguamarina, estética y bienestar"
       width={1200}
       height={421}

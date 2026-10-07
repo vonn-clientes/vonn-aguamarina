@@ -462,25 +462,32 @@
 .ag-fq-done { text-align: center; background: #fff; border-radius: 22px; padding: 3rem 1.5rem; }
 .ag-form > .ag-btn { margin-top: 1rem; justify-content: center; width: 100%; }
 
-/* ---- Paleta tomada del logo oficial (azul agua) ---- */
-.ag { --accent: #2f6fae; --accent-d: #265a8c; --link: #2a679f; --deep: #153c61; --foam: #eaf3fb; }
 .ag-meet--solo { display: block; max-width: 44rem; margin-inline: auto; text-align: center; }
 .ag-meet--solo .ag-creds { justify-content: center; }
-.ag-meet__text .ag-lead { color: #c3d6e8; }
-
-/* ---- Portada clara: el logo va directo sobre el fondo, sin tarjeta ---- */
-.ag-hero--water { color: var(--ink);
-  background:
-    radial-gradient(48% 70% at 82% 38%, rgba(122, 197, 214, 0.45), transparent 70%),
-    radial-gradient(40% 60% at 8% 100%, rgba(79, 159, 207, 0.22), transparent 70%),
-    linear-gradient(180deg, #f1f8fd 0%, #ffffff 100%); }
-.ag-hero__title { color: var(--deep); }
-.ag-hero__lead { color: #3d5a73; opacity: 1; }
-.ag-hero__link { color: var(--accent); }
-.ag-hero--water .ag-btn--light { background: var(--accent); color: #fff !important; }
-.ag-hero__logo .ag-medallion { background: transparent !important; box-shadow: none !important; padding: 0 !important; border-radius: 0 !important; filter: drop-shadow(0 14px 28px rgba(47, 111, 174, 0.22)); }
-.ag-hero__wave { display: none; }
-@media (max-width: 760px) { .ag-hero__logo .ag-medallion { width: min(320px, 84vw) !important; } }
-.ag .ag-hero__lead { margin-top: 1.5rem; }
 .ag-meet__text .ag-lead { font-size: 1.125rem; line-height: 1.55; }
 .ag-promo__desc { margin: 0.25rem 0 0.5rem; color: #3d5a73; line-height: 1.45; }
+.ag .ag-hero__lead { margin-top: 1.5rem; }
+
+/* ---- Portada con la onda, logo blanco transparente ---- */
+.ag-hero__logo::before { display: none; }
+.ag-hero__logo .ag-medallion { background: transparent !important; box-shadow: none !important; padding: 0 !important; border-radius: 0 !important; height: auto !important; filter: drop-shadow(0 10px 30px rgba(0,0,0,0.25)); }
+@media (max-width: 760px) { .ag-hero__logo .ag-medallion { width: min(320px, 84vw) !important; } }
+.ag-hero__wave { display: block; }
+.ag-hero__link { color: #fff; }
+.ag-hero--water { color: #fff;
+  background: radial-gradient(60% 80% at 80% 30%, #4fa7b6 0%, transparent 70%), linear-gradient(160deg, #1d6272 0%, #0e3b47 100%); }
+.ag-hero__title { color: #fff; }
+.ag-hero__lead { color: #fff; opacity: 0.92; }
+
+/* ---- Tipografía del logo (Lobster, la más parecida) en títulos ---- */
+.ag-h1, .ag-h2, .ag-hero__title, .ag-cat__head .ag-h3, .ag-promo h3, .ag-fq-done h2, .ag-formpage h1 { font-family: var(--font-ag-script), "Lobster", cursive; font-weight: 400; letter-spacing: 0; }
+.ag-hero__title { font-size: clamp(2.25rem, 5vw, 3.75rem); line-height: 1.12; max-width: 14ch; }
+.ag-h2 { line-height: 1.15; }
+
+/* ---- Tratamientos en bloques separados ---- */
+.ag-section--tiles .ag-head { margin-bottom: clamp(2rem, 5vw, 3.5rem); }
+.ag-cat { background: var(--alt); border-radius: 36px; padding: clamp(1.25rem, 3vw, 2.5rem); margin-top: 1.25rem; }
+.ag-cat:first-of-type { margin-top: 0; }
+.ag-cat .ag-tcard { background: #fff; }
+.ag-cat__head { margin-bottom: clamp(1.25rem, 3vw, 2rem); }
+@media (max-width: 640px) { .ag-cat { border-radius: 28px; padding: 1rem; } }
