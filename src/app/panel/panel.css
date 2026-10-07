@@ -82,3 +82,4 @@
   .ag-panel .ag-ctable td { padding: 0.2rem 0 !important; }
   .ag-panel .ag-ctable td:last-child { margin-top: 0.6rem; }
 }
+.ag-panel .ag-pbtn--ghost { color: #1b2b3a !important; background: #fff; }
