@@ -1,0 +1,36 @@
+@import "tailwindcss";
+@import "./vonn-tokens.css";
+
+/* ==========================================================================
+   Puente entre los tokens de marca de VONN (vonn-tokens.css) y las clases
+   utilitarias de Tailwind. Gracias a esto podés usar bg-primary, text-ink,
+   rounded-md, shadow-md, etc. y que automáticamente respeten el diseño de
+   VONN (y el modo oscuro, que los tokens ya manejan solos).
+   ========================================================================== */
+@theme inline {
+  --color-primary: var(--vonn-color-primary);
+  --color-accent: var(--vonn-color-accent);
+  --color-ink: var(--vonn-color-text-primary);
+  --color-ink-muted: var(--vonn-color-text-secondary);
+  --color-canvas: var(--vonn-color-bg-primary);
+  --color-canvas-muted: var(--vonn-color-bg-secondary);
+  --color-surface: var(--vonn-color-surface);
+  --color-line: var(--vonn-color-border);
+
+  --font-sans: var(--vonn-font-family);
+
+  --radius-sm: var(--vonn-radius-sm);
+  --radius-md: var(--vonn-radius-md);
+  --radius-lg: var(--vonn-radius-lg);
+  --radius-pill: var(--vonn-radius-pill);
+
+  --shadow-sm: var(--vonn-shadow-sm);
+  --shadow-md: var(--vonn-shadow-md);
+  --shadow-lg: var(--vonn-shadow-lg);
+}
+
+body {
+  background: var(--color-canvas);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+}
