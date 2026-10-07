@@ -90,3 +90,10 @@
 .ag-panel .ag-pcard [role="group"] { align-self: start; flex-wrap: wrap; }
 .ag-panel .ag-pcard [role="group"] button { min-height: 44px; height: auto; }
 .ag-panel .ag-pcard textarea, .ag-panel .ag-pcard input, .ag-panel .ag-pcard select { max-width: 100%; }
+
+/* Las tarjetas no se ensanchan por su contenido (los formularios largos se salían de la pantalla) */
+.ag-panel .ag-pcard { grid-template-columns: minmax(0, 1fr); align-content: start; }
+.ag-panel .ag-pcard > * { min-width: 0; }
+.ag-panel .ag-pcard [role="group"] { align-self: start; flex-wrap: wrap; }
+.ag-panel .ag-pcard [role="group"] button { min-height: 44px; height: auto; }
+.ag-panel .ag-pcard textarea, .ag-panel .ag-pcard input, .ag-panel .ag-pcard select { max-width: 100%; }
