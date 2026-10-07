@@ -483,3 +483,4 @@
 @media (max-width: 760px) { .ag-hero__logo .ag-medallion { width: min(320px, 84vw) !important; } }
 .ag .ag-hero__lead { margin-top: 1.5rem; }
 .ag-meet__text .ag-lead { font-size: 1.125rem; line-height: 1.55; }
+.ag-promo__desc { margin: 0.25rem 0 0.5rem; color: #3d5a73; line-height: 1.45; }

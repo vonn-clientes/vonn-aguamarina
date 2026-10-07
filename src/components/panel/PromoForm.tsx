@@ -1,4 +1,5 @@
 import type { Promo } from "@/lib/types";
+import { ShortTextArea } from "./ShortTextArea";
 
 const field = "w-full rounded-sm border border-line bg-canvas px-3 py-2 vonn-text-cuerpo outline-none focus:border-primary";
 
@@ -7,6 +8,10 @@ export function PromoFields({ promo }: { promo?: Promo }) {
   return (
     <div className="flex flex-col gap-3">
       <input name="title" defaultValue={promo?.title} placeholder="Nombre (ej: Combo reafirmante)" required className={field} />
+      <label className="vonn-text-caption text-ink-muted flex flex-col gap-1">
+        Descripción corta: qué hace este combo
+        <ShortTextArea name="description" defaultValue={promo?.description} placeholder="Ej: Reduce grasa localizada y mejora la firmeza de la zona." />
+      </label>
       <label className="vonn-text-caption text-ink-muted flex flex-col gap-1">
         Qué incluye (una línea por cada ítem)
         <textarea

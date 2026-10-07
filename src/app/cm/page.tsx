@@ -107,7 +107,7 @@ export default async function CmPage() {
                   <div className="ag-cm-actions">
                     <CopyButton text={utm("/#promociones", "story", slugify(p.title))} label="Link para historia" />
                     <CopyButton text={utm("/#promociones", "post", slugify(p.title))} label="Link para post" />
-                    <CopyButton text={`${p.title}\n${p.items.map((i) => `• ${i}`).join("\n")}`} label="Copiar texto" />
+                    <CopyButton text={`${p.title}\n${p.description ? `${p.description}\n` : ""}${p.items.map((i) => `• ${i}`).join("\n")}`} label="Copiar texto" />
                   </div>
                 </li>
               ))}

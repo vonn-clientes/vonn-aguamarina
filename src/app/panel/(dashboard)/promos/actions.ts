@@ -13,6 +13,7 @@ function parse(formData: FormData) {
       .split("\n")
       .map((l) => l.trim())
       .filter(Boolean),
+    description: String(formData.get("description") || "").trim() || null,
     note: String(formData.get("note") || "").trim() || null,
     price: priceRaw ? Number(priceRaw) : null,
     starts_on: String(formData.get("starts_on") || "") || null,

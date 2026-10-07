@@ -133,6 +133,7 @@ export default async function Home() {
                 {promos.map((p) => (
                   <article className="ag-promo ag-rise" key={p.id}>
                     <h3>{p.title}</h3>
+                    {p.description && <p className="ag-promo__desc">{p.description}</p>}
                     <p className="ag-promo__q">¿Qué incluye?</p>
                     <ul>
                       {p.items.map((i) => (

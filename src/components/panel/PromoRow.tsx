@@ -31,6 +31,7 @@ export function PromoRow({ promo }: { promo: Promo }) {
       <div className="flex items-start justify-between gap-4">
         <div>
           <p className="vonn-text-cuerpo font-bold">{promo.title}</p>
+          {promo.description && <p className="vonn-text-caption">{promo.description}</p>}
           <ul className="vonn-text-caption text-ink-muted list-disc pl-5">
             {promo.items.map((i) => <li key={i}>{i}</li>)}
           </ul>

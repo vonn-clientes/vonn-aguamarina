@@ -117,6 +117,7 @@ export interface Promo {
   id: string;
   tenant_id: string;
   title: string;
+  description: string | null;
   items: string[];
   note: string | null;
   price: number | null;
