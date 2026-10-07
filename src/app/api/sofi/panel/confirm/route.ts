@@ -15,7 +15,8 @@ export async function POST(req: Request) {
   try {
     const message = await execute(body.kind, body.args, { sb: await createClient(), tenantId: m.tenant.id });
     revalidatePath("/panel/agenda", "layout");
-    return NextResponse.json({ ok: true, message });
+    const day = ["crear_turno", "mover_turno"].includes(body.kind) && typeof body.args.date === "string" ? body.args.date : null;
+    return NextResponse.json({ ok: true, message, day });
   } catch (e) {
     return NextResponse.json({ ok: false, message: `No pude hacerlo: ${e instanceof Error ? e.message : "error"}` });
   }

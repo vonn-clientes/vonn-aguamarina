@@ -72,7 +72,7 @@ export function PanelSofi() {
       const j = await r.json();
       patch(mi, pi, j.ok ? "done" : "idle");
       setMsgs((cur) => [...cur, { role: "assistant", content: j.message }]);
-      if (j.ok) router.refresh();
+      if (j.ok) { if (j.day) router.push(`/panel/agenda?d=${j.day}`); else router.refresh(); }
     } catch {
       patch(mi, pi, "idle");
       setMsgs((cur) => [...cur, { role: "assistant", content: "No pude hacerlo, probá de nuevo 💙" }]);
