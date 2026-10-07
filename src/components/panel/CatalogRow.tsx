@@ -6,6 +6,7 @@ import type { CatalogItem } from "@/lib/types";
 import { ImageUpload } from "./ImageUpload";
 import { GalleryUpload } from "./GalleryUpload";
 import { ProductFields } from "./ProductFields";
+import { TreatmentFields } from "./TreatmentFields";
 
 const field =
   "w-full rounded-sm border border-line bg-canvas px-2 py-1 vonn-text-caption outline-none focus:border-primary";
@@ -54,7 +55,7 @@ export function CatalogRow({ item, tenantId }: { item: CatalogItem; tenantId: st
               <p className="vonn-text-caption text-ink-muted mb-1">Más fotos (galería)</p>
               <GalleryUpload tenantId={tenantId} name="gallery_urls" defaultUrls={item.gallery_urls ?? []} />
             </div>
-            {item.category === "Productos" && <ProductFields item={item} />}
+            {item.category === "Productos" ? <ProductFields item={item} /> : <TreatmentFields item={item} />}
           </form>
         </td>
       </tr>

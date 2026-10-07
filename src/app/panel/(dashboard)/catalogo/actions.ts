@@ -4,6 +4,9 @@ import { requireMembership } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { revalidatePath } from "next/cache";
 
+const lines = (v: FormDataEntryValue | null) =>
+  String(v ?? "").split("\n").map((l) => l.trim()).filter(Boolean);
+
 export async function addCatalogItem(formData: FormData) {
   const membership = await requireMembership();
   const supabase = await createClient();
@@ -23,6 +26,8 @@ export async function addCatalogItem(formData: FormData) {
     skin_types: formData.getAll("skin_types").map(String),
     concerns: formData.getAll("concerns").map(String),
     product_type: String(formData.get("product_type") || "") || null,
+    benefits: lines(formData.get("benefits")),
+    good_to_know: lines(formData.get("good_to_know")),
   });
 
   revalidatePath("/panel/catalogo");
@@ -77,6 +82,8 @@ export async function updateCatalogItem(itemId: string, formData: FormData) {
       skin_types: formData.getAll("skin_types").map(String),
       concerns: formData.getAll("concerns").map(String),
       product_type: String(formData.get("product_type") || "") || null,
+      benefits: lines(formData.get("benefits")),
+      good_to_know: lines(formData.get("good_to_know")),
     })
     .eq("id", itemId)
     .eq("tenant_id", membership.tenant.id);

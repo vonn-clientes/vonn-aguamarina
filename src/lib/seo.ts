@@ -119,7 +119,7 @@ export function faqJsonLd(faq: { q: string; a: string }[]) {
   };
 }
 
-export function serviceJsonLd(item: CatalogItem) {
+export function serviceJsonLd(item: CatalogItem, rating?: { avg: number; count: number }) {
   return {
     "@context": "https://schema.org",
     "@type": "Service",
@@ -130,6 +130,7 @@ export function serviceJsonLd(item: CatalogItem) {
     url: `${SITE.url}/tratamientos/${slugify(item.name)}`,
     provider: { "@id": `${SITE.url}/#negocio` },
     areaServed: { "@type": "City", name: SITE.city },
+    aggregateRating: rating && rating.count > 0 ? { "@type": "AggregateRating", ratingValue: rating.avg, reviewCount: rating.count, bestRating: 5 } : undefined,
   };
 }
 

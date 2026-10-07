@@ -163,7 +163,7 @@ export default async function CmPage() {
                     {p.description && <span>{p.description}</span>}
                   </div>
                   <div className="ag-cm-actions">
-                    <CopyButton text={utm(`/tienda#${slugify(p.name)}`, "story", slugify(p.name))} label="Link del producto" />
+                    <CopyButton text={utm(`/tienda/${slugify(p.name)}`, "story", slugify(p.name))} label="Link del producto" />
                     {p.description && <CopyButton text={p.description} label="Copiar texto" />}
                   </div>
                 </li>

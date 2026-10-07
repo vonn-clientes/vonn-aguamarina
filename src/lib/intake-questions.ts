@@ -55,6 +55,8 @@ export const INTAKE_SECTIONS: { title: string; intro?: string; questions: Questi
   {
     title: "Para terminar",
     questions: [
+      { key: "hifu_nombre", type: "text", label: "En una de tus historias aparece \"Hifu 12D Max\": ¿el tratamiento en la web debe llamarse Hifu 7D, Hifu 12D Max o tener los dos nombres?" },
+      { key: "google_resenas", type: "text", label: "¿Cuántas reseñas tenés en Google Maps?", help: "Para poder decir, por ejemplo, \"5 estrellas (X reseñas)\"." },
       { key: "no_mostrar", type: "long", label: "¿Hay algo que NO quieras que aparezca en la web?" },
       { key: "falta", type: "long", label: "¿Falta algo que te gustaría que tenga la web?" },
       { key: "observaciones", type: "long", label: "Observaciones" },

@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import { slugify, waLink } from "@/lib/seo";
 import type { CatalogItem } from "@/lib/types";
 import { AddToCart } from "./AddToCart";
@@ -20,7 +21,7 @@ export function ProductCard({ item, whatsapp }: { item: CatalogItem; whatsapp: s
         {soldOut && <span className="ag-product__tag">Agotado</span>}
       </div>
       <div className="ag-product__body">
-        <h3 className="ag-product__name">{item.name}</h3>
+        <h3 className="ag-product__name"><Link href={`/tienda/${slugify(item.name)}`}>{item.name}</Link></h3>
         {item.description && <p className="ag-product__desc">{item.description}</p>}
         {(item.skin_types?.length ?? 0) > 0 && (
           <p className="ag-product__skins">{item.skin_types!.join(" · ")}</p>

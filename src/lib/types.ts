@@ -58,6 +58,8 @@ export interface CatalogItem {
   skin_types?: string[];
   concerns?: string[];
   product_type?: string | null;
+  benefits?: string[];
+  good_to_know?: string[];
   sort_order: number;
 }
 
@@ -126,4 +128,15 @@ export interface Promo {
   ends_on: string | null;
   active: boolean;
   sort_order: number;
+}
+
+export interface Review {
+  id: string;
+  tenant_id: string;
+  item_id: string;
+  author: string;
+  rating: number;
+  comment: string;
+  visible: boolean;
+  created_at: string;
 }

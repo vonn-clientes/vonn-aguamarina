@@ -6,6 +6,8 @@ import { SITE } from "@/lib/site";
 import { breadcrumbJsonLd, serviceJsonLd, slugify, trimDescription } from "@/lib/seo";
 import { Advice, JsonLd, SiteFooter, SiteHeader, TurnoButton } from "@/components/public/ag";
 import { TreatmentCard } from "@/components/public/TreatmentCard";
+import { Reviews, Stars } from "@/components/public/Reviews";
+import { getReviews, summarize } from "@/lib/reviews";
 
 export const revalidate = 60;
 
@@ -69,6 +71,8 @@ export default async function ServicePage(props: PageProps<"/tratamientos/[slug]
   const wa = content?.whatsapp_number ?? null;
   const related = services.filter((s) => s.category === item.category && s.id !== item.id);
   const path = `/tratamientos/${slug}`;
+  const reviews = await getReviews(item.id);
+  const rating = summarize(reviews);
   const photos = [item.image_url, ...(item.gallery_urls ?? [])].filter((u, i, a): u is string => !!u && a.indexOf(u) === i);
 
   return (
@@ -102,6 +106,11 @@ export default async function ServicePage(props: PageProps<"/tratamientos/[slug]
             )}
             <h1 className="ag-h1">{item.name}</h1>
             {item.description && <p className="ag-lead">{item.description}</p>}
+            {rating.count > 0 && (
+              <a className="ag-rv-badge" href="#opiniones">
+                <Stars value={rating.avg} /> {rating.avg.toFixed(1)} · {rating.count} {rating.count === 1 ? "opinión" : "opiniones"}
+              </a>
+            )}
             <div className="ag-actions">
               <TurnoButton whatsapp={wa} text={`Hola! Quiero sacar un turno para ${item.name}`} />
               <Link className="ag-more" href="/#tratamientos">
@@ -128,6 +137,25 @@ export default async function ServicePage(props: PageProps<"/tratamientos/[slug]
           </section>
         )}
 
+        {((item.benefits?.length ?? 0) > 0 || (item.good_to_know?.length ?? 0) > 0) && (
+          <section className="ag-section" aria-label="Detalles del tratamiento">
+            <div className="ag-wrap ag-details">
+              {(item.benefits?.length ?? 0) > 0 && (
+                <div className="ag-detail ag-rise">
+                  <h2>Beneficios</h2>
+                  <ul>{item.benefits!.map((b) => <li key={b}>{b}</li>)}</ul>
+                </div>
+              )}
+              {(item.good_to_know?.length ?? 0) > 0 && (
+                <div className="ag-detail ag-rise">
+                  <h2>Es bueno saber</h2>
+                  <ul>{item.good_to_know!.map((b) => <li key={b}>{b}</li>)}</ul>
+                </div>
+              )}
+            </div>
+          </section>
+        )}
+
         <section className="ag-section ag-section--deep" aria-labelledby="t-turno">
           <div className="ag-wrap ag-about ag-rise">
             <h2 className="ag-h2" id="t-turno">¿Listo para tu turno?</h2>
@@ -137,6 +165,8 @@ export default async function ServicePage(props: PageProps<"/tratamientos/[slug]
             </div>
           </div>
         </section>
+
+        <Reviews itemId={item.id} itemName={item.name} reviews={reviews} path={path} />
 
         {related.length > 0 && (
           <section className="ag-section" aria-labelledby="t-relacionados">
@@ -166,7 +196,7 @@ export default async function ServicePage(props: PageProps<"/tratamientos/[slug]
 
       <SiteFooter content={content} />
 
-      <JsonLd data={serviceJsonLd(item)} />
+      <JsonLd data={serviceJsonLd(item, rating)} />
       <JsonLd
         data={breadcrumbJsonLd([
           { name: "Inicio", path: "/" },

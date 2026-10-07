@@ -67,6 +67,12 @@ export default async function Home() {
                   Ver tratamientos
                 </Link>
               </div>
+              <a className="ag-gbadge" href={MAPS_LINK} target="_blank" rel="noopener noreferrer">
+                <span className="ag-stars" aria-hidden="true">
+                  <span className="on">★</span><span className="on">★</span><span className="on">★</span><span className="on">★</span><span className="on">★</span>
+                </span>
+                <span>5 estrellas en Google Maps</span>
+              </a>
             </div>
             <div className="ag-hero__logo">
               <Medallion priority size={420} />
