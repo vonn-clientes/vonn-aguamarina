@@ -18,7 +18,7 @@ export function StatusSelect<T extends string>({
       value={value}
       disabled={pending}
       onChange={(e) => startTransition(() => onChange(e.target.value as T))}
-      className="rounded-sm border border-line bg-canvas px-3 py-1.5 vonn-text-caption outline-none focus:border-primary disabled:opacity-50"
+      className="rounded-sm border border-line bg-canvas px-3 py-2 text-base outline-none focus:border-primary disabled:opacity-50"
     >
       {options.map((opt) => (
         <option key={opt.value} value={opt.value}>

@@ -10,16 +10,14 @@ export default async function DashboardHome() {
   const t = membership.tenant.id;
   const today = todayKey();
 
-  const [turnos, mensajes, pedidos] = await Promise.all([
+  const [turnos, pedidos] = await Promise.all([
     supabase.from("ag_appointments").select("id", { count: "exact", head: true }).eq("tenant_id", t).in("status", ["pendiente", "confirmado"]).gte("starts_at", dayStartISO(today)).lt("starts_at", dayStartISO(addDays(today, 1))),
-    supabase.from("contact_messages").select("id", { count: "exact", head: true }).eq("tenant_id", t).eq("is_read", false),
     supabase.from("orders").select("id", { count: "exact", head: true }).eq("tenant_id", t).eq("status", "pendiente"),
   ]);
 
   const cards = [
     { n: turnos.count ?? 0, label: "turnos para hoy", href: "/panel/agenda" },
     { n: pedidos.count ?? 0, label: "pedidos de la tienda por atender", href: "/panel/pedidos" },
-    { n: mensajes.count ?? 0, label: "mensajes sin leer", href: "/panel/mensajes" },
   ];
   const shortcuts = [
     { href: "/panel/agenda/turnos/nuevo", title: "Agendar un turno", text: "Cargá un turno nuevo en segundos." },
@@ -32,7 +30,7 @@ export default async function DashboardHome() {
     <>
       <PageHeader title="Hola, Ingrid" description="Esto es lo que pasa hoy en Aguamarina." />
       <div className="px-5 sm:px-10 pb-10 grid gap-5 max-w-3xl">
-        <div className="grid gap-3 sm:grid-cols-3">
+        <div className="grid gap-3 sm:grid-cols-2">
           {cards.map((c) => (
             <Link key={c.label} href={c.href} className="ag-pcard !gap-1 hover:shadow-md transition-shadow">
               <span className="vonn-text-display" style={{ color: "#2c7384" }}>{c.n}</span>

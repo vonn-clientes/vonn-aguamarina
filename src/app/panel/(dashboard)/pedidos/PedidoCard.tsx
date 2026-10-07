@@ -19,17 +19,17 @@ const options: { value: Order["status"]; label: string }[] = [
 export function PedidoCard({ order }: { order: PedidoConItems }) {
   const date = new Date(order.created_at).toLocaleString("es-AR", { dateStyle: "short", timeStyle: "short" });
   return (
-    <div className="rounded-sm border border-line bg-surface p-5 flex flex-col gap-3">
+    <div className="ag-pcard">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <p className="vonn-text-subtitulo">{order.customer_name}</p>
-          <p className="vonn-text-caption text-ink-muted">
+          <p className="ag-item__name">{order.customer_name}</p>
+          <p className="ag-item__meta">
             DNI {order.customer_dni ?? "—"} · WhatsApp {order.customer_phone} · {date}
           </p>
         </div>
         <StatusSelect value={order.status} options={options} onChange={(status) => updateOrderStatus(order.id, status)} />
       </div>
-      <ul className="vonn-text-cuerpo">
+      <ul style={{ fontSize: "1rem" }}>
         {order.order_items.map((i) => (
           <li key={i.id} className="flex justify-between gap-4">
             <span>
@@ -39,7 +39,7 @@ export function PedidoCard({ order }: { order: PedidoConItems }) {
           </li>
         ))}
       </ul>
-      <p className="vonn-text-cuerpo font-bold flex justify-between border-t border-line pt-2">
+      <p style={{ fontSize: "1.0625rem" }} className="font-bold flex justify-between border-t border-line pt-2">
         <span>Total</span>
         <span>${Number(order.total).toLocaleString("es-AR")}</span>
       </p>

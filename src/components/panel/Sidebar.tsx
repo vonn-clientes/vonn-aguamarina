@@ -26,7 +26,6 @@ const GROUPS: { title?: string; links: { href: string; label: string; big?: bool
     title: "Clientes",
     links: [
       { href: "/panel/pedidos", label: "Pedidos de la tienda" },
-      { href: "/panel/mensajes", label: "Mensajes" },
     ],
   },
   {

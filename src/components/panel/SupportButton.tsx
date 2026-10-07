@@ -15,6 +15,22 @@ const initialState: TicketState = { error: "", success: "" };
 
 // Botón flotante de "reportar un error" — vive SOLO dentro del panel
 // privado, nunca en la vista pública del sitio (Fase 3 del documento).
+export function SupportForm() {
+  const [state, formAction, pending] = useActionState(createTicket, initialState);
+  return (
+    <form action={formAction} className="ag-pcard">
+      <h2>Contanos qué pasó</h2>
+      <select name="category" className="rounded-sm border border-line bg-canvas px-3 py-2 text-base outline-none focus:border-primary">
+        {categories.map((c) => (<option key={c} value={c}>{c}</option>))}
+      </select>
+      <textarea name="description" required rows={4} placeholder="Contanos con el mayor detalle posible..." className="rounded-sm border border-line bg-canvas px-3 py-2 text-base outline-none focus:border-primary" />
+      <div><button type="submit" disabled={pending} className="ag-pbtn">{pending ? "Enviando..." : "Enviar reporte"}</button></div>
+      {state.error && <p className="text-base" style={{ color: "#b4483f" }}>{state.error}</p>}
+      {state.success && <p className="text-base" style={{ color: "#2f6fae" }}>{state.success}</p>}
+    </form>
+  );
+}
+
 export function SupportButton() {
   const [open, setOpen] = useState(false);
   const [state, formAction, pending] = useActionState(createTicket, initialState);
