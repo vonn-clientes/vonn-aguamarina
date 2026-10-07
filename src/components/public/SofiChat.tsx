@@ -72,16 +72,17 @@ export function SofiChat({ whatsapp }: { whatsapp: string | null | undefined }) 
             <button onClick={() => setOpen(false)} aria-label="Cerrar chat">×</button>
           </header>
           <div className="ag-sofi__body" aria-live="polite">
-            <p className="ag-sofi__bot">¡Hola! Soy Sofi, la asesora virtual de Aguamarina 🌊 Te ayudo a elegir tratamientos, productos y packs. {name ? `¿En qué te ayudo, ${name}?` : "¿Cómo te llamás?"}</p>
+            <div className="ag-sofi__bot">¡Hola! Soy Sofi, la asesora virtual de Aguamarina 🌊 Te ayudo a elegir tratamientos, productos y packs. {name ? `¿En qué te ayudo, ${name}?` : "¿Cómo te llamás?"}</div>
             {msgs.map((m, i) => (
-              <p key={i} className={m.role === "user" ? "ag-sofi__me" : "ag-sofi__bot"}>{m.content}</p>
+              <div key={i} className={m.role === "user" ? "ag-sofi__me" : "ag-sofi__bot"}>{m.content}</div>
             ))}
-            {busy && <p className="ag-sofi__bot ag-sofi__typing" aria-label="Sofi está escribiendo"><i /><i /><i /></p>}
+            {busy && <div className="ag-sofi__bot ag-sofi__typing" aria-label="Sofi está escribiendo"><i /><i /><i /></div>}
             {name && msgs.length === 0 && (
               <div className="ag-sofi__chips">{CHIPS.map((c) => (<button key={c} onClick={() => send(c)}>{c}</button>))}</div>
             )}
             <div ref={end} />
           </div>
+          <div className="ag-sofi__foot">
           {msgs.length > 0 && (
             <a className="ag-sofi__wa" href={wa} target="_blank" rel="noopener noreferrer">
               Pedir turno por WhatsApp{interest.length ? ` · ${interest.length === 1 ? interest[0] : `${interest.length} elegidos`}` : ""}
@@ -98,7 +99,8 @@ export function SofiChat({ whatsapp }: { whatsapp: string | null | undefined }) 
               <button type="submit" disabled={busy || !text.trim()}>Enviar</button>
             </form>
           )}
-          <p className="ag-sofi__note">Sofi es un asistente virtual. Los turnos los confirma Ingrid.</p>
+          <div className="ag-sofi__note">Sofi es un asistente virtual · Los turnos los confirma Ingrid</div>
+          </div>
         </section>
       )}
     </>
