@@ -33,7 +33,7 @@ async function ask(p: Provider, system: string, messages: ChatMsg[]): Promise<st
     const res = await fetch(`${p.base}/chat/completions`, {
       method: "POST",
       headers: { "content-type": "application/json", authorization: `Bearer ${p.key}` },
-      body: JSON.stringify({ model: p.model, temperature: 0.7, max_tokens: 400, messages: [{ role: "system", content: system }, ...messages] }),
+      body: JSON.stringify({ model: p.model, temperature: 0.5, max_tokens: 400, messages: [{ role: "system", content: system }, ...messages] }),
       signal: AbortSignal.timeout(12_000),
     });
     if (!res.ok) return null;
