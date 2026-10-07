@@ -1,69 +1,69 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { VonnLogo } from "@/components/Logo";
 import { logout } from "@/app/panel/actions/auth";
-import type { BusinessMode } from "@/lib/types";
 
-const baseLinks = [
-  { href: "/panel", label: "Inicio" },
-  { href: "/panel/agenda", label: "Agenda y cuentas" },
-  { href: "/panel/contenido", label: "Editor del sitio" },
-  { href: "/panel/catalogo", label: "Catálogo" },
-  { href: "/panel/promos", label: "Promociones" },
-  { href: "/panel/opiniones", label: "Opiniones" },
-  { href: "/panel/pedidos", label: "Pedidos de la tienda" },
-  { href: "/panel/links", label: "Links para Instagram" },
-  { href: "/panel/mensajes", label: "Mensajes" },
-  { href: "/panel/empleados", label: "Empleados" },
-  { href: "/panel/configuracion", label: "Configuración" },
-  { href: "/panel/soporte", label: "Soporte" },
+// Menú del panel, agrupado por lo que Ingrid quiere hacer (no por cómo está armado el sistema).
+const GROUPS: { title?: string; links: { href: string; label: string; big?: boolean }[] }[] = [
+  {
+    links: [
+      { href: "/panel", label: "Inicio" },
+      { href: "/panel/agenda", label: "Agenda y cuentas", big: true },
+    ],
+  },
+  {
+    title: "Mi sitio",
+    links: [
+      { href: "/panel/contenido", label: "Textos y datos" },
+      { href: "/panel/catalogo", label: "Tratamientos y productos" },
+      { href: "/panel/promos", label: "Promociones" },
+      { href: "/panel/opiniones", label: "Opiniones" },
+    ],
+  },
+  {
+    title: "Clientes",
+    links: [
+      { href: "/panel/pedidos", label: "Pedidos de la tienda" },
+      { href: "/panel/mensajes", label: "Mensajes" },
+    ],
+  },
+  {
+    title: "Más",
+    links: [
+      { href: "/panel/links", label: "Links para Instagram" },
+      { href: "/panel/soporte", label: "Ayuda" },
+    ],
+  },
 ];
 
-export function Sidebar({
-  businessName,
-  businessMode,
-}: {
-  businessName: string;
-  businessMode: BusinessMode;
-}) {
+export function Sidebar() {
   const pathname = usePathname();
-
-  const links = [...baseLinks];
-  if (businessMode !== "ninguno") {
-    links.splice(3, 0, {
-      href: "/panel/actividad",
-      label: businessMode === "turnos" ? "Turnos" : "Pedidos",
-    });
-  }
-
   return (
-    <aside className="w-full sm:w-60 shrink-0 border-b sm:border-b-0 sm:border-r border-line bg-surface flex sm:flex-col sm:h-screen sm:sticky sm:top-0">
-      <div className="p-6 hidden sm:flex sm:flex-col sm:gap-1">
-        <VonnLogo />
-        <p className="vonn-text-caption text-ink-muted">{businessName}</p>
+    <aside className="w-full sm:w-64 shrink-0 bg-white sm:border-r border-line flex flex-col sm:h-screen sm:sticky sm:top-0">
+      <div className="px-5 pt-4 pb-2 flex items-center justify-between sm:block">
+        <Link href="/panel" aria-label="Inicio del panel">
+          <Image src="/logo-aguamarina-oficial.png" alt="Aguamarina" width={120} height={42} sizes="120px" priority />
+        </Link>
+        <form action={logout} className="sm:hidden">
+          <button className="text-sm text-ink-muted px-2">Salir</button>
+        </form>
       </div>
-      <nav className="flex sm:flex-col gap-1 p-3 sm:p-3 overflow-x-auto sm:overflow-visible flex-1">
-        {links.map((link) => {
-          const active = pathname === link.href;
-          return (
-            <Link
-              key={link.href}
-              href={link.href}
-              className={`whitespace-nowrap rounded-sm px-4 py-2.5 vonn-text-cuerpo transition-colors ${
-                active ? "bg-primary text-white" : "text-ink hover:bg-canvas-muted"
-              }`}
-            >
-              {link.label}
-            </Link>
-          );
-        })}
+      <nav className="ag-nav" aria-label="Panel del sitio">
+        {GROUPS.map((g, i) => (
+          <div key={i}>
+            {g.title && <h3>{g.title}</h3>}
+            {g.links.map((l) => (
+              <Link key={l.href} href={l.href} className={l.big ? "big" : undefined} aria-current={pathname === l.href ? "page" : undefined}>
+                {l.label}
+              </Link>
+            ))}
+          </div>
+        ))}
       </nav>
-      <form action={logout} className="p-3">
-        <button className="w-full text-left rounded-sm px-4 py-2.5 vonn-text-caption text-ink-muted hover:bg-canvas-muted whitespace-nowrap">
-          Cerrar sesión
-        </button>
+      <form action={logout} className="p-3 hidden sm:block">
+        <button className="w-full text-left rounded-sm px-4 py-2.5 text-sm text-ink-muted hover:bg-canvas-muted">Cerrar sesión</button>
       </form>
     </aside>
   );

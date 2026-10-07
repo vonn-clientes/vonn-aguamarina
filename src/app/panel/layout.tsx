@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import "./panel.css";
 
 // El panel de gestión es privado: nunca debe aparecer en Google.
 export const metadata: Metadata = {
@@ -7,5 +8,5 @@ export const metadata: Metadata = {
 };
 
 export default function PanelRootLayout({ children }: { children: React.ReactNode }) {
-  return <>{children}</>;
+  return <div className="ag-panel">{children}</div>;
 }

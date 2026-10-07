@@ -2,11 +2,7 @@ import { requireMembership } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { PageHeader } from "@/components/panel/PageHeader";
 import { CatalogRow } from "@/components/panel/CatalogRow";
-import { addCatalogItem } from "./actions";
-import { ImageUpload } from "@/components/panel/ImageUpload";
-import { GalleryUpload } from "@/components/panel/GalleryUpload";
-import { ProductFields } from "@/components/panel/ProductFields";
-import { TreatmentFields } from "@/components/panel/TreatmentFields";
+import { AddItemForm } from "@/components/panel/AddItemForm";
 import type { CatalogItem } from "@/lib/types";
 
 export default async function CatalogoPage() {
@@ -20,62 +16,46 @@ export default async function CatalogoPage() {
     .order("sort_order", { ascending: true });
 
   const items = (data as CatalogItem[]) ?? [];
-  const field =
-    "w-full rounded-sm border border-line bg-canvas px-3 py-2 vonn-text-cuerpo outline-none focus:border-primary";
+  const treatments = items.filter((i) => i.category !== "Productos");
+  const products = items.filter((i) => i.category === "Productos");
+
+  const table = (list: CatalogItem[], empty: string) =>
+    list.length === 0 ? (
+      <p className="vonn-text-cuerpo text-ink-muted">{empty}</p>
+    ) : (
+      <div className="overflow-x-auto">
+        <table className="w-full text-left min-w-[34rem]">
+          <thead>
+            <tr className="vonn-text-caption text-ink-muted border-b border-line">
+              <th className="pb-2 font-medium">Nombre</th>
+              <th className="pb-2 font-medium">Categoría</th>
+              <th className="pb-2 font-medium">Precio</th>
+              <th className="pb-2 font-medium">En el sitio</th>
+              <th className="pb-2 font-medium"></th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-line">
+            {list.map((item) => (
+              <CatalogRow key={item.id} item={item} tenantId={membership.tenant.id} />
+            ))}
+          </tbody>
+        </table>
+      </div>
+    );
 
   return (
     <>
-      <PageHeader
-        title="Catálogo"
-        description="Los productos o servicios que se muestran en tu sitio público."
-      />
-      <div className="p-6 sm:p-10 flex flex-col gap-8 max-w-3xl">
-        {items.length > 0 && (
-          <table className="w-full text-left">
-            <thead>
-              <tr className="vonn-text-caption text-ink-muted border-b border-line">
-                <th className="pb-2 font-medium">Nombre</th>
-                <th className="pb-2 font-medium">Categoría</th>
-                <th className="pb-2 font-medium">Precio</th>
-                <th className="pb-2 font-medium">Estado</th>
-                <th className="pb-2 font-medium"></th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-line">
-              {items.map((item) => (
-                <CatalogRow key={item.id} item={item} tenantId={membership.tenant.id} />
-              ))}
-            </tbody>
-          </table>
-        )}
-
-        <form action={addCatalogItem} className="flex flex-col gap-4 border-t border-line pt-6">
-          <h2 className="vonn-text-subtitulo">Agregar nuevo</h2>
-          <div className="grid gap-4 sm:grid-cols-2">
-            <input name="name" placeholder="Nombre" required className={field} />
-            <input name="category" placeholder="Categoría (opcional)" className={field} />
-            <input name="price" placeholder="Precio" inputMode="decimal" className={field} />
-            <input
-              name="duration_minutes"
-              placeholder="Duración en minutos (solo si es un servicio)"
-              inputMode="numeric"
-              className={field}
-            />
-          </div>
-          <textarea name="description" placeholder="Descripción breve (opcional)" rows={2} className={field} />
-          <p className="vonn-text-caption text-ink-muted">Foto principal</p>
-          <ImageUpload tenantId={membership.tenant.id} name="image_url" label="foto" />
-          <p className="vonn-text-caption text-ink-muted">Más fotos (galería)</p>
-          <GalleryUpload tenantId={membership.tenant.id} name="gallery_urls" />
-          <ProductFields />
-          <TreatmentFields />
-          <p className="vonn-text-caption text-ink-muted">
-            Para que aparezca en la tienda, poné la categoría <strong>Productos</strong>. Si le cargás un precio se puede comprar online; sin precio, el botón consulta por WhatsApp.
-          </p>
-          <button type="submit" className="self-start rounded-pill bg-primary text-white px-6 py-3 vonn-text-cuerpo font-medium">
-            Agregar al catálogo
-          </button>
-        </form>
+      <PageHeader title="Tratamientos y productos" description="Todo lo que se ve en la página: lo que ofrecés en el gabinete y lo que vendés en la tienda." />
+      <div className="px-5 sm:px-10 pb-10 flex flex-col gap-5 max-w-4xl">
+        <section className="ag-pcard">
+          <h2>Tratamientos</h2>
+          {table(treatments, "Todavía no cargaste tratamientos.")}
+        </section>
+        <section className="ag-pcard">
+          <h2>Productos de la tienda</h2>
+          {table(products, "Todavía no cargaste productos.")}
+        </section>
+        <AddItemForm tenantId={membership.tenant.id} />
       </div>
     </>
   );

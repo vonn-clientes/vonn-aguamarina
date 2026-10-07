@@ -2,7 +2,7 @@
 
 import { useActionState } from "react";
 import { login, type LoginState } from "@/app/panel/actions/auth";
-import { VonnLogo } from "@/components/Logo";
+import Image from "next/image";
 
 const initialState: LoginState = { error: "" };
 
@@ -10,12 +10,12 @@ export default function LoginPage() {
   const [state, formAction, pending] = useActionState(login, initialState);
 
   return (
-    <main className="flex-1 flex items-center justify-center px-6 bg-canvas-muted">
-      <div className="w-full max-w-sm flex flex-col gap-6 bg-surface border border-line rounded-lg p-8 shadow-md">
-        <VonnLogo className="self-start" />
+    <main className="flex-1 flex items-center justify-center px-6 ">
+      <div className="w-full max-w-sm flex flex-col gap-6 bg-surface border border-line rounded-lg p-8 shadow-md mx-auto">
+        <Image src="/logo-aguamarina-oficial.png" alt="Aguamarina" width={150} height={52} priority className="self-center" />
         <div>
-          <h1 className="vonn-text-subtitulo">Entrar al panel</h1>
-          <p className="vonn-text-caption text-ink-muted mt-1">
+          <h1 className="vonn-text-subtitulo text-center">Entrá a tu panel</h1>
+          <p className="vonn-text-caption text-ink-muted mt-1 text-center">
             Con tu usuario y contraseña.
           </p>
         </div>

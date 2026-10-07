@@ -7,6 +7,7 @@ import { ImageUpload } from "./ImageUpload";
 import { GalleryUpload } from "./GalleryUpload";
 import { ProductFields } from "./ProductFields";
 import { TreatmentFields } from "./TreatmentFields";
+import { TREATMENT_CATEGORIES } from "./AddItemForm";
 
 const field =
   "w-full rounded-sm border border-line bg-canvas px-2 py-1 vonn-text-caption outline-none focus:border-primary";
@@ -27,7 +28,15 @@ export function CatalogRow({ item, tenantId }: { item: CatalogItem; tenantId: st
             className="grid gap-2 sm:grid-cols-5 items-center"
           >
             <input name="name" defaultValue={item.name} placeholder="Nombre" required className={field} />
-            <input name="category" defaultValue={item.category ?? ""} placeholder="Categoría" className={field} />
+            {item.category === "Productos" ? (
+              <input type="hidden" name="category" value="Productos" />
+            ) : (
+              <select name="category" defaultValue={item.category ?? "Faciales"} className={field}>
+                {[...new Set([...TREATMENT_CATEGORIES, ...(item.category ? [item.category] : [])])].map((c) => (
+                  <option key={c}>{c}</option>
+                ))}
+              </select>
+            )}
             <input name="price" defaultValue={item.price ?? ""} placeholder="Precio" inputMode="decimal" className={field} />
             <input
               name="duration_minutes"
@@ -80,7 +89,7 @@ export function CatalogRow({ item, tenantId }: { item: CatalogItem; tenantId: st
           className="vonn-text-caption text-primary"
           onClick={() => startTransition(() => toggleCatalogItem(item.id, !item.active))}
         >
-          {item.active ? "Activo" : "Oculto"}
+          {item.active ? "Visible (tocá para ocultar)" : "Oculto (tocá para mostrar)"}
         </button>
         {item.category === "Productos" && (
           <button
