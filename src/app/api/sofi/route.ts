@@ -69,7 +69,7 @@ export async function POST(req: Request) {
   let reply: string, mentioned: string[];
   if (text) {
     const m = text.match(/\[\[\s*interes\s*:\s*([^\]]*)\]\]/i);
-    reply = text.replace(/\[\[[^\]]*\]\]/g, "").trim();
+    reply = text.replace(/\[\[[^\]]*\]\]/g, "").replace(/[*_#`]+/g, "").trim();
     const tagged = m ? m[1].split(";").map((s) => s.trim()).filter(Boolean) : [];
     mentioned = names.filter((n) => tagged.some((t) => fold(t) === fold(n)));
   } else {
