@@ -285,3 +285,48 @@
 .ag-co__go:disabled { opacity: 0.6; cursor: progress; }
 .ag-co-error { background: #fdecec; color: #8a1f1f; border-radius: 14px; padding: 0.85rem 1rem; }
 .ag-co-done { max-width: 34rem; margin: 0 auto; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 1.25rem; }
+
+/* ---- Portada: logo grande arriba ---- */
+.ag-hero { padding-top: clamp(2rem, 5vw, 4rem); }
+.ag-hero .ag-medallion { margin: 0 auto; }
+.ag-hero__place { margin-top: 1.5rem; font-size: 0.9375rem; color: var(--soft); letter-spacing: 0; }
+.ag-h1--hero { font-size: clamp(1.75rem, 4.2vw, 3rem); line-height: 1.12; max-width: 24ch; margin: 0.6rem auto 0 !important; letter-spacing: -0.025em; }
+.ag-hero .ag-actions { margin-top: 2rem; }
+
+/* ---- Tratamientos por categoría: tarjetas con foto que se sienten botón ---- */
+.ag-cat { margin-top: clamp(3.5rem, 8vw, 6rem); }
+.ag-cat:first-of-type { margin-top: 0; }
+.ag-cat__head { text-align: center; margin-bottom: clamp(1.75rem, 4vw, 2.75rem); }
+.ag-cat__head .ag-kicker { margin-bottom: 0.4rem; }
+.ag-tgrid { display: grid; gap: 14px; grid-template-columns: 1fr; justify-content: center; }
+@media (min-width: 560px) { .ag-tgrid { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 960px) { .ag-tgrid { grid-template-columns: repeat(3, 1fr); } }
+.ag-tcard { display: flex; flex-direction: column; background: var(--alt); border-radius: 28px; overflow: hidden; text-decoration: none; color: var(--ink); box-shadow: 0 1px 0 rgba(0,0,0,0.04); transition: transform 0.35s var(--ease), box-shadow 0.35s var(--ease); }
+.ag-tcard:hover, .ag-tcard:focus-visible { transform: translateY(-4px); box-shadow: 0 18px 40px -18px rgba(14, 59, 71, 0.35); }
+.ag-tcard:active { transform: translateY(-1px) scale(0.99); }
+.ag-tcard__img { display: flex; align-items: center; justify-content: center; aspect-ratio: 4 / 5; background: linear-gradient(160deg, var(--foam), #cfe8ea); overflow: hidden; }
+.ag-tcard__img img:not(.ag-tcard__ph) { width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s var(--ease); }
+.ag-tcard:hover .ag-tcard__img img:not(.ag-tcard__ph) { transform: scale(1.04); }
+.ag-tcard__ph { width: 34%; height: auto; border-radius: 50%; opacity: 0.9; }
+.ag-tcard__body { display: flex; flex-direction: column; gap: 0.35rem; padding: 1.4rem 1.5rem 0; flex: 1; text-align: center; }
+.ag-tcard__name { font-size: 1.375rem; font-weight: 600; letter-spacing: -0.02em; line-height: 1.2; }
+.ag-tcard__desc { color: var(--soft); font-size: 0.9375rem; line-height: 1.4; }
+.ag-tcard__btn { align-self: center; margin: 1.1rem 0 1.5rem; display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 10px 24px; border-radius: 980px; background: #fff; color: var(--accent); font-weight: 500; box-shadow: inset 0 0 0 1.5px var(--accent); transition: background-color 0.25s var(--ease), color 0.25s var(--ease); }
+.ag-tcard__btn::after { content: " ›"; margin-left: 0.35em; }
+.ag-tcard:hover .ag-tcard__btn, .ag-tcard:focus-visible .ag-tcard__btn { background: var(--accent); color: #fff; }
+
+/* ---- Fotos del tratamiento ---- */
+.ag-gallery { display: grid; gap: 12px; grid-template-columns: repeat(2, 1fr); padding-bottom: clamp(3rem, 8vw, 6rem); }
+.ag-gallery img { width: 100%; height: 100%; aspect-ratio: 4 / 5; object-fit: cover; border-radius: 28px; background: var(--foam); }
+.ag-gallery .ag-gallery__main { grid-column: 1 / -1; aspect-ratio: 16 / 10; }
+@media (min-width: 900px) { .ag-gallery { grid-template-columns: repeat(3, 1fr); } }
+
+/* Encabezado en celulares: que nada se pise */
+@media (max-width: 520px) {
+  .ag-header__in { gap: 0.5rem; }
+  .ag-brand { gap: 0.4rem; font-size: 1rem; min-width: 0; }
+  .ag-brand__mark { width: 28px; height: 28px; flex: none; }
+  .ag-brand__name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .ag-header__actions { gap: 0.25rem; flex: none; }
+  .ag-cart { width: 38px; height: 38px; }
+}

@@ -126,6 +126,7 @@ export function serviceJsonLd(item: CatalogItem) {
     name: item.name,
     description: item.description ?? undefined,
     serviceType: item.category ?? undefined,
+    image: item.image_url ? [item.image_url, ...(item.gallery_urls ?? [])] : undefined,
     url: `${SITE.url}/tratamientos/${slugify(item.name)}`,
     provider: { "@id": `${SITE.url}/#negocio` },
     areaServed: { "@type": "City", name: SITE.city },

@@ -97,7 +97,7 @@ export function SiteFooter({ content }: { content: SiteContent | null }) {
         <div className="ag-footer__top">
           <div>
             <p className="ag-footer__name">{SITE.name}</p>
-            <p>{SITE.tagline} en {SITE.city}.</p>
+            <p>{SITE.tagline}</p>
             <address style={{ fontStyle: "normal" }}>
               {SITE.street}, {SITE.city}, {SITE.region}
             </address>
@@ -154,7 +154,7 @@ export function Advice({ whatsapp, topic = "mi piel y mi cuerpo" }: { whatsapp: 
             ¿No sabés qué necesitás?
           </h2>
           <p className="ag-lead">
-            Contanos qué te gustaría cambiar o cuidar y te asesoramos por WhatsApp: vemos juntas qué necesita tu piel y tu
+            Contanos qué te gustaría cambiar o cuidar y te asesoramos por WhatsApp: vemos qué necesita tu piel y tu
             cuerpo.
           </p>
           <TurnoButton whatsapp={whatsapp} text={`Hola! Quiero que me asesoren sobre ${topic}`}>

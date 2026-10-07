@@ -19,11 +19,13 @@ export async function addCatalogItem(formData: FormData) {
     duration_minutes: durationRaw ? Number(durationRaw) : null,
     category: String(formData.get("category") || "") || null,
     image_url: String(formData.get("image_url") || "") || null,
+    gallery_urls: formData.getAll("gallery_urls").map(String).filter(Boolean),
   });
 
   revalidatePath("/panel/catalogo");
   revalidatePath("/");
   revalidatePath("/tienda");
+  revalidatePath("/tratamientos", "layout");
 }
 
 export async function toggleCatalogItem(itemId: string, active: boolean) {
@@ -68,6 +70,7 @@ export async function updateCatalogItem(itemId: string, formData: FormData) {
       duration_minutes: durationRaw ? Number(durationRaw) : null,
       category: String(formData.get("category") || "") || null,
       image_url: String(formData.get("image_url") || "") || null,
+      gallery_urls: formData.getAll("gallery_urls").map(String).filter(Boolean),
     })
     .eq("id", itemId)
     .eq("tenant_id", membership.tenant.id);

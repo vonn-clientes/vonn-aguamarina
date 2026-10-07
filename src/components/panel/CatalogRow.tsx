@@ -4,6 +4,7 @@ import { useState, useTransition } from "react";
 import { toggleCatalogItem, deleteCatalogItem, updateCatalogItem, toggleSoldOut } from "@/app/panel/(dashboard)/catalogo/actions";
 import type { CatalogItem } from "@/lib/types";
 import { ImageUpload } from "./ImageUpload";
+import { GalleryUpload } from "./GalleryUpload";
 
 const field =
   "w-full rounded-sm border border-line bg-canvas px-2 py-1 vonn-text-caption outline-none focus:border-primary";
@@ -45,7 +46,12 @@ export function CatalogRow({ item, tenantId }: { item: CatalogItem; tenantId: st
               className={`${field} sm:col-span-5`}
             />
             <div className="sm:col-span-5">
+              <p className="vonn-text-caption text-ink-muted mb-1">Foto principal</p>
               <ImageUpload tenantId={tenantId} name="image_url" defaultUrl={item.image_url} label="foto" />
+            </div>
+            <div className="sm:col-span-5">
+              <p className="vonn-text-caption text-ink-muted mb-1">Más fotos (galería)</p>
+              <GalleryUpload tenantId={tenantId} name="gallery_urls" defaultUrls={item.gallery_urls ?? []} />
             </div>
           </form>
         </td>

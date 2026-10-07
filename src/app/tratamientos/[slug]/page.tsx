@@ -5,6 +5,7 @@ import { getPublicSite } from "@/lib/public-data";
 import { SITE } from "@/lib/site";
 import { breadcrumbJsonLd, serviceJsonLd, slugify, trimDescription } from "@/lib/seo";
 import { Advice, JsonLd, SiteFooter, SiteHeader, TurnoButton } from "@/components/public/ag";
+import { TreatmentCard } from "@/components/public/TreatmentCard";
 
 export const revalidate = 60;
 
@@ -68,6 +69,7 @@ export default async function ServicePage(props: PageProps<"/tratamientos/[slug]
   const wa = content?.whatsapp_number ?? null;
   const related = services.filter((s) => s.category === item.category && s.id !== item.id);
   const path = `/tratamientos/${slug}`;
+  const photos = [item.image_url, ...(item.gallery_urls ?? [])].filter((u, i, a): u is string => !!u && a.indexOf(u) === i);
 
   return (
     <div className="ag">
@@ -93,10 +95,12 @@ export default async function ServicePage(props: PageProps<"/tratamientos/[slug]
 
         <section className="ag-svc-hero">
           <div className="ag-wrap">
-            {item.category && <p className="ag-kicker">{item.category}</p>}
-            <h1 className="ag-h1">
-              {item.name} en {SITE.city}
-            </h1>
+            {item.category && (
+              <p className="ag-kicker">
+                {item.category} · {SITE.city}
+              </p>
+            )}
+            <h1 className="ag-h1">{item.name}</h1>
             {item.description && <p className="ag-lead">{item.description}</p>}
             <div className="ag-actions">
               <TurnoButton whatsapp={wa} text={`Hola! Quiero sacar un turno para ${item.name}`} />
@@ -107,27 +111,29 @@ export default async function ServicePage(props: PageProps<"/tratamientos/[slug]
           </div>
         </section>
 
-        <section className="ag-section ag-section--alt" aria-labelledby="t-consulta">
-          <div className="ag-wrap">
-            <div className="ag-head ag-rise">
-              <h2 className="ag-h2" id="t-consulta">
-                Antes de empezar
-              </h2>
-              <p className="ag-lead">Lo que tenés que saber para consultar por {item.name}.</p>
-            </div>
-            <div className="ag-trio">
-              <div className="ag-rise">
-                <h3>Solo con turno</h3>
-                <p>Reservá tu lugar por WhatsApp y coordinamos día y horario.</p>
-              </div>
-              <div className="ag-rise">
-                <h3>Te orientamos</h3>
-                <p>Te contamos cómo es la sesión y cuántas necesitás en tu caso.</p>
-              </div>
-              <div className="ag-rise">
-                <h3>Valor al día</h3>
-                <p>Te pasamos el precio actualizado cuando nos escribís.</p>
-              </div>
+        {photos.length > 0 && (
+          <section className="ag-wrap ag-gallery" aria-label={`Fotos de ${item.name}`}>
+            {photos.map((src, i) => (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                key={src}
+                src={src}
+                alt={`${item.name} en Aguamarina, foto ${i + 1}`}
+                width={1200}
+                height={900}
+                loading={i === 0 ? "eager" : "lazy"}
+                className={i === 0 ? "ag-gallery__main" : undefined}
+              />
+            ))}
+          </section>
+        )}
+
+        <section className="ag-section ag-section--deep" aria-labelledby="t-turno">
+          <div className="ag-wrap ag-about ag-rise">
+            <h2 className="ag-h2" id="t-turno">¿Listo para tu turno?</h2>
+            <p className="ag-lead">Escribinos y coordinamos día y horario. La atención es solo con turno previo.</p>
+            <div className="ag-center" style={{ marginTop: "2rem" }}>
+              <TurnoButton whatsapp={wa} tone="light" text={`Hola! Quiero sacar un turno para ${item.name}`} />
             </div>
           </div>
         </section>
@@ -140,30 +146,16 @@ export default async function ServicePage(props: PageProps<"/tratamientos/[slug]
                   Más de {item.category?.toLowerCase()}
                 </h2>
               </div>
-              <ul className="ag-chips ag-rise" style={{ margin: "0 auto" }}>
+              <div className="ag-tgrid">
                 {related.map((r) => (
-                  <li key={r.id}>
-                    <Link className="ag-chip" href={`/tratamientos/${slugify(r.name)}`}>
-                      {r.name}
-                    </Link>
-                  </li>
+                  <TreatmentCard key={r.id} item={r} />
                 ))}
-              </ul>
+              </div>
             </div>
           </section>
         )}
 
         <Advice whatsapp={wa} topic={item.name} />
-
-        <section className="ag-section ag-section--deep">
-          <div className="ag-wrap ag-about ag-rise">
-            <h2 className="ag-h2">¿Lista para tu turno?</h2>
-            <p className="ag-lead">Escribinos y lo coordinamos.</p>
-            <div className="ag-center" style={{ marginTop: "2rem" }}>
-              <TurnoButton whatsapp={wa} tone="light" text={`Hola! Quiero sacar un turno para ${item.name}`} />
-            </div>
-          </div>
-        </section>
       </main>
 
       <div className="ag-stickybar">

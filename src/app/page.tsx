@@ -15,6 +15,7 @@ import {
 } from "@/lib/seo";
 import { Advice, JsonLd, Medallion, SiteFooter, SiteHeader, TurnoButton } from "@/components/public/ag";
 import { ProductCard } from "@/components/tienda/ProductCard";
+import { TreatmentCard } from "@/components/public/TreatmentCard";
 
 // La página se genera una vez y se refresca sola cada 60 segundos: rápida
 // para quien visita, y los cambios que haga la dueña desde el panel se ven
@@ -47,7 +48,11 @@ export default async function Home() {
         {/* ---- Portada ---- */}
         <section className="ag-hero">
           <div className="ag-wrap">
-            <h1 className="ag-h1">{content?.hero_title || `Estética y bienestar en ${SITE.city}`}</h1>
+            <Medallion priority size={260} />
+            <p className="ag-hero__place">{SITE.city}, {SITE.region}</p>
+            <h1 className="ag-h1 ag-h1--hero">
+              {content?.hero_title || "Tratamientos faciales y corporales, aparatología, manicura y maquillaje"}
+            </h1>
             {content?.hero_subtitle && <p className="ag-lead">{content.hero_subtitle}</p>}
             <div className="ag-actions">
               <TurnoButton whatsapp={wa} />
@@ -55,7 +60,6 @@ export default async function Home() {
                 Ver tratamientos
               </Link>
             </div>
-            <Medallion priority size={176} />
           </div>
         </section>
 
@@ -85,33 +89,19 @@ export default async function Home() {
               </h2>
               <p className="ag-lead">Elegí una categoría y mirá cada tratamiento en detalle.</p>
             </div>
-            <div className="ag-tiles">
-              {groups.map(([category, items]) => (
-                <article className="ag-tile ag-rise" key={category} id={slugify(category)}>
+            {groups.map(([category, items]) => (
+              <article className="ag-cat" key={category} id={slugify(category)}>
+                <div className="ag-cat__head ag-rise">
                   <p className="ag-kicker">{category}</p>
                   <h3 className="ag-h3">{CATEGORY_HEADLINES[category] ?? category}</h3>
-                  <ul className="ag-minis">
-                    {items.map((item) => (
-                      <li key={item.id}>
-                        <Link className="ag-mini" href={`/tratamientos/${slugify(item.name)}`}>
-                          <span className="ag-mini__name">{item.name}</span>
-                          {item.description && <span className="ag-mini__desc">{trimDescription(item.description, 90)}</span>}
-                          <span className="ag-mini__go">Conocé más ›</span>
-                        </Link>
-                      </li>
-                    ))}
-                  </ul>
-                  <a
-                    className="ag-more"
-                    href={waLink(wa, `Hola! Quiero consultar por tratamientos de ${category.toLowerCase()}`)}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    Consultar
-                  </a>
-                </article>
-              ))}
-            </div>
+                </div>
+                <div className="ag-tgrid">
+                  {items.map((item) => (
+                    <TreatmentCard key={item.id} item={item} />
+                  ))}
+                </div>
+              </article>
+            ))}
           </div>
         </section>
 

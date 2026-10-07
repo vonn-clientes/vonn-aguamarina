@@ -54,6 +54,7 @@ export interface CatalogItem {
   duration_minutes: number | null;
   active: boolean;
   sold_out?: boolean;
+  gallery_urls?: string[];
   sort_order: number;
 }
 
