@@ -52,7 +52,7 @@ export default async function TiendaPage() {
             <ul className="ag-howto" aria-label="Cómo comprar">
               <li><strong>Elegís</strong><span>Sumás al carrito lo que necesites.</span></li>
               <li><strong>Terminás por WhatsApp</strong><span>Se abre el chat con tu pedido ya escrito.</span></li>
-              <li><strong>Pagás y retirás</strong><span>Ingrid te pasa cómo pagar y coordinan el retiro.</span></li>
+              <li><strong>Pagás y retirás</strong><span>Ingrid te pasa cómo pagar y te reservamos el pedido 24 horas.</span></li>
               <li><strong>Consultás cuando quieras</strong><span>Dudas de uso o tipo de piel, por WhatsApp.</span></li>
             </ul>
             {products.length === 0 ? (
