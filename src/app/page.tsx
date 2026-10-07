@@ -179,15 +179,13 @@ export default async function Home() {
 
         {/* ---- Ingrid ---- */}
         <section className="ag-section ag-section--deep" id="ingrid" aria-labelledby="t-ingrid">
-          <div className="ag-wrap ag-meet ag-rise">
-            <div className="ag-meet__photo">
-              {content?.about_image_url ? (
-                // eslint-disable-next-line @next/next/no-img-element
+          <div className={`ag-wrap ag-meet ag-rise${content?.about_image_url ? "" : " ag-meet--solo"}`}>
+            {content?.about_image_url && (
+              <div className="ag-meet__photo">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={content.about_image_url} alt={`${SITE.owner}, profesional matriculada`} width={560} height={700} />
-              ) : (
-                <Medallion size={220} />
-              )}
-            </div>
+              </div>
+            )}
             <div className="ag-meet__text">
               <p className="ag-kicker ag-kicker--light">Conocé a la profesional</p>
               <h2 className="ag-h2" id="t-ingrid">
