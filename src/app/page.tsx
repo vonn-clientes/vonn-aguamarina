@@ -18,6 +18,7 @@ import { seoAlt } from "@/lib/seo-image";
 import { Advice, InstagramIcon, JsonLd, MapsIcon, Medallion, SiteFooter, SiteHeader, TurnoButton, WhatsappIcon } from "@/components/public/ag";
 import { ProductCard } from "@/components/tienda/ProductCard";
 import { TreatmentCard } from "@/components/public/TreatmentCard";
+import { ReviewForm } from "@/components/public/ReviewForm";
 import { ReviewsCarousel } from "@/components/public/ReviewsCarousel";
 import { getSiteReviews, type ShowcaseReview } from "@/lib/reviews";
 import { getGoogleReviews } from "@/lib/google-reviews";
@@ -212,13 +213,16 @@ export default async function Home() {
         )}
 
         {/* ---- Opiniones ---- */}
-        {showcase.length > 0 && (
+        {(
           <section className="ag-section" id="opiniones" aria-labelledby="t-opiniones">
             <div className="ag-narrow">
               <div className="ag-head ag-rise">
                 <h2 id="t-opiniones">Lo que cuentan nuestras clientas</h2>
               </div>
               <ReviewsCarousel reviews={showcase} rating={google?.rating ?? null} total={google?.total ?? null} mapsUri={google?.mapsUri ?? null} />
+              <div style={{ textAlign: "center", marginTop: "1.5rem" }}>
+                <ReviewForm itemId={null} path="/" />
+              </div>
             </div>
           </section>
         )}

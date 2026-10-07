@@ -34,5 +34,5 @@ export async function getSiteReviews(tenantId: string): Promise<ShowcaseReview[]
     sb.from("catalog_items").select("id, name").eq("tenant_id", tenantId),
   ]);
   const names = new Map((items ?? []).map((i) => [i.id as string, i.name as string]));
-  return (rv ?? []).map((r) => ({ id: r.id, author: r.author, rating: r.rating, comment: r.comment, source: "web" as const, detail: undefined }));
+  return (rv ?? []).map((r) => ({ id: r.id, author: r.author, rating: r.rating, comment: r.comment, source: "web" as const, detail: r.item_id ? names.get(r.item_id) : "Opinión del lugar" }));
 }

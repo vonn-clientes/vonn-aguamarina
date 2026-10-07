@@ -90,12 +90,16 @@ export async function POST(req: Request) {
     const rm = text.match(/\[\[\s*resena\s*:\s*([^|\]]*)\|\s*([1-5])\s*\|\s*([^|\]]+)(?:\|\s*([^\]]*))?\]\]/i);
     if (rm) {
       // Si no hay tratamiento claro ("general"), la opinión se guarda en el primer tratamiento y se muestra como opinión del gabinete.
-      const item = [...site.services, ...site.products].find((i) => fold(i.name) === fold(rm[1].trim())) ?? site.services[0] ?? site.products[0];
+      const picked = [...site.services, ...site.products].find((i) => fold(i.name) === fold(rm[1].trim())) ?? null;
       const comment = rm[3].trim().slice(0, 600);
       const author = (rm[4] ?? "").replace(/[^\p{L}\p{N} .'-]/gu, "").trim().slice(0, 40) || name || "Clienta";
-      if (item && comment.length >= 5) {
+      if (comment.length >= 5) {
         const sb = sbClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!, { auth: { persistSession: false } });
-        const { error } = await sb.from("reviews").insert({ tenant_id: site.tenant.id, item_id: item.id, author, rating: Number(rm[2]), comment, visible: false });
+        const base = { tenant_id: site.tenant.id, author, rating: Number(rm[2]), comment, visible: false };
+        let { error } = await sb.from("reviews").insert({ ...base, item_id: picked?.id ?? null });
+        const fallback = site.services[0] ?? site.products[0];
+        // Si la base todavía exige un tratamiento, usa el primero del catálogo.
+        if (error && !picked && fallback) ({ error } = await sb.from("reviews").insert({ ...base, item_id: fallback.id }));
         savedReview = !error;
       }
     }

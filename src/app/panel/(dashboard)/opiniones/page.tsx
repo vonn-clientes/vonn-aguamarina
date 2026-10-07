@@ -22,7 +22,7 @@ export default async function OpinionesPage() {
       <div className="px-5 sm:px-10 pb-10 max-w-2xl"><div className="ag-pcard">
         {reviews.length === 0 && <p className="vonn-text-cuerpo text-ink-muted">Todavía no hay opiniones.</p>}
         {reviews.map((r) => (
-          <ReviewRow key={r.id} review={r} itemName={names.get(r.item_id) ?? "—"} />
+          <ReviewRow key={r.id} review={r} itemName={(r.item_id && names.get(r.item_id)) || "Opinión del lugar"} />
         ))}
       </div></div>
     </>

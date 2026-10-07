@@ -133,7 +133,7 @@ export interface Promo {
 export interface Review {
   id: string;
   tenant_id: string;
-  item_id: string;
+  item_id: string | null; // null = opinión general del lugar
   author: string;
   rating: number;
   comment: string;
