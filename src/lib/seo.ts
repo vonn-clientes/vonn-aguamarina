@@ -177,6 +177,14 @@ export const FAQ: { q: string; a: string }[] = [
     a: "Con aviso previo, la espera es de 15 minutos. Sin aviso, se aguardan 10 minutos y el turno se da por cancelado.",
   },
   {
+    q: "¿Cómo compro un producto de la tienda?",
+    a: "Elegís los productos, sumás al carrito y terminás la compra por WhatsApp: se abre el chat con tu pedido ya escrito. Ingrid te confirma la disponibilidad y te pasa cómo pagar.",
+  },
+  {
+    q: "¿Cuánto tiempo me reservan el pedido de la tienda?",
+    a: "Una vez hecho el pedido, lo reservamos 24 horas para que puedas pagarlo y retirarlo en el gabinete.",
+  },
+  {
     q: "¿Cuánto duran los packs y los vouchers?",
     a: "Los packs tienen una duración de 1 mes y medio, y los vouchers tienen vigencia de 1 mes.",
   },
