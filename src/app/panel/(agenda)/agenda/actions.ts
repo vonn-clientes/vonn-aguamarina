@@ -20,11 +20,13 @@ function refresh() {
   revalidatePath(BASE, "layout");
 }
 
-// ---------- Clientas ----------
+// ---------- Clientes ----------
 
 function clientFields(fd: FormData) {
   return {
-    full_name: text(fd, "full_name"),
+    first_name: text(fd, "first_name"),
+    last_name: opt(fd, "last_name"),
+    full_name: [text(fd, "first_name"), text(fd, "last_name")].filter(Boolean).join(" "),
     phone: opt(fd, "phone"),
     email: opt(fd, "email"),
     birth_date: opt(fd, "birth_date"),
@@ -39,16 +41,16 @@ export async function saveClient(id: string | null, fd: FormData) {
   const m = await requireMembership();
   const supabase = await createClient();
   const fields = clientFields(fd);
-  if (!fields.full_name) redirect(id ? `${BASE}/clientas/${id}?error=nombre` : `${BASE}/clientas/nueva?error=nombre`);
+  if (!fields.full_name) redirect(id ? `${BASE}/clientes/${id}?error=nombre` : `${BASE}/clientes/nuevo?error=nombre`);
 
   if (id) {
     await supabase.from("ag_clients").update(fields).eq("id", id).eq("tenant_id", m.tenant.id);
     refresh();
-    redirect(`${BASE}/clientas/${id}?ok=1`);
+    redirect(`${BASE}/clientes/${id}?ok=1`);
   }
   const { data } = await supabase.from("ag_clients").insert({ tenant_id: m.tenant.id, ...fields }).select("id").single();
   refresh();
-  redirect(data ? `${BASE}/clientas/${data.id}?ok=1` : `${BASE}/clientas`);
+  redirect(data ? `${BASE}/clientes/${data.id}?ok=1` : `${BASE}/clientes`);
 }
 
 export async function archiveClient(id: string, archived: boolean) {
@@ -56,7 +58,7 @@ export async function archiveClient(id: string, archived: boolean) {
   const supabase = await createClient();
   await supabase.from("ag_clients").update({ archived }).eq("id", id).eq("tenant_id", m.tenant.id);
   refresh();
-  redirect(archived ? `${BASE}/clientas` : `${BASE}/clientas/${id}`);
+  redirect(archived ? `${BASE}/clientes` : `${BASE}/clientes/${id}`);
 }
 
 // ---------- Turnos ----------
@@ -64,9 +66,11 @@ export async function archiveClient(id: string, archived: boolean) {
 async function appointmentFields(fd: FormData, tenantId: string) {
   const supabase = await createClient();
 
-  // Clienta: una existente o una nueva con nombre y teléfono.
+  // Cliente: una existente o una nueva con nombre y teléfono.
   let clientId = opt(fd, "client_id");
-  let clientName = text(fd, "client_name");
+  const first = text(fd, "client_first");
+  const last = text(fd, "client_last");
+  let clientName = [first, last].filter(Boolean).join(" ");
   let clientPhone = opt(fd, "client_phone");
   if (clientId) {
     const { data } = await supabase.from("ag_clients").select("full_name, phone").eq("id", clientId).eq("tenant_id", tenantId).maybeSingle();
@@ -78,7 +82,7 @@ async function appointmentFields(fd: FormData, tenantId: string) {
   if (!clientId && clientName) {
     const { data } = await supabase
       .from("ag_clients")
-      .insert({ tenant_id: tenantId, full_name: clientName, phone: clientPhone })
+      .insert({ tenant_id: tenantId, full_name: clientName, first_name: first || clientName, last_name: last || null, phone: clientPhone })
       .select("id")
       .single();
     clientId = data?.id ?? null;
@@ -111,8 +115,25 @@ async function appointmentFields(fd: FormData, tenantId: string) {
       duration_min: duration,
       price: parseAmount(fd.get("price")),
       notes: opt(fd, "notes"),
+      session_number: Number(text(fd, "session")) >= 1 ? Math.min(99, Math.floor(Number(text(fd, "session")))) : null,
     },
   };
+}
+
+// ¿Se pisa con otro turno vivo? (Solo avisa: Ingrid decide, porque a veces atiende en simultáneo.)
+async function hasOverlap(tenantId: string, startsAt: string | null, duration: number, selfId: string | null) {
+  if (!startsAt) return false;
+  const supabase = await createClient();
+  const s = new Date(startsAt).getTime();
+  const e = s + duration * 60000;
+  const { data } = await supabase
+    .from("ag_appointments")
+    .select("id, starts_at, duration_min")
+    .eq("tenant_id", tenantId)
+    .in("status", ["pendiente", "confirmado", "realizado"])
+    .gte("starts_at", new Date(s - 12 * 3600000).toISOString())
+    .lt("starts_at", new Date(e).toISOString());
+  return (data ?? []).some((b) => b.id !== selfId && new Date(b.starts_at).getTime() < e && s < new Date(b.starts_at).getTime() + b.duration_min * 60000);
 }
 
 export async function createAppointment(fd: FormData) {
@@ -122,7 +143,7 @@ export async function createAppointment(fd: FormData) {
   if (!r.ok) redirect(`${BASE}/turnos/nuevo?error=1${isDateKey(r.date) ? `&d=${r.date}` : ""}`);
   await supabase.from("ag_appointments").insert({ tenant_id: m.tenant.id, ...r.fields });
   refresh();
-  redirect(`${BASE}?d=${r.date}`);
+  redirect(`${BASE}?d=${r.date}${await hasOverlap(m.tenant.id, r.fields.starts_at, r.fields.duration_min, null) ? "&aviso=superpuesto" : ""}`);
 }
 
 export async function updateAppointment(id: string, fd: FormData) {
@@ -132,7 +153,7 @@ export async function updateAppointment(id: string, fd: FormData) {
   if (!r.ok) redirect(`${BASE}/turnos/${id}?error=1`);
   await supabase.from("ag_appointments").update(r.fields).eq("id", id).eq("tenant_id", m.tenant.id);
   refresh();
-  redirect(`${BASE}?d=${r.date}`);
+  redirect(`${BASE}?d=${r.date}${await hasOverlap(m.tenant.id, r.fields.starts_at, r.fields.duration_min, id) ? "&aviso=superpuesto" : ""}`);
 }
 
 export async function setStatus(id: string, status: Status, back: string) {
@@ -145,7 +166,7 @@ export async function setStatus(id: string, status: Status, back: string) {
   redirect(safeBack(back, BASE));
 }
 
-// Marca el turno como realizado: carga el valor en la cuenta de la clienta y, si pagó, registra el cobro.
+// Marca el turno como realizado: carga el valor en la cuenta del cliente y, si pagó, registra el cobro.
 export async function completeAppointment(id: string, fd: FormData) {
   const m = await requireMembership();
   const supabase = await createClient();

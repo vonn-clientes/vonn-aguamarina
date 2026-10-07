@@ -3,14 +3,20 @@ import type { Client } from "@/lib/agenda";
 
 const SKIN = ["", "Normal", "Seca", "Mixta", "Grasa", "Sensible", "Madura"];
 
-// Ficha de clienta: solo el nombre es obligatorio, el resto se completa cuando se sepa.
+// Ficha de cliente: solo el nombre es obligatorio, el resto se completa cuando se sepa.
 export function ClientForm({ action, client, cancelHref }: { action: (fd: FormData) => void | Promise<void>; client?: Client; cancelHref: string }) {
   return (
     <form action={action} className="ag-g-form">
-      <label className="ag-g-field">
-        <span>Nombre y apellido</span>
-        <input name="full_name" defaultValue={client?.full_name ?? ""} required autoComplete="off" />
-      </label>
+      <div className="ag-g-row2">
+        <label className="ag-g-field">
+          <span>Nombre</span>
+          <input name="first_name" defaultValue={client?.first_name ?? client?.full_name ?? ""} required autoComplete="off" />
+        </label>
+        <label className="ag-g-field">
+          <span>Apellido</span>
+          <input name="last_name" defaultValue={client?.last_name ?? ""} autoComplete="off" />
+        </label>
+      </div>
       <div className="ag-g-row2">
         <label className="ag-g-field">
           <span>WhatsApp</span>
@@ -47,7 +53,7 @@ export function ClientForm({ action, client, cancelHref }: { action: (fd: FormDa
       </label>
       <label className="ag-g-field">
         <span>Notas</span>
-        <textarea name="notes" defaultValue={client?.notes ?? ""} placeholder="Lo que quieras recordar de ella" />
+        <textarea name="notes" defaultValue={client?.notes ?? ""} placeholder="Lo que quieras recordar de esta persona" />
       </label>
       <div className="ag-g-formactions">
         <button className="ag-g-btn ag-g-btn--main">Guardar ficha</button>

@@ -3,7 +3,7 @@ import { requireMembership } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { balance, money, type Client, type Movement } from "@/lib/agenda";
 
-export default async function ClientasPage({ searchParams }: { searchParams: Promise<{ q?: string }> }) {
+export default async function ClientesPage({ searchParams }: { searchParams: Promise<{ q?: string }> }) {
   const m = await requireMembership();
   const sp = await searchParams;
   const q = (sp.q ?? "").trim();
@@ -24,32 +24,32 @@ export default async function ClientasPage({ searchParams }: { searchParams: Pro
     <>
       <div className="ag-g-head">
         <div>
-          <h1 className="ag-g-title">Clientas</h1>
+          <h1 className="ag-g-title">Clientes</h1>
           <p className="ag-g-sub">
             {clients.length} {clients.length === 1 ? "ficha" : "fichas"}
           </p>
         </div>
-        <Link href="/panel/agenda/clientas/nueva" className="ag-g-btn ag-g-btn--main">
-          + Nueva clienta
+        <Link href="/panel/agenda/clientes/nuevo" className="ag-g-btn ag-g-btn--main">
+          + Nuevo cliente
         </Link>
       </div>
 
       <form className="ag-g-search" role="search">
-        <input name="q" defaultValue={q} placeholder="Buscar por nombre o teléfono" aria-label="Buscar clienta" />
+        <input name="q" defaultValue={q} placeholder="Buscar por nombre o teléfono" aria-label="Buscar cliente" />
         <button className="ag-g-btn">Buscar</button>
       </form>
 
       {clients.length === 0 ? (
         <div className="ag-g-empty">
-          <b>{q ? "No encontré a nadie con ese dato" : "Todavía no hay clientas"}</b>
-          Las fichas se crean solas al agendar el primer turno, o desde “Nueva clienta”.
+          <b>{q ? "No encontré a nadie con ese dato" : "Todavía no hay clientes"}</b>
+          Las fichas se crean solas al agendar el primer turno, o desde “Nuevo cliente”.
         </div>
       ) : (
         <div className="ag-g-rows">
           {clients.map((c) => {
             const saldo = balance(byClient.get(c.id) ?? []);
             return (
-              <Link key={c.id} href={`/panel/agenda/clientas/${c.id}`} className="ag-g-line">
+              <Link key={c.id} href={`/panel/agenda/clientes/${c.id}`} className="ag-g-line">
                 <div>
                   <strong>{c.full_name}</strong>
                   <small>{c.phone || "Sin teléfono"}</small>

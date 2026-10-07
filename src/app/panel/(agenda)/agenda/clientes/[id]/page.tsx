@@ -24,7 +24,7 @@ export default async function FichaPage({ params, searchParams }: { params: Prom
   const movs = (movRes.data as Movement[]) ?? [];
   const appts = (apRes.data as Appointment[]) ?? [];
   const saldo = balance(movs);
-  const here = `/panel/agenda/clientas/${id}`;
+  const here = `/panel/agenda/clientes/${id}`;
   const upcoming = appts.filter((a) => a.status === "pendiente" || a.status === "confirmado").reverse();
   const past = appts.filter((a) => a.status !== "pendiente" && a.status !== "confirmado");
 
@@ -50,7 +50,7 @@ export default async function FichaPage({ params, searchParams }: { params: Prom
       </div>
 
       {sp.ok && <p className="ag-g-ok">Guardado.</p>}
-      {sp.error && <p className="ag-g-err">{sp.error === "monto" ? "Escribí un monto válido." : "Escribí el nombre de la clienta."}</p>}
+      {sp.error && <p className="ag-g-err">{sp.error === "monto" ? "Escribí un monto válido." : "Escribí el nombre del cliente."}</p>}
 
       <div className="ag-g-saldo">
         <div>
@@ -71,7 +71,7 @@ export default async function FichaPage({ params, searchParams }: { params: Prom
             <label className="ag-g-field">
               <span>Qué es</span>
               <select name="kind" defaultValue="pago">
-                <option value="pago">Pago de la clienta</option>
+                <option value="pago">Pago del cliente</option>
                 <option value="cargo">Cargo (algo que se le cobra)</option>
               </select>
             </label>
@@ -160,9 +160,9 @@ export default async function FichaPage({ params, searchParams }: { params: Prom
       )}
 
       <h2 className="ag-g-h2">Ficha</h2>
-      <ClientForm action={saveClient.bind(null, id)} client={c} cancelHref="/panel/agenda/clientas" />
+      <ClientForm action={saveClient.bind(null, id)} client={c} cancelHref="/panel/agenda/clientes" />
       <form action={archiveClient.bind(null, id, true)} style={{ marginTop: "1.25rem" }}>
-        <button className="ag-g-btn ag-g-btn--danger">Archivar clienta</button>
+        <button className="ag-g-btn ag-g-btn--danger">Archivar cliente</button>
       </form>
     </>
   );

@@ -16,10 +16,10 @@ export default async function EditarTurnoPage({ params, searchParams }: { params
   const a = data as Appointment;
 
   const [clientsRes, servicesRes] = await Promise.all([
-    supabase.from("ag_clients").select("id, full_name, phone").eq("tenant_id", m.tenant.id).eq("archived", false).order("full_name"),
+    supabase.from("ag_clients").select("id, full_name, first_name, last_name, phone").eq("tenant_id", m.tenant.id).eq("archived", false).order("full_name"),
     supabase.from("catalog_items").select("id, name, duration_minutes, active").eq("tenant_id", m.tenant.id).neq("category", "Productos").order("active", { ascending: false }).order("sort_order"),
   ]);
-  const clients = (clientsRes.data ?? []).map((c) => ({ id: c.id as string, name: c.full_name as string, phone: c.phone as string | null }));
+  const clients = (clientsRes.data ?? []).map((c) => ({ id: c.id as string, name: c.full_name as string, first: (c.first_name ?? c.full_name) as string, last: (c.last_name ?? "") as string, phone: c.phone as string | null }));
   const services = (servicesRes.data ?? []).map((s) => ({ id: s.id as string, name: (s.active ? "" : "(oculto) ") + s.name, duration: s.duration_minutes as number | null }));
   const day = dateKey(a.starts_at);
 
@@ -38,13 +38,15 @@ export default async function EditarTurnoPage({ params, searchParams }: { params
         services={services}
         defaults={{
           client_id: a.client_id,
-          client_name: a.client_name,
+          client_first: a.client_name.split(" ")[0],
+          client_last: a.client_name.split(" ").slice(1).join(" "),
           client_phone: a.client_phone,
           catalog_item_id: a.catalog_item_id,
           service_name: a.service_name,
           date: day,
           time: timeInput(a.starts_at),
           duration: a.duration_min,
+          session: a.session_number,
           price: a.price,
           notes: a.notes,
         }}

@@ -3,7 +3,7 @@ import { PAY_METHODS, STATUS_LABEL, fmtDayShort, fmtTime, dateKey, money, remind
 import { completeAppointment, setStatus } from "@/app/panel/(agenda)/agenda/actions";
 
 // Tarjeta de un turno con todo lo que Ingrid necesita hacer con un toque.
-export function AppointmentCard({ a, back, showDate = false }: { a: Appointment; back: string; showDate?: boolean }) {
+export function AppointmentCard({ a, back, showDate = false, clash = [] }: { a: Appointment; back: string; showDate?: boolean; clash?: string[] }) {
   const open = a.status === "pendiente" || a.status === "confirmado";
   const end = new Date(new Date(a.starts_at).getTime() + a.duration_min * 60000).toISOString();
   const off = a.status === "cancelado" || a.status === "ausente";
@@ -16,14 +16,15 @@ export function AppointmentCard({ a, back, showDate = false }: { a: Appointment;
       </div>
       <div>
         <h3>
-          <Link href={a.client_id ? `/panel/agenda/clientas/${a.client_id}` : `/panel/agenda/turnos/${a.id}`}>{a.client_name}</Link>
+          <Link href={a.client_id ? `/panel/agenda/clientes/${a.client_id}` : `/panel/agenda/turnos/${a.id}`}>{a.client_name}</Link>
         </h3>
         <p className="ag-g-meta">
-          <span>{a.service_name}</span>
+          <span>{a.service_name}{a.session_number ? ` · sesión ${a.session_number}` : ""}</span>
           <span className={`ag-g-chip ag-g-chip--${a.status}`}>{STATUS_LABEL[a.status]}</span>
           {a.price != null && <span>{money(a.price)}</span>}
         </p>
       </div>
+      {clash.length > 0 && <p className="ag-g-clash">Se superpone con el turno de {clash.join(" y ")}.</p>}
       {a.notes && <p className="ag-g-notes">{a.notes}</p>}
 
       <div className="ag-g-actions">

@@ -1,11 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import Link from "next/link";
+import { fold } from "@/lib/agenda";
 
 export interface ClientOpt {
   id: string;
   name: string;
+  first: string;
+  last: string;
   phone: string | null;
 }
 export interface ServiceOpt {
@@ -15,13 +18,15 @@ export interface ServiceOpt {
 }
 export interface TurnoDefaults {
   client_id?: string | null;
-  client_name?: string;
+  client_first?: string;
+  client_last?: string;
   client_phone?: string | null;
   catalog_item_id?: string | null;
   service_name?: string;
   date: string;
   time: string;
   duration: number;
+  session?: number | null;
   price?: number | null;
   notes?: string | null;
 }
@@ -43,6 +48,25 @@ export function TurnoForm({
   cancelHref: string;
 }) {
   const [clientId, setClientId] = useState(defaults.client_id ?? "");
+  const [first, setFirst] = useState(defaults.client_first ?? "");
+  const [last, setLast] = useState(defaults.client_last ?? "");
+  const picked = clients.find((c) => c.id === clientId);
+
+  // Sugerencias: clientes existentes que coinciden con lo que se va escribiendo (nombre o apellido, en cualquier orden).
+  const suggestions = useMemo(() => {
+    const terms = fold(`${first} ${last}`).split(/\s+/).filter(Boolean);
+    if (clientId || terms.length === 0) return [];
+    return clients.filter((c) => terms.every((t) => fold(c.name).includes(t))).slice(0, 5);
+  }, [clients, first, last, clientId]);
+
+  function pick(c: ClientOpt) {
+    setClientId(c.id);
+    setFirst(c.first);
+    setLast(c.last);
+  }
+  function unpick() {
+    setClientId("");
+  }
   const [serviceId, setServiceId] = useState(defaults.catalog_item_id ?? (defaults.service_name ? "otro" : ""));
   const [duration, setDuration] = useState(String(defaults.duration));
 
@@ -54,29 +78,47 @@ export function TurnoForm({
 
   return (
     <form action={action} className="ag-g-form">
-      <label className="ag-g-field">
-        <span>Clienta</span>
-        <select name="client_id" value={clientId} onChange={(e) => setClientId(e.target.value)}>
-          <option value="">Clienta nueva…</option>
-          {clients.map((c) => (
-            <option key={c.id} value={c.id}>
-              {c.name}
-            </option>
-          ))}
-        </select>
-      </label>
-
-      {!clientId && (
-        <div className="ag-g-row2">
-          <label className="ag-g-field">
-            <span>Nombre y apellido</span>
-            <input name="client_name" defaultValue={defaults.client_name ?? ""} autoComplete="off" required />
-          </label>
+      <input type="hidden" name="client_id" value={clientId} />
+      {picked ? (
+        <div className="ag-g-picked">
+          <div>
+            <small>Cliente existente</small>
+            <strong>{picked.name}</strong>
+            {picked.phone && <span>{picked.phone}</span>}
+          </div>
+          <button type="button" className="ag-g-btn ag-g-btn--small" onClick={unpick}>
+            Cambiar
+          </button>
+        </div>
+      ) : (
+        <>
+          <div className="ag-g-row2">
+            <label className="ag-g-field">
+              <span>Nombre</span>
+              <input name="client_first" value={first} onChange={(e) => setFirst(e.target.value)} autoComplete="off" required />
+            </label>
+            <label className="ag-g-field">
+              <span>Apellido</span>
+              <input name="client_last" value={last} onChange={(e) => setLast(e.target.value)} autoComplete="off" />
+            </label>
+          </div>
+          {suggestions.length > 0 && (
+            <div className="ag-g-sugg" role="listbox" aria-label="Clientes que ya vinieron">
+              <small>¿Es alguno de estos clientes?</small>
+              {suggestions.map((c) => (
+                <button type="button" key={c.id} role="option" aria-selected="false" onClick={() => pick(c)}>
+                  <strong>{c.name}</strong>
+                  <span>{c.phone || "Sin teléfono"}</span>
+                </button>
+              ))}
+            </div>
+          )}
+          {first.trim() && suggestions.length === 0 && <p className="ag-g-hint">Cliente nuevo: se crea su ficha al agendar.</p>}
           <label className="ag-g-field">
             <span>WhatsApp (opcional)</span>
             <input name="client_phone" type="tel" inputMode="tel" defaultValue={defaults.client_phone ?? ""} placeholder="3442 …" />
           </label>
-        </div>
+        </>
       )}
 
       <label className="ag-g-field">
@@ -122,6 +164,11 @@ export function TurnoForm({
           <input name="price" inputMode="decimal" defaultValue={defaults.price ?? ""} placeholder="0" />
         </label>
       </div>
+
+      <label className="ag-g-field">
+        <span>Número de sesión (opcional)</span>
+        <input name="session" type="number" inputMode="numeric" min={1} max={99} defaultValue={defaults.session ?? ""} placeholder="Ej: 1, 2, 3…" />
+      </label>
 
       <label className="ag-g-field">
         <span>Notas (opcional)</span>

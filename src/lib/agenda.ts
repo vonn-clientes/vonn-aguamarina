@@ -36,12 +36,15 @@ export interface Appointment {
   confirm_token: string;
   confirmed_at: string | null;
   charged: boolean;
+  session_number: number | null;
 }
 
 export interface Client {
   id: string;
   tenant_id: string;
   full_name: string;
+  first_name: string | null;
+  last_name: string | null;
   phone: string | null;
   email: string | null;
   birth_date: string | null;
@@ -152,7 +155,7 @@ export function parseAmount(raw: FormDataEntryValue | null): number | null {
   return Number.isFinite(n) && n >= 0 ? n : null;
 }
 
-/** Saldo de una clienta: lo que se le cargó menos lo que pagó (positivo = debe). */
+/** Saldo de una cliente: lo que se le cargó menos lo que pagó (positivo = debe). */
 export function balance(movs: Pick<Movement, "kind" | "amount">[]): number {
   let b = 0;
   for (const m of movs) {
@@ -173,4 +176,24 @@ export function reminderLink(a: Pick<Appointment, "client_name" | "client_phone"
 
 export function chatLink(phone: string | null | undefined, text?: string): string {
   return waLink(phone, text);
+}
+
+/** Quita tildes y mayúsculas para comparar nombres al buscar. */
+export const fold = (v: string) => v.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
+
+/** Turnos de la lista que se pisan con otro (misma franja horaria). */
+export function overlaps<T extends Pick<Appointment, "id" | "starts_at" | "duration_min" | "status" | "client_name">>(list: T[]): Map<string, string[]> {
+  const live = list.filter((a) => a.status !== "cancelado" && a.status !== "ausente");
+  const out = new Map<string, string[]>();
+  for (const a of live) {
+    const s = new Date(a.starts_at).getTime();
+    const e = s + a.duration_min * 60000;
+    for (const b of live) {
+      if (a.id === b.id) continue;
+      const bs = new Date(b.starts_at).getTime();
+      const be = bs + b.duration_min * 60000;
+      if (s < be && bs < e) out.set(a.id, [...(out.get(a.id) ?? []), b.client_name]);
+    }
+  }
+  return out;
 }

@@ -1,10 +1,10 @@
 import Link from "next/link";
 import { requireMembership } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
-import { addDays, dayStartISO, fmtDayLong, isDateKey, money, todayKey, type Appointment } from "@/lib/agenda";
+import { addDays, dayStartISO, fmtDayLong, isDateKey, money, overlaps, todayKey, type Appointment } from "@/lib/agenda";
 import { AppointmentCard } from "@/components/agenda/AppointmentCard";
 
-export default async function HoyPage({ searchParams }: { searchParams: Promise<{ d?: string }> }) {
+export default async function HoyPage({ searchParams }: { searchParams: Promise<{ d?: string; aviso?: string }> }) {
   const m = await requireMembership();
   const sp = await searchParams;
   const today = todayKey();
@@ -38,6 +38,7 @@ export default async function HoyPage({ searchParams }: { searchParams: Promise<
   const active = list.filter((a) => a.status !== "cancelado" && a.status !== "ausente");
   const unconfirmed = list.filter((a) => a.status === "pendiente").length;
   const back = `/panel/agenda?d=${day}`;
+  const clashes = overlaps(list);
 
   return (
     <>
@@ -47,6 +48,10 @@ export default async function HoyPage({ searchParams }: { searchParams: Promise<
           <p className="ag-g-sub">{day === today ? fmtDayLong(day) : "Turnos del día"}</p>
         </div>
       </div>
+
+      {sp.aviso === "superpuesto" && (
+        <p className="ag-g-clash ag-g-clash--top">Guardado. Ojo: ese turno se superpone con otro. Si atendés en simultáneo, no pasa nada.</p>
+      )}
 
       <div className="ag-g-daynav">
         <Link href={`/panel/agenda?d=${addDays(day, -1)}`} aria-label="Día anterior">
@@ -83,7 +88,7 @@ export default async function HoyPage({ searchParams }: { searchParams: Promise<
       ) : (
         <ul className="ag-g-list">
           {list.map((a) => (
-            <AppointmentCard key={a.id} a={a} back={back} />
+            <AppointmentCard key={a.id} a={a} back={back} clash={clashes.get(a.id)} />
           ))}
         </ul>
       )}

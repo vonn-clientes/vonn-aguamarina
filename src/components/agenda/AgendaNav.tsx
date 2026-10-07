@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 const LINKS = [
   { href: "/panel/agenda", label: "Hoy", exact: true },
   { href: "/panel/agenda/semana", label: "Semana" },
-  { href: "/panel/agenda/clientas", label: "Clientas" },
+  { href: "/panel/agenda/clientes", label: "Clientes" },
   { href: "/panel/agenda/caja", label: "Caja" },
 ];
 
@@ -24,12 +24,12 @@ export function AgendaNav() {
             </Link>
           );
         })}
+        {!onForm && (
+          <Link href="/panel/agenda/turnos/nuevo" className="ag-g-nav__new">
+            + Turno
+          </Link>
+        )}
       </nav>
-      {!onForm && (
-        <Link href="/panel/agenda/turnos/nuevo" className="ag-g-btn ag-g-btn--main ag-g-fab">
-          + Nuevo turno
-        </Link>
-      )}
     </>
   );
 }

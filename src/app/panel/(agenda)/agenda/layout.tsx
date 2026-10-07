@@ -5,7 +5,7 @@ import { requireMembership } from "@/lib/auth";
 import { logout } from "@/app/panel/actions/auth";
 import { AgendaNav } from "@/components/agenda/AgendaNav";
 
-// Agenda privada de Ingrid: turnos, clientas y caja. Requiere sesión (requireMembership).
+// Agenda privada de Ingrid: turnos, clientes y caja. Requiere sesión (requireMembership).
 export default async function AgendaLayout({ children }: { children: React.ReactNode }) {
   await requireMembership();
   return (
