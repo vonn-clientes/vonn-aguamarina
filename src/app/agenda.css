@@ -222,3 +222,5 @@ main.ag-g-wrap > * + * { margin-top: 0; }
 .ag-g-field, .ag-g-row2 > *, .ag-g-row3 > * { min-width: 0; }
 .ag-g-field input, .ag-g-field select { min-width: 0; max-width: 100%; }
 .ag-g-field input[type="date"], .ag-g-field input[type="time"] { -webkit-appearance: none; appearance: none; }
+.ag-t__when { text-transform: none; }
+.ag-t__when::first-letter { text-transform: uppercase; }
