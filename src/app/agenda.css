@@ -206,3 +206,9 @@ main.ag-g-wrap > * + * { margin-top: 0; }
 .ag-g-debtor__main { flex: 1 1 14rem; min-width: 0; text-decoration: none; display: grid; gap: 0.3rem; }
 .ag-g-debtor__main strong { display: block; }
 .ag-g-debtor__side { display: flex; align-items: center; gap: 0.8rem; }
+
+/* Mayúscula solo en la primera letra (antes ponía "Con Deuda", "De 2026") */
+.ag-g-title { text-transform: none; }
+.ag-g-title::first-letter { text-transform: uppercase; }
+.ag-g-daynav .grow { text-transform: none; }
+.ag-g-daynav .grow::first-letter { text-transform: uppercase; }
