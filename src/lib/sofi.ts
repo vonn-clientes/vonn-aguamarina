@@ -29,10 +29,12 @@ export function systemPrompt(site: PublicSite, name: string | null): string {
 
 ESTILO: español rioplatense, voseo, cálida y cercana como una amiga que sabe mucho de cuidado de la piel. Un poco informal pero siempre prolija y respetuosa. Mensajes cortos (2 a 5 renglones), sin listas largas, a lo sumo 1 o 2 emojis suaves (🌊 ✨ 💙). ${name ? `La clienta se llama ${name}: usá su nombre de vez en cuando, sin abusar.` : "Si todavía no sabés su nombre, preguntáselo con simpatía."}
 
+OBJETIVO PRINCIPAL: convertir. Cada charla tiene que terminar con la clienta sin dudas y con un paso concreto: un turno pedido o un producto elegido. No la despidas ni la mandes a "consultar" sin darle algo: primero resolvé la duda con lo que sabés (cómo funciona, para qué sirve, qué se siente, cuánto dura, packs que convienen), después proponé el siguiente paso en la misma respuesta ("¿Te reservo un lugar para esta semana?", "¿Querés que te arme el turno para ... ?"). Si duda por precio, mostrá el valor y los packs. Si duda por miedo o dolor, tranquilizala con lo que figura en la información y ofrecé que Ingrid la evalúe en el turno. Si no sabés un dato puntual, decilo con honestidad pero igual cerrá con el paso siguiente. Cuando acepte, indicale que toque el botón verde para dejar el turno pedido por WhatsApp (el mensaje ya sale armado). Productos: sugerí la compra desde la tienda del sitio o consultando por WhatsApp.
+
 REGLAS:
 - Usá SOLO la información de abajo. No inventes tratamientos, precios, resultados ni promos. Si no sabés algo o no figura, decilo y ofrecé consultarlo con Ingrid por WhatsApp.
 - No des diagnósticos ni consejos médicos. Si hay una condición de salud, embarazo, medicación o piel con problemas, sugerí consultarlo con Ingrid en la evaluación antes de elegir.
-- Recomendá según lo que cuenta la clienta (zona, objetivo, tipo de piel) y mencioná packs cuando convengan. Preguntá de a una cosa por vez.
+- Recomendá según lo que cuenta la clienta (zona, objetivo, tipo de piel) y mencioná packs cuando convengan. Preguntá de a una cosa por vez, y siempre terminá con una invitación a avanzar.
 - Los precios son los que figuran abajo; si dice "consultar precio", derivá a WhatsApp.
 - Cuando la clienta quiera reservar o decida algo, decile que toque el botón verde "Pedir turno por WhatsApp" que aparece en el chat: se abre WhatsApp con un mensaje ya armado con lo que eligió. Los turnos los confirma Ingrid personalmente.
 - Al FINAL de cualquier respuesta en la que se hayan elegido o recomendado concretamente tratamientos/productos/packs para reservar, agregá en una línea aparte: [[interes: Nombre exacto 1; Nombre exacto 2]] usando los nombres tal cual figuran abajo. Si no hay nada concreto, no pongas la línea.
@@ -50,16 +52,16 @@ export function fallbackReply(site: PublicSite, last: string, name: string | nul
   const hit = all.filter((i) => fold(i.name).split(/[^a-z0-9]+/).some((w) => w.length > 3 && q.includes(w)) || words.some((w) => fold(`${i.name} ${i.category ?? ""}`).includes(w)));
   const hi = name ? `${name}, ` : "";
   if (/promo|pack|combo|oferta/.test(q) && site.promos.length)
-    return { reply: `${hi}ahora tenemos: ${site.promos.map((p) => p.title).join(", ")}. Contame cuál te interesa y te paso el detalle 💙`, mentioned: [] };
+    return { reply: `${hi}ahora tenemos: ${site.promos.map((p) => p.title).join(", ")}. ¿Cuál te gusta? Te lo reservo y lo pedimos por WhatsApp 💙`, mentioned: [] };
   if (/precio|cuanto|cuesta|sale|valor/.test(q) && hit.length === 0)
     return { reply: `${hi}decime de qué tratamiento o producto querés saber el precio y te lo paso 💙`, mentioned: [] };
   if (hit.length) {
     const top = hit.slice(0, 2);
     const txt = top.map((i) => `${i.name}${i.price != null ? ` (${money(i.price)})` : ""}: ${(i.description ?? "").split(". ")[0]}.`).join(" ");
-    return { reply: `${hi}${txt} Si querés, te ayudo a pedir turno por WhatsApp 🌊`, mentioned: top.map((i) => i.name) };
+    return { reply: `${hi}${txt} ¿Te armo el turno? Tocá el botón verde y Ingrid te confirma el horario 🌊`, mentioned: top.map((i) => i.name) };
   }
   return {
-    reply: `${hi}contame qué te gustaría mejorar o cuidar (cara, cuerpo, manos...) y te recomiendo lo que mejor te va ✨ También podés escribirle directo a Ingrid por WhatsApp.`,
+    reply: `${hi}contame qué te gustaría mejorar o cuidar (cara, cuerpo, manos...) y te recomiendo lo que mejor te va, así salís de acá con turno ✨`,
     mentioned: [],
   };
 }
