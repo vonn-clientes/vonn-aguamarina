@@ -23,8 +23,8 @@ export default async function CatalogoPage() {
     list.length === 0 ? (
       <p className="vonn-text-cuerpo text-ink-muted">{empty}</p>
     ) : (
-      <div className="overflow-x-auto">
-        <table className="w-full text-left min-w-[34rem]">
+      <div>
+        <table className="ag-ctable w-full text-left">
           <thead>
             <tr className="vonn-text-caption text-ink-muted border-b border-line">
               <th className="pb-2 font-medium">Nombre</th>

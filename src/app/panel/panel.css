@@ -69,3 +69,16 @@
 .ag-panel .ag-nav { gap: 1.6rem; padding: 1rem 1rem 1.25rem; }
 .ag-panel .ag-nav a { min-height: 48px; margin-bottom: 0.2rem; }
 .ag-panel main { padding-block: 1rem; }
+
+/* Texto blanco siempre legible sobre los botones y etiquetas de color */
+.ag-panel .bg-primary, .ag-panel .ag-pbtn { color: #fff !important; }
+
+/* Catálogo: cada fila es una tarjeta en pantallas chicas (la tabla no entraba) */
+@media (max-width: 1100px) {
+  .ag-panel .ag-ctable thead { display: none; }
+  .ag-panel .ag-ctable, .ag-panel .ag-ctable tbody, .ag-panel .ag-ctable tr, .ag-panel .ag-ctable td { display: block; width: 100%; min-width: 0; }
+  .ag-panel .ag-ctable tbody { display: grid; gap: 0.9rem; }
+  .ag-panel .ag-ctable tr { background: #f3f8fc; border-radius: 20px; padding: 1rem 1.1rem; }
+  .ag-panel .ag-ctable td { padding: 0.2rem 0 !important; }
+  .ag-panel .ag-ctable td:last-child { margin-top: 0.6rem; }
+}
