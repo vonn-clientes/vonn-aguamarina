@@ -48,8 +48,15 @@ ${catalogContext(site)}`;
 export function fallbackReply(site: PublicSite, last: string, name: string | null): { reply: string; mentioned: string[] } {
   const q = fold(last);
   const all = [...site.services, ...site.products];
-  const words = q.split(/[^a-z0-9]+/).filter((w) => w.length > 3);
-  const hit = all.filter((i) => fold(i.name).split(/[^a-z0-9]+/).some((w) => w.length > 3 && q.includes(w)) || words.some((w) => fold(`${i.name} ${i.category ?? ""}`).includes(w)));
+  const stems = [...new Set(q.split(/[^a-z0-9]+/).filter((w) => w.length > 3).map((w) => w.slice(0, 5)))];
+  const scored = all
+    .map((i) => {
+      const hay = fold(`${i.name} ${i.name} ${i.category ?? ""} ${i.description ?? ""} ${(i.benefits ?? []).join(" ")} ${(i.concerns ?? []).join(" ")} ${(i.skin_types ?? []).join(" ")}`);
+      return { i, n: stems.filter((w) => hay.includes(w)).length };
+    })
+    .filter((x) => x.n > 0)
+    .sort((x, y) => y.n - x.n);
+  const hit = scored.map((x) => x.i);
   const hi = name ? `${name}, ` : "";
   if (/promo|pack|combo|oferta/.test(q) && site.promos.length)
     return { reply: `${hi}ahora tenemos: ${site.promos.map((p) => p.title).join(", ")}. ¿Cuál te gusta? Te lo reservo y lo pedimos por WhatsApp 💙`, mentioned: [] };
