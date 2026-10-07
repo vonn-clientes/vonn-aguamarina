@@ -714,3 +714,36 @@ body:has(.ag-stickybar) .ag-wafloat { bottom: calc(5.5rem + env(safe-area-inset-
 .ag-cm .ag-more, .ag-cm-actions button { min-height: 44px; padding: 0 1.1rem; border-radius: 999px; background: #e8f1f9; color: #153c61; font-weight: 600; border: 0; font-size: .95rem; display: inline-flex; align-items: center; }
 .ag-cm-top .ag-more { background: #fff; }
 .ag-cm-login h1 { font-family: var(--font-ag-script), "Lobster", cursive; font-weight: 400; color: var(--deep); }
+
+/* ===== Sofi, asesora virtual ===== */
+.ag-sofi-fab { position: fixed; left: 1rem; bottom: calc(1rem + env(safe-area-inset-bottom)); z-index: 60; display: flex; align-items: center; gap: .6rem; min-height: 56px; padding: 0 1.1rem 0 .6rem; border: 0; border-radius: 999px; background: #153c61; color: #fff; cursor: pointer; font: inherit; box-shadow: 0 10px 28px rgba(21,60,97,.35); transition: transform .2s; }
+.ag-sofi-fab:hover { transform: translateY(-2px); }
+.ag-sofi-fab span:last-child { display: grid; text-align: left; line-height: 1.15; }
+.ag-sofi-fab small { font-size: .78rem; opacity: .8; }
+.ag-sofi-fab__dot { width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; background: linear-gradient(135deg, #7ac5d6, #2f6fae); font-size: 1.1rem; }
+body:has(.ag-stickybar) .ag-sofi-fab { bottom: calc(5.5rem + env(safe-area-inset-bottom)); }
+.ag-sofi { position: fixed; z-index: 70; right: 0; bottom: 0; left: 0; height: min(86dvh, 640px); display: flex; flex-direction: column; background: #fff; border-radius: 26px 26px 0 0; box-shadow: 0 -12px 50px rgba(21,60,97,.28); overflow: hidden; animation: ag-sofi-in .3s cubic-bezier(.28,.11,.32,1); }
+@media (min-width: 640px) { .ag-sofi { left: 1.25rem; right: auto; bottom: 1.25rem; width: 390px; height: 600px; border-radius: 26px; } }
+@keyframes ag-sofi-in { from { transform: translateY(24px); opacity: 0; } to { transform: none; opacity: 1; } }
+.ag-sofi header { display: flex; align-items: center; gap: .75rem; padding: .9rem 1rem; background: linear-gradient(135deg, #153c61, #2f6fae); color: #fff; }
+.ag-sofi header div { flex: 1; display: grid; line-height: 1.2; }
+.ag-sofi header small { opacity: .85; font-size: .8rem; }
+.ag-sofi header button { width: 44px; height: 44px; border: 0; border-radius: 50%; background: rgba(255,255,255,.16); color: #fff; font-size: 1.5rem; cursor: pointer; }
+.ag-sofi__avatar { width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; background: #fff; color: #2f6fae; font-family: var(--font-ag-script), cursive; font-size: 1.4rem; }
+.ag-sofi__body { flex: 1; overflow-y: auto; padding: 1rem; display: flex; flex-direction: column; gap: .6rem; background: #f3f8fc; }
+.ag-sofi__bot, .ag-sofi__me { max-width: 86%; margin: 0; padding: .7rem .95rem; border-radius: 18px; font-size: 1rem; line-height: 1.45; white-space: pre-wrap; overflow-wrap: anywhere; }
+.ag-sofi__bot { background: #fff; color: #1b2b3a; border-bottom-left-radius: 6px; align-self: flex-start; box-shadow: 0 1px 3px rgba(21,60,97,.08); }
+.ag-sofi__me { background: #2f6fae; color: #fff; border-bottom-right-radius: 6px; align-self: flex-end; }
+.ag-sofi__typing { display: inline-flex; gap: 5px; padding: .9rem 1rem; }
+.ag-sofi__typing i { width: 7px; height: 7px; border-radius: 50%; background: #9db7cd; animation: ag-dot 1s infinite; }
+.ag-sofi__typing i:nth-child(2) { animation-delay: .15s; } .ag-sofi__typing i:nth-child(3) { animation-delay: .3s; }
+@keyframes ag-dot { 0%, 80%, 100% { opacity: .3; transform: none; } 40% { opacity: 1; transform: translateY(-3px); } }
+.ag-sofi__chips { display: flex; flex-wrap: wrap; gap: .5rem; }
+.ag-sofi__chips button { min-height: 44px; padding: 0 1rem; border-radius: 999px; border: 1px solid #c4d8ea; background: #fff; color: #153c61; font: inherit; font-size: .95rem; cursor: pointer; }
+.ag-sofi__wa { margin: .6rem 1rem 0; min-height: 48px; display: flex; align-items: center; justify-content: center; text-align: center; padding: 0 1rem; border-radius: 999px; background: #25a559; color: #fff !important; font-weight: 600; text-decoration: none; font-size: .95rem; }
+.ag-sofi__form { display: flex; gap: .5rem; padding: .7rem 1rem; }
+.ag-sofi__form input { flex: 1; min-width: 0; height: 48px; border-radius: 999px; border: 1px solid #c4d8ea; padding: 0 1rem; font: inherit; font-size: 1rem; }
+.ag-sofi__form button { height: 48px; padding: 0 1.2rem; border: 0; border-radius: 999px; background: #2f6fae; color: #fff; font: inherit; font-weight: 600; cursor: pointer; }
+.ag-sofi__form button:disabled { opacity: .5; }
+.ag-sofi__note { margin: 0; padding: 0 1rem .8rem; font-size: .78rem; color: #5b7287; text-align: center; }
+@media (prefers-reduced-motion: reduce) { .ag-sofi, .ag-sofi-fab { animation: none; transition: none; } .ag-sofi__typing i { animation: none; } }

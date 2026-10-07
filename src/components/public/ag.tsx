@@ -1,3 +1,4 @@
+import { SofiChat } from "./SofiChat";
 import Image from "next/image";
 import Link from "next/link";
 import { SITE, MAPS_LINK } from "@/lib/site";
@@ -163,6 +164,7 @@ export function SiteFooter({ content }: { content: SiteContent | null }) {
         </div>
       </div>
       <WhatsappFloat whatsapp={wa} />
+      <SofiChat whatsapp={wa} />
     </footer>
   );
 }
