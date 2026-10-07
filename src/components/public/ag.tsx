@@ -14,6 +14,44 @@ export function WhatsappIcon() {
   );
 }
 
+export function InstagramIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" focusable="false">
+      <rect x="3" y="3" width="18" height="18" rx="5" />
+      <circle cx="12" cy="12" r="4" />
+      <circle cx="17.3" cy="6.7" r="0.6" fill="currentColor" />
+    </svg>
+  );
+}
+
+// Pin de Google Maps (marca de Google) para el botón "Cómo llegar".
+export function MapsIcon() {
+  return (
+    <svg viewBox="0 0 92.3 132.3" aria-hidden="true" focusable="false">
+      <path fill="#1a73e8" d="M60.2 2.2C55.8.8 51 0 46.1 0 32 0 19.3 6.4 10.8 16.5l21.8 18.3L60.2 2.2z" />
+      <path fill="#ea4335" d="M10.8 16.5C4.1 24.5 0 34.9 0 46.1c0 8.7 1.7 15.7 4.6 22l28-33.3-21.8-18.3z" />
+      <path fill="#4285f4" d="M46.2 28.5c9.8 0 17.7 7.9 17.7 17.7 0 4.3-1.6 8.3-4.2 11.4 0 0 13.9-16.6 27.5-32.7-5.6-10.8-15.3-19-27-22.7L32.6 34.8c3.3-3.8 8.1-6.3 13.6-6.3" />
+      <path fill="#fbbc04" d="M46.2 63.8c-9.8 0-17.7-7.9-17.7-17.7 0-4.3 1.5-8.3 4.1-11.3l-28 33.3c4.8 10.6 12.8 19.2 21 29.9l34.1-40.5c-3.3 3.9-8.1 6.3-13.5 6.3" />
+      <path fill="#34a853" d="M59.1 109.2c15.4-24.1 33.3-35 33.3-63 0-7.7-1.9-14.9-5.2-21.3L25.6 98c2.6 3.4 5.3 7.3 7.9 11.3 9.3 14.5 6.7 23.1 12.7 23.1s3.4-8.7 12.9-23.2" />
+    </svg>
+  );
+}
+
+// Botón flotante de WhatsApp, siempre visible abajo a la derecha: para cualquier consulta.
+export function WhatsappFloat({ whatsapp }: { whatsapp: string | null | undefined }) {
+  return (
+    <a
+      className="ag-wafloat"
+      href={waLink(whatsapp, "Hola! Quería hacerles una consulta")}
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label="Escribinos por WhatsApp"
+    >
+      <WhatsappIcon />
+    </a>
+  );
+}
+
 export function JsonLd({ data }: { data: object }) {
   return (
     <script
@@ -80,7 +118,6 @@ export function SiteHeader({
 
         <div className="ag-header__actions">
           {showProducts && <CartLink />}
-          <TurnoButton whatsapp={whatsapp} size="small" />
           <MobileMenu items={nav} />
         </div>
       </div>
@@ -119,12 +156,13 @@ export function SiteFooter({ content }: { content: SiteContent | null }) {
         </div>
         <div className="ag-footer__bottom">
           <p>© {new Date().getFullYear()} {SITE.name}</p>
-          <a className="ag-made" href="https://www.vonn.com.ar" target="_blank" rel="noopener noreferrer" aria-label="Sitio creado con VONN. Ir a vonn.com.ar">
-            <span>Creado con</span>
+          <a className="ag-made" href="https://www.vonn.com.ar" target="_blank" rel="noopener noreferrer" aria-label="Sitio creado por VONN. Ir a vonn.com.ar">
+            <span>Creado por</span>
             <Image src="/logo/vonn-logo-light.svg" alt="VONN" width={110} height={32} />
           </a>
         </div>
       </div>
+      <WhatsappFloat whatsapp={wa} />
     </footer>
   );
 }

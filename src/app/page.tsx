@@ -15,7 +15,7 @@ import {
   websiteJsonLd,
 } from "@/lib/seo";
 import { seoAlt } from "@/lib/seo-image";
-import { Advice, JsonLd, Medallion, SiteFooter, SiteHeader, TurnoButton } from "@/components/public/ag";
+import { Advice, InstagramIcon, JsonLd, MapsIcon, Medallion, SiteFooter, SiteHeader, TurnoButton, WhatsappIcon } from "@/components/public/ag";
 import { ProductCard } from "@/components/tienda/ProductCard";
 import { TreatmentCard } from "@/components/public/TreatmentCard";
 
@@ -27,7 +27,8 @@ export const revalidate = 60;
 const CATEGORY_HEADLINES: Record<string, string> = {
   Faciales: "Tu piel, bien cuidada.",
   Corporales: "Tu cuerpo, en equilibrio.",
-  "Manos y estilo": "Manos, maquillaje y peinados.",
+  "Manos y estilo": "Maquillaje, peinados y más.",
+  Estilo: "Maquillaje, peinados y más.",
 };
 
 const POLICIES = [
@@ -93,7 +94,7 @@ export default async function Home() {
               <h2 className="ag-h2" id="t-tratamientos">
                 Tratamientos
               </h2>
-              <p className="ag-lead">Faciales, corporales, manos y estilo.</p>
+              <p className="ag-lead">Tratamientos para cuidar cada parte de tu piel y tu cuerpo.</p>
             </div>
             {groups.map(([category, items]) => (
               <article className="ag-cat" key={category} id={slugify(category)}>
@@ -154,7 +155,7 @@ export default async function Home() {
                 <h2 className="ag-h2" id="t-productos">
                   Tienda
                 </h2>
-                <p className="ag-lead">Para seguir en casa lo que trabajamos en el gabinete.</p>
+                <p className="ag-lead">Para seguir en casa lo que trabajamos en Aguamarina.</p>
               </div>
               <div className="ag-shop">
                 {products.slice(0, 4).map((p) => (
@@ -172,12 +173,16 @@ export default async function Home() {
 
         {/* ---- Ingrid ---- */}
         <section className="ag-section ag-section--deep" id="ingrid" aria-labelledby="t-ingrid">
-          <div className={`ag-wrap ag-meet ag-rise${content?.about_image_url ? "" : " ag-meet--solo"}`}>
-            {content?.about_image_url && (
-              <div className="ag-meet__photo">
+          <div className="ag-wrap ag-meet ag-rise">
+            <div className="ag-meet__photo">
+              {content?.about_image_url ? (
                 <Image src={content.about_image_url} alt={seoAlt(SITE.owner, "perfil")} width={560} height={700} sizes="(max-width: 800px) 90vw, 460px" quality={75} />
-              </div>
-            )}
+              ) : (
+                <div className="ag-meet__ph" role="img" aria-label={`Foto de ${SITE.owner}, próximamente`}>
+                  <Image src="/logo-aguamarina-oficial.png" alt="" width={240} height={84} sizes="240px" />
+                </div>
+              )}
+            </div>
             <div className="ag-meet__text">
               <p className="ag-kicker ag-kicker--light">Conocé a la profesional</p>
               <h2 className="ag-h2" id="t-ingrid">
@@ -196,46 +201,40 @@ export default async function Home() {
           </div>
         </section>
 
-        {/* ---- Dónde estamos ---- */}
+        {/* ---- Contacto y ubicación ---- */}
         <section className="ag-section" id="donde" aria-labelledby="t-donde">
           <div className="ag-wrap ag-where">
-            <div className="ag-rise">
+            <div className="ag-rise ag-where__info">
               <h2 className="ag-h2" id="t-donde">
-                Dónde estamos
+                Contacto
               </h2>
-              <dl>
-                <div>
-                  <dt>Dirección</dt>
-                  <dd>
-                    <address style={{ fontStyle: "normal" }}>{FULL_ADDRESS}</address>
-                  </dd>
-                </div>
-                <div>
-                  <dt>Atención</dt>
-                  <dd>Con turno previo, por WhatsApp</dd>
-                </div>
-                <div>
-                  <dt>WhatsApp</dt>
-                  <dd>
-                    <a href={waLink(wa)} target="_blank" rel="noopener noreferrer">
-                      {phoneDisplay(wa)}
-                    </a>
-                  </dd>
-                </div>
+              <p className="ag-lead">Escribinos o visitanos, con turno previo.</p>
+              <address className="ag-where__addr">{FULL_ADDRESS}</address>
+              <div className="ag-where__btns">
+                <a className="ag-cbtn ag-cbtn--wa" href={waLink(wa, "Hola! Quería hacerles una consulta")} target="_blank" rel="noopener noreferrer">
+                  <WhatsappIcon />
+                  <span>
+                    <small>WhatsApp</small>
+                    {phoneDisplay(wa)}
+                  </span>
+                </a>
                 {content?.instagram_url && (
-                  <div>
-                    <dt>Instagram</dt>
-                    <dd>
-                      <a href={content.instagram_url} target="_blank" rel="noopener noreferrer">
-                        @aguamarinaesteticaybienestar
-                      </a>
-                    </dd>
-                  </div>
+                  <a className="ag-cbtn ag-cbtn--ig" href={content.instagram_url} target="_blank" rel="noopener noreferrer">
+                    <InstagramIcon />
+                    <span>
+                      <small>Instagram</small>
+                      @aguamarinaesteticaybienestar
+                    </span>
+                  </a>
                 )}
-              </dl>
-              <a className="ag-btn" href={MAPS_LINK} target="_blank" rel="noopener noreferrer">
-                Cómo llegar
-              </a>
+                <a className="ag-cbtn ag-cbtn--maps" href={MAPS_LINK} target="_blank" rel="noopener noreferrer">
+                  <MapsIcon />
+                  <span>
+                    <small>Google Maps</small>
+                    Cómo llegar
+                  </span>
+                </a>
+              </div>
             </div>
             <iframe
               className="ag-map"
@@ -284,9 +283,9 @@ export default async function Home() {
           <div className="ag-wrap">
             <div className="ag-head ag-rise">
               <h2 className="ag-h2" id="t-politicas">
-                Cómo cuidamos tu turno.
+                Para que todo salga bien.
               </h2>
-              <p className="ag-lead">Estas son las condiciones del gabinete, para que todo sea claro desde el principio.</p>
+              <p className="ag-lead">Unos acuerdos simples, para cuidar el tiempo de todas.</p>
             </div>
             <ul className="ag-policies">
               {POLICIES.map((p) => (
