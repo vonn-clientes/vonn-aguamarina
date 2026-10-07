@@ -87,13 +87,15 @@ export async function POST(req: Request) {
   // Opinión dejada por chat: se guarda OCULTA para que Ingrid la apruebe desde el panel.
   let savedReview = false;
   if (text) {
-    const rm = text.match(/\[\[\s*resena\s*:\s*([^|\]]+)\|\s*([1-5])\s*\|\s*([^\]]+)\]\]/i);
+    const rm = text.match(/\[\[\s*resena\s*:\s*([^|\]]*)\|\s*([1-5])\s*\|\s*([^|\]]+)(?:\|\s*([^\]]*))?\]\]/i);
     if (rm) {
-      const item = [...site.services, ...site.products].find((i) => fold(i.name) === fold(rm[1].trim()));
+      // Si no hay tratamiento claro ("general"), la opinión se guarda en el primer tratamiento y se muestra como opinión del gabinete.
+      const item = [...site.services, ...site.products].find((i) => fold(i.name) === fold(rm[1].trim())) ?? site.services[0] ?? site.products[0];
       const comment = rm[3].trim().slice(0, 600);
+      const author = (rm[4] ?? "").replace(/[^\p{L}\p{N} .'-]/gu, "").trim().slice(0, 40) || name || "Clienta";
       if (item && comment.length >= 5) {
         const sb = sbClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!, { auth: { persistSession: false } });
-        const { error } = await sb.from("reviews").insert({ tenant_id: site.tenant.id, item_id: item.id, author: name ?? "Clienta", rating: Number(rm[2]), comment, visible: false });
+        const { error } = await sb.from("reviews").insert({ tenant_id: site.tenant.id, item_id: item.id, author, rating: Number(rm[2]), comment, visible: false });
         savedReview = !error;
       }
     }
