@@ -17,7 +17,7 @@ export function catalogContext(site: PublicSite): string {
   const c = site.content;
   const schedule = c?.schedule && Object.keys(c.schedule).length ? Object.entries(c.schedule).map(([d, h]) => `${d}: ${h}`).join(" | ") : "se coordina por WhatsApp";
   return [
-    `NEGOCIO: ${SITE.name}, de ${SITE.owner} (profesional matriculada en cosmetología y cosmiatría, esteticista, maquilladora profesional y manicura). Dirección: ${c?.address ?? `${SITE.street}, ${SITE.city}, ${SITE.region}`}. Atención SOLO con turno previo. Horarios: ${schedule}.`,
+    `NEGOCIO: ${SITE.name}, de ${SITE.owner} (profesional matriculada en cosmetología y cosmiatría, esteticista y maquilladora profesional). Dirección: ${c?.address ?? `${SITE.street}, ${SITE.city}, ${SITE.region}`}. Atención SOLO con turno previo. Horarios: ${schedule}.`,
     `TRATAMIENTOS:\n${site.services.map(svc).join("\n") || "(sin cargar)"}`,
     `PRODUCTOS DE LA TIENDA:\n${site.products.map(prod).join("\n") || "(sin cargar)"}`,
     `PROMOS / PACKS VIGENTES:\n${site.promos.map((p) => `- ${p.title}: ${p.items.join(", ")}${p.price != null ? ` — ${money(p.price)}` : ""}${p.description ? `. ${p.description}` : ""}`).join("\n") || "(ninguna por ahora)"}`,

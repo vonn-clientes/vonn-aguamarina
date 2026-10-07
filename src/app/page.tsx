@@ -39,7 +39,7 @@ const POLICIES = [
   { title: "Vouchers", text: "Tienen vigencia de 1 mes." },
 ];
 
-const CREDENTIALS = ["Cosmetología y cosmiatría", "Esteticista", "Maquilladora profesional", "Manicura", "Aparatología"];
+const CREDENTIALS = ["Cosmetología y cosmiatría", "Esteticista", "Maquilladora profesional", "Aparatología"];
 
 export default async function Home() {
   const site = await getPublicSite();
@@ -62,7 +62,7 @@ export default async function Home() {
             <div className="ag-hero__copy">
               <h1 className="ag-hero__title">Estética y bienestar para tu piel y tu cuerpo.</h1>
               <p className="ag-hero__lead">
-                {content?.hero_title || "Tratamientos faciales y corporales, aparatología, manicura y maquillaje"}
+                {content?.hero_title || "Tratamientos faciales y corporales, aparatología, maquillaje y peinado"}
               </p>
               <div className="ag-actions">
                 <TurnoButton whatsapp={wa} tone="light">Sacar turno</TurnoButton>
@@ -94,7 +94,7 @@ export default async function Home() {
               <h2 className="ag-h2" id="t-tratamientos">
                 Tratamientos
               </h2>
-              <p className="ag-lead">Tratamientos para cuidar cada parte de tu piel y tu cuerpo.</p>
+              <p className="ag-lead">Tratamientos para cuidar cada detalle de tu piel y tu cuerpo.</p>
             </div>
             {groups.map(([category, items]) => (
               <article className="ag-cat" key={category} id={slugify(category)}>

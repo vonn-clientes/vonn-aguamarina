@@ -37,7 +37,7 @@ const script = localFont({
 });
 
 const DESCRIPTION =
-  "Gabinete de estética en Concepción del Uruguay: tratamientos faciales y corporales, aparatología, manicuría y maquillaje. Atención solo con turno previo.";
+  "Gabinete de estética en Concepción del Uruguay: tratamientos faciales y corporales, aparatología, maquillaje y peinado. Atención solo con turno previo.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE.url),
