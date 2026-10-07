@@ -15,6 +15,7 @@ function limited(ip: string) {
   return arr.length > 30;
 }
 
+let lastErr = "";
 type Provider = { base: string; key: string; model: string };
 // Hasta tres proveedores/modelos de IA gratuitos compatibles con el formato OpenAI (Groq, Google Gemini, OpenRouter, etc.).
 function providers(): Provider[] {
@@ -36,11 +37,12 @@ async function ask(p: Provider, system: string, messages: ChatMsg[]): Promise<st
       body: JSON.stringify({ model: p.model, temperature: 0.5, max_tokens: 400, messages: [{ role: "system", content: system }, ...messages] }),
       signal: AbortSignal.timeout(12_000),
     });
-    if (!res.ok) return null;
+    if (!res.ok) { lastErr = `${p.model}:${res.status}`; return null; }
     const j = await res.json();
     const t = j?.choices?.[0]?.message?.content;
     return typeof t === "string" && t.trim() ? t.trim() : null;
-  } catch {
+  } catch (e) {
+    lastErr = `${p.model}:${e instanceof Error ? e.name : "err"}`;
     return null;
   }
 }
@@ -75,5 +77,5 @@ export async function POST(req: Request) {
   } else {
     ({ reply, mentioned } = fallbackReply(site, messages[messages.length - 1].content, name));
   }
-  return NextResponse.json({ reply, mentioned });
+  return NextResponse.json({ reply, mentioned, via: text ? "ai" : `fallback ${lastErr}` });
 }
