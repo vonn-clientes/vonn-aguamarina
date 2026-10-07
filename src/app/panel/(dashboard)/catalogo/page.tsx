@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { PageHeader } from "@/components/panel/PageHeader";
 import { CatalogRow } from "@/components/panel/CatalogRow";
 import { addCatalogItem } from "./actions";
+import { ImageUpload } from "@/components/panel/ImageUpload";
 import type { CatalogItem } from "@/lib/types";
 
 export default async function CatalogoPage() {
@@ -39,7 +40,7 @@ export default async function CatalogoPage() {
             </thead>
             <tbody className="divide-y divide-line">
               {items.map((item) => (
-                <CatalogRow key={item.id} item={item} />
+                <CatalogRow key={item.id} item={item} tenantId={membership.tenant.id} />
               ))}
             </tbody>
           </table>
@@ -59,6 +60,10 @@ export default async function CatalogoPage() {
             />
           </div>
           <textarea name="description" placeholder="Descripción breve (opcional)" rows={2} className={field} />
+          <ImageUpload tenantId={membership.tenant.id} name="image_url" label="foto" />
+          <p className="vonn-text-caption text-ink-muted">
+            Para que aparezca en la tienda, poné la categoría <strong>Productos</strong>. Si le cargás un precio se puede comprar online; sin precio, el botón consulta por WhatsApp.
+          </p>
           <button type="submit" className="self-start rounded-pill bg-primary text-white px-6 py-3 vonn-text-cuerpo font-medium">
             Agregar al catálogo
           </button>

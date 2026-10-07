@@ -18,10 +18,12 @@ export async function addCatalogItem(formData: FormData) {
     price: priceRaw ? Number(priceRaw) : null,
     duration_minutes: durationRaw ? Number(durationRaw) : null,
     category: String(formData.get("category") || "") || null,
+    image_url: String(formData.get("image_url") || "") || null,
   });
 
   revalidatePath("/panel/catalogo");
   revalidatePath("/");
+  revalidatePath("/tienda");
 }
 
 export async function toggleCatalogItem(itemId: string, active: boolean) {
@@ -36,6 +38,7 @@ export async function toggleCatalogItem(itemId: string, active: boolean) {
 
   revalidatePath("/panel/catalogo");
   revalidatePath("/");
+  revalidatePath("/tienda");
 }
 
 export async function deleteCatalogItem(itemId: string) {
@@ -46,6 +49,7 @@ export async function deleteCatalogItem(itemId: string) {
 
   revalidatePath("/panel/catalogo");
   revalidatePath("/");
+  revalidatePath("/tienda");
 }
 
 export async function updateCatalogItem(itemId: string, formData: FormData) {
@@ -63,10 +67,27 @@ export async function updateCatalogItem(itemId: string, formData: FormData) {
       price: priceRaw ? Number(priceRaw) : null,
       duration_minutes: durationRaw ? Number(durationRaw) : null,
       category: String(formData.get("category") || "") || null,
+      image_url: String(formData.get("image_url") || "") || null,
     })
     .eq("id", itemId)
     .eq("tenant_id", membership.tenant.id);
 
   revalidatePath("/panel/catalogo");
   revalidatePath("/");
+  revalidatePath("/tienda");
+}
+
+export async function toggleSoldOut(itemId: string, sold_out: boolean) {
+  const membership = await requireMembership();
+  const supabase = await createClient();
+
+  await supabase
+    .from("catalog_items")
+    .update({ sold_out })
+    .eq("id", itemId)
+    .eq("tenant_id", membership.tenant.id);
+
+  revalidatePath("/panel/catalogo");
+  revalidatePath("/");
+  revalidatePath("/tienda");
 }

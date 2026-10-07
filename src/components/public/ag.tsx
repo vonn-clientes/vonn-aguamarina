@@ -4,6 +4,7 @@ import { SITE, MAPS_LINK } from "@/lib/site";
 import { waLink, phoneDisplay } from "@/lib/seo";
 import type { SiteContent } from "@/lib/types";
 import { MobileMenu, type NavItem } from "./menu";
+import { CartLink } from "@/components/tienda/CartLink";
 
 export function WhatsappIcon() {
   return (
@@ -57,7 +58,7 @@ export function SiteHeader({
 }) {
   const nav: NavItem[] = [
     { href: "/#tratamientos", label: "Tratamientos" },
-    ...(showProducts ? [{ href: "/#productos", label: "Productos" }] : []),
+    ...(showProducts ? [{ href: "/tienda", label: "Tienda" }] : []),
     { href: "/#ingrid", label: "Conocé a Ingrid" },
     { href: "/#preguntas", label: "Preguntas" },
     { href: "/#donde", label: "Contacto" },
@@ -79,6 +80,7 @@ export function SiteHeader({
         </nav>
 
         <div className="ag-header__actions">
+          {showProducts && <CartLink />}
           <TurnoButton whatsapp={whatsapp} size="small" />
           <MobileMenu items={nav} />
         </div>
@@ -139,5 +141,27 @@ export function Medallion({ priority = false, size = 168 }: { priority?: boolean
       priority={priority}
       style={{ width: size, height: size }}
     />
+  );
+}
+
+// Bloque de asesoramiento: para quien no sabe qué tratamiento o producto necesita.
+export function Advice({ whatsapp, topic = "mi piel y mi cuerpo" }: { whatsapp: string | null | undefined; topic?: string }) {
+  return (
+    <section className="ag-section ag-advice" aria-labelledby="t-asesoramiento">
+      <div className="ag-wrap ag-rise">
+        <div className="ag-advice__box">
+          <h2 className="ag-h2" id="t-asesoramiento">
+            ¿No sabés qué necesitás?
+          </h2>
+          <p className="ag-lead">
+            Contanos qué te gustaría cambiar o cuidar y te asesoramos por WhatsApp: vemos juntas qué necesita tu piel y tu
+            cuerpo.
+          </p>
+          <TurnoButton whatsapp={whatsapp} text={`Hola! Quiero que me asesoren sobre ${topic}`}>
+            Pedir asesoramiento
+          </TurnoButton>
+        </div>
+      </div>
+    </section>
   );
 }

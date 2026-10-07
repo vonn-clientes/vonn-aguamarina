@@ -13,6 +13,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   try {
     const site = await getPublicSite();
+    if (site && site.products.length > 0) {
+      entries.push({ url: `${SITE.url}/tienda`, lastModified: now, changeFrequency: "weekly", priority: 0.8 });
+    }
     for (const s of site?.services ?? []) {
       entries.push({
         url: `${SITE.url}/tratamientos/${slugify(s.name)}`,

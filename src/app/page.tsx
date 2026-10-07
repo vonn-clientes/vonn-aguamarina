@@ -13,7 +13,8 @@ import {
   waLink,
   websiteJsonLd,
 } from "@/lib/seo";
-import { JsonLd, Medallion, SiteFooter, SiteHeader, TurnoButton } from "@/components/public/ag";
+import { Advice, JsonLd, Medallion, SiteFooter, SiteHeader, TurnoButton } from "@/components/public/ag";
+import { ProductCard } from "@/components/tienda/ProductCard";
 
 // La página se genera una vez y se refresca sola cada 60 segundos: rápida
 // para quien visita, y los cambios que haga la dueña desde el panel se ven
@@ -114,31 +115,27 @@ export default async function Home() {
           </div>
         </section>
 
+        <Advice whatsapp={wa} />
+
         {/* ---- Productos ---- */}
         {products.length > 0 && (
           <section className="ag-section ag-section--alt" id="productos" aria-labelledby="t-productos">
             <div className="ag-wrap">
               <div className="ag-head ag-rise">
                 <h2 className="ag-h2" id="t-productos">
-                  Productos
+                  Tienda
                 </h2>
                 <p className="ag-lead">Para seguir en casa lo que trabajamos en el gabinete.</p>
               </div>
-              <div className="ag-cards">
-                {products.map((p) => (
-                  <article className="ag-card ag-rise" key={p.id}>
-                    <h3 className="ag-h3">{p.name}</h3>
-                    {p.description && <p>{p.description}</p>}
-                    <a
-                      className="ag-more"
-                      href={waLink(wa, `Hola! Quiero consultar por ${p.name}`)}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      Consultar
-                    </a>
-                  </article>
+              <div className="ag-shop">
+                {products.slice(0, 4).map((p) => (
+                  <ProductCard key={p.id} item={p} whatsapp={wa} />
                 ))}
+              </div>
+              <div className="ag-center">
+                <Link className="ag-more" href="/tienda">
+                  Ver toda la tienda
+                </Link>
               </div>
             </div>
           </section>

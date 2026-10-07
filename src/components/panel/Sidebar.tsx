@@ -10,6 +10,7 @@ const baseLinks = [
   { href: "/panel", label: "Inicio" },
   { href: "/panel/contenido", label: "Editor del sitio" },
   { href: "/panel/catalogo", label: "Catálogo" },
+  { href: "/panel/pedidos", label: "Pedidos de la tienda" },
   { href: "/panel/links", label: "Links para Instagram" },
   { href: "/panel/mensajes", label: "Mensajes" },
   { href: "/panel/empleados", label: "Empleados" },

@@ -33,6 +33,8 @@ export interface SiteContent {
   hero_subtitle: string | null;
   hero_image_url: string | null;
   about_image_url?: string | null;
+  transfer_alias?: string | null;
+  transfer_holder?: string | null;
   about_text: string | null;
   address: string | null;
   whatsapp_number: string | null;
@@ -51,6 +53,7 @@ export interface CatalogItem {
   category: string | null;
   duration_minutes: number | null;
   active: boolean;
+  sold_out?: boolean;
   sort_order: number;
 }
 
@@ -92,6 +95,8 @@ export interface Order {
   status: "pendiente" | "preparando" | "listo" | "entregado" | "cancelado";
   total: number;
   notes: string | null;
+  customer_dni?: string | null;
+  payment_method?: string | null;
   created_at: string;
 }
 

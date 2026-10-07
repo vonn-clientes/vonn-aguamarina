@@ -2,6 +2,7 @@ import { requireMembership } from "@/lib/auth";
 import { getSiteContent } from "@/lib/queries";
 import { PageHeader } from "@/components/panel/PageHeader";
 import { saveSiteContent } from "./actions";
+import { ImageUpload } from "@/components/panel/ImageUpload";
 
 export default async function ContenidoPage() {
   const membership = await requireMembership();
@@ -31,6 +32,10 @@ export default async function ContenidoPage() {
           <textarea id="about_text" name="about_text" rows={4} defaultValue={content?.about_text ?? ""} className={field} />
         </div>
         <div className="flex flex-col gap-1">
+          <span className={label}>Foto de la profesional (sección "Conocé a Ingrid")</span>
+          <ImageUpload tenantId={membership.tenant.id} name="about_image_url" defaultUrl={content?.about_image_url} label="foto" />
+        </div>
+        <div className="flex flex-col gap-1">
           <label className={label} htmlFor="address">Dirección</label>
           <input id="address" name="address" defaultValue={content?.address ?? ""} className={field} />
         </div>
@@ -41,6 +46,18 @@ export default async function ContenidoPage() {
         <div className="flex flex-col gap-1">
           <label className={label} htmlFor="instagram_url">Instagram (link completo)</label>
           <input id="instagram_url" name="instagram_url" defaultValue={content?.instagram_url ?? ""} className={field} />
+        </div>
+
+        <div className="flex flex-col gap-3 rounded-sm border border-line p-4">
+          <span className="vonn-text-subtitulo">Pagos de la tienda (transferencia)</span>
+          <div className="flex flex-col gap-1">
+            <label className={label} htmlFor="transfer_alias">Alias para transferir</label>
+            <input id="transfer_alias" name="transfer_alias" defaultValue={content?.transfer_alias ?? ""} className={field} placeholder="mi.alias" />
+          </div>
+          <div className="flex flex-col gap-1">
+            <label className={label} htmlFor="transfer_holder">Nombre del titular (opcional)</label>
+            <input id="transfer_holder" name="transfer_holder" defaultValue={content?.transfer_holder ?? ""} className={field} />
+          </div>
         </div>
 
         <div className="flex flex-col gap-3">

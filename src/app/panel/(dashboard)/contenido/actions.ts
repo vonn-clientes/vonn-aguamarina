@@ -23,10 +23,15 @@ export async function saveSiteContent(formData: FormData) {
     address: String(formData.get("address") || ""),
     whatsapp_number: String(formData.get("whatsapp_number") || ""),
     instagram_url: String(formData.get("instagram_url") || ""),
+    about_image_url: String(formData.get("about_image_url") || "") || null,
+    transfer_alias: String(formData.get("transfer_alias") || "").trim() || null,
+    transfer_holder: String(formData.get("transfer_holder") || "").trim() || null,
     schedule,
     updated_at: new Date().toISOString(),
   });
 
   revalidatePath("/panel/contenido");
   revalidatePath("/");
+  revalidatePath("/tienda");
+  revalidatePath("/tienda/carrito");
 }

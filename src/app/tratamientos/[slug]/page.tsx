@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import { getPublicSite } from "@/lib/public-data";
 import { SITE } from "@/lib/site";
 import { breadcrumbJsonLd, serviceJsonLd, slugify, trimDescription } from "@/lib/seo";
-import { JsonLd, SiteFooter, SiteHeader, TurnoButton } from "@/components/public/ag";
+import { Advice, JsonLd, SiteFooter, SiteHeader, TurnoButton } from "@/components/public/ag";
 
 export const revalidate = 60;
 
@@ -152,6 +152,8 @@ export default async function ServicePage(props: PageProps<"/tratamientos/[slug]
             </div>
           </section>
         )}
+
+        <Advice whatsapp={wa} topic={item.name} />
 
         <section className="ag-section ag-section--deep">
           <div className="ag-wrap ag-about ag-rise">

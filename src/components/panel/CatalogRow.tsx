@@ -1,13 +1,14 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { toggleCatalogItem, deleteCatalogItem, updateCatalogItem } from "@/app/panel/(dashboard)/catalogo/actions";
+import { toggleCatalogItem, deleteCatalogItem, updateCatalogItem, toggleSoldOut } from "@/app/panel/(dashboard)/catalogo/actions";
 import type { CatalogItem } from "@/lib/types";
+import { ImageUpload } from "./ImageUpload";
 
 const field =
   "w-full rounded-sm border border-line bg-canvas px-2 py-1 vonn-text-caption outline-none focus:border-primary";
 
-export function CatalogRow({ item }: { item: CatalogItem }) {
+export function CatalogRow({ item, tenantId }: { item: CatalogItem; tenantId: string }) {
   const [pending, startTransition] = useTransition();
   const [editing, setEditing] = useState(false);
 
@@ -40,9 +41,12 @@ export function CatalogRow({ item }: { item: CatalogItem }) {
               name="description"
               defaultValue={item.description ?? ""}
               placeholder="Descripción"
-              rows={1}
+              rows={2}
               className={`${field} sm:col-span-5`}
             />
+            <div className="sm:col-span-5">
+              <ImageUpload tenantId={tenantId} name="image_url" defaultUrl={item.image_url} label="foto" />
+            </div>
           </form>
         </td>
       </tr>
@@ -51,7 +55,13 @@ export function CatalogRow({ item }: { item: CatalogItem }) {
 
   return (
     <tr className={pending ? "opacity-50" : ""}>
-      <td className="py-3 pr-4 vonn-text-cuerpo">{item.name}</td>
+      <td className="py-3 pr-4 vonn-text-cuerpo">
+        <div className="flex items-center gap-3">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          {item.image_url && <img src={item.image_url} alt="" className="h-10 w-10 rounded-sm object-cover" />}
+          <span>{item.name}</span>
+        </div>
+      </td>
       <td className="py-3 pr-4 vonn-text-cuerpo text-ink-muted">{item.category || "—"}</td>
       <td className="py-3 pr-4 vonn-text-cuerpo">
         {item.price != null ? `$${item.price.toLocaleString("es-AR")}` : "—"}
@@ -63,6 +73,14 @@ export function CatalogRow({ item }: { item: CatalogItem }) {
         >
           {item.active ? "Activo" : "Oculto"}
         </button>
+        {item.category === "Productos" && (
+          <button
+            className="vonn-text-caption text-ink-muted block mt-1"
+            onClick={() => startTransition(() => toggleSoldOut(item.id, !item.sold_out))}
+          >
+            {item.sold_out ? "Agotado (tocá para reponer)" : "Marcar agotado"}
+          </button>
+        )}
       </td>
       <td className="py-3">
         <div className="flex gap-3">

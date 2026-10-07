@@ -25,4 +25,5 @@ export async function updateOrderStatus(orderId: string, status: Order["status"]
     .eq("id", orderId)
     .eq("tenant_id", membership.tenant.id);
   revalidatePath("/panel/actividad");
+  revalidatePath("/panel/pedidos");
 }
