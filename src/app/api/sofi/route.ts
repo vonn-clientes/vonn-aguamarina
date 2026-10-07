@@ -78,16 +78,6 @@ export async function POST(req: Request) {
   } else {
     ({ reply, mentioned } = fallbackReply(site, messages[messages.length - 1].content, name));
   }
-  return NextResponse.json({ reply, mentioned, via: text ? "ai" : `fallback ${lastErr}` });
+  return NextResponse.json({ reply, mentioned, via: text ? "ai" : "fallback" });
 }
 
-// Diagnóstico: lista los modelos disponibles para la clave configurada (no expone la clave).
-export async function GET() {
-  const p = providers()[0];
-  if (!p) return NextResponse.json({ error: "sin configurar" });
-  try {
-    const r = await fetch(`${p.base}/models`, { headers: { authorization: `Bearer ${p.key}` }, signal: AbortSignal.timeout(8000) });
-    const j = await r.json();
-    return NextResponse.json({ status: r.status, models: (j?.data ?? []).map((m: { id: string }) => m.id), configured: providers().map((x) => x.model) });
-  } catch { return NextResponse.json({ error: "fallo" }); }
-}
