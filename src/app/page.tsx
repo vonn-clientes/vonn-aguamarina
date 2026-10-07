@@ -69,11 +69,12 @@ export default async function Home() {
               </div>
             </div>
             <div className="ag-hero__logo">
-              <Medallion priority size={400} variant="white" />
+              <Medallion priority size={420} />
             </div>
           </div>
           <svg className="ag-hero__wave" viewBox="0 0 1440 90" preserveAspectRatio="none" aria-hidden="true">
-            <path d="M0 40c240 50 480 50 720 20s480-40 720 0v30H0z" fill="#fff" />
+            <path d="M0 30c260 55 520 55 760 22s460-45 680-6v44H0z" fill="rgba(79,159,207,0.28)" />
+            <path d="M0 52c240 40 480 40 720 12s480-34 720 0v26H0z" fill="#eaf3fb" />
           </svg>
         </section>
 

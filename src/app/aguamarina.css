@@ -491,3 +491,74 @@
 .ag-cat .ag-tcard { background: #fff; }
 .ag-cat__head { margin-bottom: clamp(1.25rem, 3vw, 2rem); }
 @media (max-width: 640px) { .ag-cat { border-radius: 28px; padding: 1rem; } }
+
+/* ---- Todo el sitio a partir del logo oficial (azul agua) ---- */
+.ag { --accent: #2f6fae; --accent-d: #265a8c; --link: #2a679f; --deep: #153c61; --foam: #eaf3fb; }
+.ag-hero--water { color: var(--ink);
+  background:
+    radial-gradient(46% 70% at 80% 40%, rgba(122, 197, 214, 0.42), transparent 70%),
+    radial-gradient(40% 60% at 6% 90%, rgba(79, 159, 207, 0.18), transparent 70%),
+    linear-gradient(180deg, #ffffff 0%, #f1f8fd 100%); }
+.ag-hero__title { color: var(--deep); }
+.ag-hero__lead { color: #3d5a73; opacity: 1; }
+.ag-hero__link { color: var(--accent); }
+.ag-hero--water .ag-btn--light { background: var(--accent); color: #fff !important; }
+.ag-hero__logo .ag-medallion { filter: drop-shadow(0 12px 24px rgba(47, 111, 174, 0.2)); }
+.ag-hero__wave { display: block; height: clamp(50px, 7vw, 100px); }
+.ag-section--tiles { background: var(--foam); padding-top: 0; }
+.ag-cat { background: #fff; }
+.ag-cat .ag-tcard { background: var(--alt); }
+.ag-meet__text .ag-lead { color: #c3d6e8; }
+
+/* ================= Celular ================= */
+@media (max-width: 640px) {
+  .ag-section { padding: 2.75rem 0; }
+  .ag-section--tiles { padding-top: 0; }
+  .ag-head { margin-bottom: 1.5rem; }
+  .ag-h2 { font-size: 2rem; }
+  /* Portada */
+  .ag-hero--water { padding: 1.25rem 0 3.5rem; }
+  .ag-hero__title { max-width: none; margin-inline: auto; text-align: center; font-size: 2.125rem; }
+  .ag-hero__lead { font-size: 1rem; }
+  .ag-hero__grid { gap: 1rem; }
+  /* Tratamientos: 2 columnas, foto cuadrada, sin texto largo */
+  .ag-tgrid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  .ag-tcard { border-radius: 20px; }
+  .ag-tcard__img { aspect-ratio: 1 / 1; }
+  .ag-tcard__ph { width: 72%; }
+  .ag-tcard__body { padding: 0.75rem 0.6rem 0; gap: 0; }
+  .ag-tcard__name { font-size: 1rem; line-height: 1.2; }
+  .ag-tcard__desc { display: none; }
+  .ag-tcard__go, .ag-tcard .ag-tcard__btn { font-size: 0.875rem; padding-inline: 0.75rem; }
+  .ag-cat { padding: 0.85rem; border-radius: 26px; }
+  .ag-cat__head { margin-bottom: 0.9rem; }
+  .ag-cat__head .ag-h3 { font-size: 1.5rem; }
+  /* Promos y políticas en una columna, más compactas */
+  .ag-promo { padding: 1.25rem; }
+  .ag-policies li { padding: 1.1rem; }
+  /* Tienda */
+  .ag-shop { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  .ag-product__name { font-size: 1rem; }
+  .ag-product__desc { display: none; }
+}
+@media (max-width: 640px) {
+  .ag-tcard__btn { font-size: 0.875rem; margin: 0.6rem 0.6rem 0.75rem; padding: 0 0.5rem; white-space: nowrap; }
+  .ag-product__body { padding: 0.9rem 0.8rem 0; }
+  .ag-product__cta { padding: 0.75rem 0.8rem 0.9rem; }
+  .ag-product__cta .ag-btn { font-size: 0.875rem; padding-inline: 0.5rem; }
+  .ag-product__img { aspect-ratio: 1 / 1; }
+}
+@media (max-width: 640px) {
+  .ag-tgrid > :last-child:nth-child(odd), .ag-shop > :last-child:nth-child(odd) { grid-column: 1 / -1; }
+  .ag-tgrid > :last-child:nth-child(odd) .ag-tcard__img { aspect-ratio: 16 / 9; }
+}
+@media (max-width: 640px) {
+  .ag-promos { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; gap: 10px; margin-inline: -1rem; padding: 0 1rem 0.5rem; scrollbar-width: none; }
+  .ag-promos::-webkit-scrollbar { display: none; }
+  .ag-promo { flex: 0 0 82%; scroll-snap-align: center; }
+}
+@media (max-width: 640px) {
+  .ag-lead { font-size: 1.0625rem; line-height: 1.5; }
+  .ag-svc-hero .ag-h1 { font-size: 2.5rem; }
+  .ag-svc-hero { padding-block: 1.5rem 2.5rem; }
+}
