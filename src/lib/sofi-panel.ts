@@ -31,7 +31,8 @@ const N = (d: string) => ({ type: "number", description: d });
 export const TOOLS = [
   fn("ver_turnos", "Lista los turnos entre dos fechas (inclusive). Úsala para saber qué hay en la agenda.", { desde: S("AAAA-MM-DD"), hasta: S("AAAA-MM-DD") }, ["desde", "hasta"]),
   fn("buscar_clientes", "Busca clientas por nombre o teléfono y devuelve su saldo.", { texto: S("nombre o parte del nombre") }, ["texto"]),
-  fn("ver_catalogo", "Lista los tratamientos con precio y duración.", {}),
+  fn("ver_catalogo", "Lista los tratamientos y productos del sitio con precio, duración y si tienen foto/descripción. Úsala para saber qué le falta a la web.", {}),
+  fn("proponer_edicion_item", "Prepara cambiar precio, duración o descripción de un tratamiento/producto del sitio. Las fotos las sube Ingrid con el botón de cámara del chat.", { item: S("nombre exacto del tratamiento o producto"), precio: N("opcional"), duracion_min: N("opcional"), descripcion: S("opcional, texto nuevo para la web") }, ["item"]),
   fn("ver_caja", "Resumen de cobros, gastos y total de un rango de fechas.", { desde: S("AAAA-MM-DD"), hasta: S("AAAA-MM-DD") }, ["desde", "hasta"]),
   fn("proponer_turno", "Prepara un turno nuevo para que Ingrid lo confirme. No lo crea todavía.", {
     cliente: S("nombre de la clienta"), servicio: S("tratamiento (idealmente uno del catálogo)"), fecha: S("AAAA-MM-DD"), hora: S("HH:MM en 24 hs"),
@@ -79,8 +80,8 @@ export async function runTool(name: string, a: Record<string, unknown>, c: Ctx):
       return { result: { clientas: list.map((x) => ({ nombre: x.full_name, telefono: x.phone, saldo_que_debe: (mv ?? []).filter((m) => m.client_id === x.id).reduce((s, m) => s + (m.kind === "cargo" ? Number(m.amount) : m.kind === "pago" ? -Number(m.amount) : 0), 0) })) } };
     }
     case "ver_catalogo": {
-      const { data } = await c.sb.from("catalog_items").select("name, price, duration_minutes, category").eq("tenant_id", c.tenantId).eq("active", true).order("sort_order").limit(80);
-      return { result: (data ?? []).map((x) => ({ nombre: x.name, precio: x.price, minutos: x.duration_minutes, categoria: x.category })) };
+      const { data } = await c.sb.from("catalog_items").select("name, price, duration_minutes, category, image_url, description").eq("tenant_id", c.tenantId).eq("active", true).order("sort_order").limit(80);
+      return { result: (data ?? []).map((x) => ({ nombre: x.name, precio: x.price, minutos: x.duration_minutes, categoria: x.category, tiene_foto: !!x.image_url, tiene_descripcion: !!x.description })) };
     }
     case "ver_caja": {
       const d = str(a.desde), h = str(a.hasta);
@@ -144,6 +145,18 @@ export async function runTool(name: string, a: Record<string, unknown>, c: Ctx):
       const method = str(a.medio) || null;
       const label = `Pago a cuenta: ${matches[0].full_name} · ${money(amount)}${method ? ` (${method})` : ""}`;
       return { result: { ok: true, propuesta: label }, pending: { kind: "pago_cliente", args: { client_id: matches[0].id, amount, method }, label } };
+    }
+    case "proponer_edicion_item": {
+      const { data: all } = await c.sb.from("catalog_items").select("id, name").eq("tenant_id", c.tenantId);
+      const it = (all ?? []).find((x) => fold(x.name) === fold(str(a.item))) ?? (all ?? []).find((x) => fold(x.name).includes(fold(str(a.item))));
+      if (!it) return { result: { error: "no encontré ese tratamiento, usá ver_catalogo" } };
+      const patch: Record<string, unknown> = {};
+      if (num(a.precio) !== null) patch.price = num(a.precio);
+      if (num(a.duracion_min)) patch.duration_minutes = num(a.duracion_min);
+      if (str(a.descripcion)) patch.description = str(a.descripcion).slice(0, 1500);
+      if (!Object.keys(patch).length) return { result: { error: "no indicaste qué cambiar" } };
+      const label = `Cambiar "${it.name}" en la web: ${[patch.price != null ? `precio ${money(patch.price as number)}` : "", patch.duration_minutes ? `${patch.duration_minutes} min` : "", patch.description ? "nueva descripción" : ""].filter(Boolean).join(", ")}`;
+      return { result: { ok: true, propuesta: label }, pending: { kind: "editar_item", args: { id: it.id, patch }, label } };
     }
     case "proponer_clienta": {
       const nombre = str(a.nombre);
@@ -222,6 +235,24 @@ export async function execute(kind: string, a: Record<string, unknown>, c: Ctx):
       if (error) throw new Error(error.message);
       return `Listo, anoté el pago de ${money(amount)} ✅`;
     }
+    case "editar_item": {
+      const p = (a.patch ?? {}) as Record<string, unknown>;
+      const patch: Record<string, unknown> = {};
+      if (num(p.price) !== null) patch.price = num(p.price);
+      if (num(p.duration_minutes)) patch.duration_minutes = num(p.duration_minutes);
+      if (str(p.description)) patch.description = str(p.description).slice(0, 1500);
+      if (!Object.keys(patch).length) throw new Error("nada para cambiar");
+      const { error } = await sb.from("catalog_items").update(patch).eq("id", str(a.id)).eq("tenant_id", tenantId);
+      if (error) throw new Error(error.message);
+      return "Listo, ya quedó actualizado en la web ✅";
+    }
+    case "asignar_foto": {
+      const url = str(a.url);
+      if (!url.includes(`/aguamarina-media/${tenantId}/`)) throw new Error("foto inválida");
+      const { error } = await sb.from("catalog_items").update({ image_url: url }).eq("id", str(a.id)).eq("tenant_id", tenantId);
+      if (error) throw new Error(error.message);
+      return "Listo, la foto ya está en la web ✅";
+    }
     case "crear_clienta": {
       const name = str(a.name);
       if (!name) throw new Error("falta el nombre");
@@ -243,7 +274,8 @@ Lo que podés hacer:
 1) Consultar agenda, clientas, catálogo y caja con tus herramientas (usalas, no inventes datos).
 2) Preparar acciones (turnos nuevos, mover/confirmar/cancelar turnos, cobros, gastos, pagos de clientas, clientas nuevas) con las herramientas "proponer_*". Nunca se ejecutan solas: Ingrid las confirma con un botón. Después de proponer, decí en una frase corta que lo revise y confirme abajo. Si falta un dato imprescindible (clienta, tratamiento, día u hora) preguntalo en una sola frase. Si hay varias clientas con el mismo nombre, preguntá cuál.
 3) Escribir textos: copies para Instagram/WhatsApp/historias, descripciones de tratamientos, mensajes de recordatorio o de seguimiento a clientas, respuestas a consultas, promociones. Usá solo información real del gabinete; entregá el texto listo para copiar, con emojis medidos, sin inventar precios ni resultados médicos ni promesas exageradas.
-4) Ayudar a pensar: resumir el día o la semana, avisar turnos sin confirmar, huecos libres, ideas de promos.
+4) Ayudar con el contenido de la web: ver qué tratamientos o productos no tienen foto o descripción (ver_catalogo), cambiar precio/duración/descripción (proponer_edicion_item) y escribir descripciones. Fotos: no las podés subir vos; decile que toque el botón de cámara 📷 del chat, elija la foto y después elija a qué tratamiento va. Esto SÍ es parte de tu trabajo, nunca digas que está fuera de alcance.
+5) Ayudar a pensar: resumir el día o la semana, avisar turnos sin confirmar, huecos libres, ideas de promos.
 Si te piden algo que no tiene que ver con el gabinete, decilo amablemente y volvé a lo tuyo.
 
 Tratamientos y precios del catálogo:

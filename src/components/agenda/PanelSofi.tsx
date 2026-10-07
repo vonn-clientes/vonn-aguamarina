@@ -2,10 +2,12 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useKeyboardFit } from "@/lib/use-keyboard-fit";
+import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 
 type Pending = { kind: string; args: Record<string, unknown>; label: string; state?: "idle" | "busy" | "done" | "skipped" };
-type Msg = { role: "user" | "assistant"; content: string; pending?: Pending[] };
+type Item = { id: string; name: string; hasPhoto: boolean };
+type Msg = { role: "user" | "assistant"; content: string; pending?: Pending[]; photo?: { url: string; items: Item[] } };
 
 const CHIPS = [
   "¿Qué turnos tengo hoy?",
@@ -14,6 +16,7 @@ const CHIPS = [
   "Reservá un turno",
   "Escribime un copy para Instagram",
   "Armá un mensaje de recordatorio",
+  "¿Qué le falta a la web?",
 ];
 
 export function PanelSofi() {
@@ -76,6 +79,46 @@ export function PanelSofi() {
     }
   }
 
+  async function onPhoto(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    e.target.value = "";
+    if (!file || busy) return;
+    setBusy(true);
+    try {
+      const bmp = await createImageBitmap(file);
+      const sc = Math.min(1, 1200 / Math.max(bmp.width, bmp.height));
+      const cv = document.createElement("canvas");
+      cv.width = Math.round(bmp.width * sc);
+      cv.height = Math.round(bmp.height * sc);
+      cv.getContext("2d")!.drawImage(bmp, 0, 0, cv.width, cv.height);
+      const blob: Blob = await new Promise((res, rej) => cv.toBlob((b) => (b ? res(b) : rej()), "image/webp", 0.8));
+      const meta = await (await fetch("/api/sofi/panel/items")).json();
+      const path = `${meta.tenantId}/sofi-${Date.now()}.webp`;
+      const sb = createClient();
+      const { error } = await sb.storage.from("aguamarina-media").upload(path, blob, { contentType: "image/webp" });
+      if (error) throw error;
+      const url = sb.storage.from("aguamarina-media").getPublicUrl(path).data.publicUrl;
+      setMsgs((cur) => [...cur, { role: "user", content: "📷 Te mandé una foto" }, { role: "assistant", content: "¡Linda! ¿A qué tratamiento o producto se la pongo? (los que no tienen foto van primero)", photo: { url, items: meta.items } }]);
+    } catch {
+      setMsgs((cur) => [...cur, { role: "assistant", content: "No pude subir la foto, probá con otra 💙" }]);
+    }
+    setBusy(false);
+  }
+
+  async function assign(mi: number, it: Item) {
+    const url = msgs[mi].photo?.url;
+    if (!url) return;
+    setMsgs((cur) => cur.map((m, i) => (i === mi ? { ...m, photo: undefined } : m)));
+    try {
+      const r = await fetch("/api/sofi/panel/confirm", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ kind: "asignar_foto", args: { id: it.id, url } }) });
+      const j = await r.json();
+      setMsgs((cur) => [...cur, { role: "assistant", content: j.ok ? `Listo, puse la foto en "${it.name}" ✅` : j.message }]);
+      if (j.ok) router.refresh();
+    } catch {
+      setMsgs((cur) => [...cur, { role: "assistant", content: "No pude guardarla, probá de nuevo 💙" }]);
+    }
+  }
+
   async function copy(i: number, t: string) {
     try {
       await navigator.clipboard.writeText(t);
@@ -131,6 +174,14 @@ export function PanelSofi() {
                     {copied === mi ? "Copiado ✓" : "Copiar texto"}
                   </button>
                 )}
+                {m.photo && (
+                  <div className="ag-ps__chips">
+                    <img src={m.photo.url} alt="" className="ag-ps__thumb" />
+                    {m.photo.items.map((it) => (
+                      <button key={it.id} onClick={() => assign(mi, it)}>{it.name}{it.hasPhoto ? "" : " · sin foto"}</button>
+                    ))}
+                  </div>
+                )}
                 {m.pending?.map((p, pi) => (
                   <div key={pi} className={`ag-ps__act ag-ps__act--${p.state}`}>
                     <span>{p.label}</span>
@@ -166,6 +217,10 @@ export function PanelSofi() {
               send(text);
             }}
           >
+            <label className="ag-ps__cam" aria-label="Enviar una foto">
+              📷
+              <input type="file" accept="image/*" className="sr-only" onChange={onPhoto} disabled={busy} />
+            </label>
             <textarea
               ref={input}
               value={text}
