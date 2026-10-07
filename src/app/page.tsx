@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getPublicSite } from "@/lib/public-data";
@@ -174,8 +175,7 @@ export default async function Home() {
           <div className={`ag-wrap ag-meet ag-rise${content?.about_image_url ? "" : " ag-meet--solo"}`}>
             {content?.about_image_url && (
               <div className="ag-meet__photo">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={content.about_image_url} alt={seoAlt(SITE.owner, "perfil")} width={560} height={700} />
+                <Image src={content.about_image_url} alt={seoAlt(SITE.owner, "perfil")} width={560} height={700} sizes="(max-width: 800px) 90vw, 460px" quality={75} />
               </div>
             )}
             <div className="ag-meet__text">

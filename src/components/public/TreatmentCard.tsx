@@ -11,8 +11,7 @@ export function TreatmentCard({ item }: { item: CatalogItem }) {
     <Link className="ag-tcard ag-rise" href={`/tratamientos/${slugify(item.name)}`}>
       <span className="ag-tcard__img">
         {item.image_url ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img src={item.image_url} alt={seoAlt(item.name)} width={640} height={800} loading="lazy" />
+          <Image src={item.image_url} alt={seoAlt(item.name)} width={640} height={800} sizes="(max-width: 760px) 46vw, (max-width: 1100px) 30vw, 380px" quality={70} />
         ) : (
           <Image src="/logo-aguamarina-oficial.png" alt="" width={300} height={105} className="ag-tcard__ph" />
         )}

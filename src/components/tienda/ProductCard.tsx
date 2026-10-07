@@ -14,8 +14,7 @@ export function ProductCard({ item, whatsapp }: { item: CatalogItem; whatsapp: s
     <article className="ag-product ag-rise" id={slugify(item.name)}>
       <div className="ag-product__img">
         {item.image_url ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img src={item.image_url} alt={seoAlt(item.name, "producto")} width={640} height={640} loading="lazy" />
+          <Image src={item.image_url} alt={seoAlt(item.name, "producto")} width={640} height={640} sizes="(max-width: 760px) 46vw, (max-width: 1100px) 30vw, 300px" quality={70} />
         ) : (
           <Image src="/logo-aguamarina-oficial.png" alt="" width={300} height={105} className="ag-product__ph" />
         )}
