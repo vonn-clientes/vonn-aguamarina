@@ -401,3 +401,11 @@
 .ag-count { color: var(--soft); font-size: 0.9375rem; margin: 0 0 0.75rem; }
 .ag-empty { text-align: center; padding: 3rem 1rem; display: grid; gap: 1rem; justify-items: center; color: var(--soft); }
 .ag-product__skins { font-size: 0.8125rem; color: var(--accent); margin: 0.35rem 0 0; }
+
+/* ---- Políticas ---- */
+.ag-policies { list-style: none; margin: 0 auto; padding: 0; display: grid; gap: 12px; grid-template-columns: 1fr; max-width: 62rem; }
+@media (min-width: 640px) { .ag-policies { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 980px) { .ag-policies { grid-template-columns: repeat(3, 1fr); } }
+.ag-policies li { background: var(--alt); border-radius: 22px; padding: 1.5rem; }
+.ag-policies h3 { font-size: 1.125rem; font-weight: 600; margin: 0 0 0.4rem; letter-spacing: -0.01em; }
+.ag-policies p { margin: 0; color: var(--soft); font-size: 1rem; line-height: 1.5; }

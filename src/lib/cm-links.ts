@@ -5,6 +5,7 @@ export const CM_SECTIONS: { name: string; path: string; slug: string; onlyWithPr
   { name: "Todos los tratamientos", path: "/#tratamientos", slug: "tratamientos" },
   { name: "Conocé a Ingrid", path: "/#ingrid", slug: "ingrid" },
   { name: "Tu primera visita, paso a paso", path: "/#turnos", slug: "primera-visita" },
+  { name: "Políticas del gabinete (cancelaciones, packs)", path: "/#politicas", slug: "politicas" },
   { name: "Preguntas frecuentes", path: "/#preguntas", slug: "preguntas" },
   { name: "Dónde estamos (mapa y dirección)", path: "/#donde", slug: "donde-estamos" },
   { name: "Pedir asesoramiento", path: "/#asesoramiento", slug: "asesoramiento" },

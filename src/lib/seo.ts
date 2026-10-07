@@ -169,6 +169,14 @@ export const FAQ: { q: string; a: string }[] = [
   },
   {
     q: "¿Qué pasa si no puedo asistir al turno?",
-    a: "Avisanos con anticipación por WhatsApp para reprogramarlo. Así otra persona puede aprovechar ese horario.",
+    a: "Tenés que avisar con 24 horas de anticipación. Si no avisás a tiempo, se abona el 50% de la sesión.",
+  },
+  {
+    q: "¿Cuánto tiempo esperan si llego tarde?",
+    a: "Con aviso previo, la espera es de 15 minutos. Sin aviso, se aguardan 10 minutos y el turno se da por cancelado.",
+  },
+  {
+    q: "¿Cuánto duran los packs y los vouchers?",
+    a: "Los packs tienen una duración de 1 mes y medio, y los vouchers tienen vigencia de 1 mes.",
   },
 ];

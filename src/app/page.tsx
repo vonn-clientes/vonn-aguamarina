@@ -28,6 +28,14 @@ const CATEGORY_HEADLINES: Record<string, string> = {
   "Manos y estilo": "Manos, maquillaje y peinados.",
 };
 
+const POLICIES = [
+  { title: "Turnos en día y horario", text: "Los turnos se respetan en el día y el horario acordados." },
+  { title: "Si no podés venir", text: "Avisanos con 24 horas de anticipación. Si no, se abona el 50% de la sesión." },
+  { title: "Tiempo de espera", text: "Con aviso previo, 15 minutos. Sin aviso, se aguardan 10 minutos y el turno se da por cancelado." },
+  { title: "Packs", text: "Tienen una duración de 1 mes y medio." },
+  { title: "Vouchers", text: "Tienen vigencia de 1 mes." },
+];
+
 const CREDENTIALS = ["Cosmetología y cosmiatría", "Esteticista", "Maquilladora profesional", "Manicura", "Aparatología"];
 
 export default async function Home() {
@@ -195,6 +203,26 @@ export default async function Home() {
             <div className="ag-center">
               <TurnoButton whatsapp={wa}>Sacar turno</TurnoButton>
             </div>
+          </div>
+        </section>
+
+        {/* ---- Políticas ---- */}
+        <section className="ag-section" id="politicas" aria-labelledby="t-politicas">
+          <div className="ag-wrap">
+            <div className="ag-head ag-rise">
+              <h2 className="ag-h2" id="t-politicas">
+                Cómo cuidamos tu turno.
+              </h2>
+              <p className="ag-lead">Estas son las condiciones del gabinete, para que todo sea claro desde el principio.</p>
+            </div>
+            <ul className="ag-policies">
+              {POLICIES.map((p) => (
+                <li className="ag-rise" key={p.title}>
+                  <h3>{p.title}</h3>
+                  <p>{p.text}</p>
+                </li>
+              ))}
+            </ul>
           </div>
         </section>
 
