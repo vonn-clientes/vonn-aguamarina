@@ -79,6 +79,7 @@ export default async function CmPage() {
 
         <section>
           <h2>Secciones del sitio</h2>
+          <p className="ag-lead" style={{ marginBottom: "1rem" }}>Idea para una historia: «Conocé a Sofi, nuestra asistente virtual 💙 Te ayuda a elegir tu tratamiento y a sacar turno». Pegá el link de Sofi con el sticker de link.</p>
           <ul className="ag-cm-list">
             {CM_SECTIONS.filter((x) => !x.onlyWithProducts || products.length > 0).map((x) => (
               <li key={x.slug}>

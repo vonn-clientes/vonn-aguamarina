@@ -18,6 +18,10 @@ export function SofiChat({ whatsapp }: { whatsapp: string | null | undefined }) 
   const end = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    // Link directo desde Instagram: /?sofi=1 abre el chat.
+    try { if (new URLSearchParams(window.location.search).get("sofi")) setOpen(true); } catch {}
+  }, []);
+  useEffect(() => {
     try {
       const s = JSON.parse(sessionStorage.getItem(KEY) || "null");
       if (s) { setName(s.name ?? ""); setMsgs(s.msgs ?? []); setInterest(s.interest ?? []); }
