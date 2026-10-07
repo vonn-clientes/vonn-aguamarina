@@ -18,6 +18,9 @@ import { seoAlt } from "@/lib/seo-image";
 import { Advice, InstagramIcon, JsonLd, MapsIcon, Medallion, SiteFooter, SiteHeader, TurnoButton, WhatsappIcon } from "@/components/public/ag";
 import { ProductCard } from "@/components/tienda/ProductCard";
 import { TreatmentCard } from "@/components/public/TreatmentCard";
+import { ReviewsCarousel } from "@/components/public/ReviewsCarousel";
+import { getSiteReviews, type ShowcaseReview } from "@/lib/reviews";
+import { getGoogleReviews } from "@/lib/google-reviews";
 
 // La página se genera una vez y se refresca sola cada 60 segundos: rápida
 // para quien visita, y los cambios que haga la dueña desde el panel se ven
@@ -45,6 +48,13 @@ export default async function Home() {
   const site = await getPublicSite();
   if (!site) notFound();
   const { content, services, products, promos } = site;
+  const [own, google] = await Promise.all([getSiteReviews(site.tenant.id).catch((): ShowcaseReview[] => []), getGoogleReviews()]);
+  // Intercala opiniones de Google y de la web para que se vean variadas.
+  const showcase: ShowcaseReview[] = [];
+  for (let k = 0; k < Math.max(own.length, google?.reviews.length ?? 0); k++) {
+    if (google?.reviews[k]) showcase.push(google.reviews[k]);
+    if (own[k]) showcase.push(own[k]);
+  }
   const groups = groupByCategory(services);
   const wa = content?.whatsapp_number ?? null;
 
@@ -197,6 +207,18 @@ export default async function Home() {
                   Ver toda la tienda
                 </Link>
               </div>
+            </div>
+          </section>
+        )}
+
+        {/* ---- Opiniones ---- */}
+        {showcase.length > 0 && (
+          <section className="ag-section" id="opiniones" aria-labelledby="t-opiniones">
+            <div className="ag-narrow">
+              <div className="ag-head ag-rise">
+                <h2 id="t-opiniones">Lo que cuentan nuestras clientas</h2>
+              </div>
+              <ReviewsCarousel reviews={showcase} rating={google?.rating ?? null} total={google?.total ?? null} mapsUri={google?.mapsUri ?? null} />
             </div>
           </section>
         )}

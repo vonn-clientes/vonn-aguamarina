@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { createClient as sbClient } from "@supabase/supabase-js";
 import { fallbackReply, fold, getPublicSite, systemPrompt, type ChatMsg } from "@/lib/sofi";
 
 export const dynamic = "force-dynamic";
@@ -83,6 +84,21 @@ export async function POST(req: Request) {
   let text: string | null = null;
   for (const p of providers()) { text = await ask(p, system, messages); if (text) break; }
 
+  // Opinión dejada por chat: se guarda OCULTA para que Ingrid la apruebe desde el panel.
+  let savedReview = false;
+  if (text) {
+    const rm = text.match(/\[\[\s*resena\s*:\s*([^|\]]+)\|\s*([1-5])\s*\|\s*([^\]]+)\]\]/i);
+    if (rm) {
+      const item = [...site.services, ...site.products].find((i) => fold(i.name) === fold(rm[1].trim()));
+      const comment = rm[3].trim().slice(0, 600);
+      if (item && comment.length >= 5) {
+        const sb = sbClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!, { auth: { persistSession: false } });
+        const { error } = await sb.from("reviews").insert({ tenant_id: site.tenant.id, item_id: item.id, author: name ?? "Clienta", rating: Number(rm[2]), comment, visible: false });
+        savedReview = !error;
+      }
+    }
+  }
+
   const names = [...site.services, ...site.products].map((i) => i.name).concat(site.promos.map((p) => p.title));
   let reply: string, mentioned: string[];
   if (text) {
@@ -93,6 +109,6 @@ export async function POST(req: Request) {
   } else {
     ({ reply, mentioned } = fallbackReply(site, messages[messages.length - 1].content, name));
   }
-  return NextResponse.json({ reply, mentioned, via: text ? "ai" : "fallback" });
+  return NextResponse.json({ reply, mentioned, via: text ? "ai" : "fallback", ...(savedReview ? { review: true } : {}) });
 }
 

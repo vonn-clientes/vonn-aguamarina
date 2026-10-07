@@ -767,3 +767,19 @@ body:has(.ag-stickybar) .ag-sofi-fab { bottom: calc(5.5rem + env(safe-area-inset
 .ag-sofi .ag-sofi__vonn img { height: 26px; width: auto; align-self: flex-start; }
 .ag-sofi .ag-sofi__vonn span { font-size: .85rem; line-height: 1.4; color: #3d5a73; }
 .ag-sofi .ag-sofi__vonn b { align-self: flex-start; padding: .45rem .9rem; border-radius: 999px; background: #2f6fae; color: #fff; font-size: .85rem; font-weight: 600; }
+
+/* ---- Carrusel de opiniones (cambia cada 4 s) ---- */
+.ag .ag-rc { max-width: 720px; margin: 0 auto; text-align: center; }
+.ag .ag-rc__sum { margin: 0 0 1.25rem; color: #4b6279; font-size: 1rem; }
+.ag .ag-rc__sum a { color: var(--link); }
+.ag .ag-rc__stage { display: grid; }
+.ag .ag-rc__card { grid-area: 1 / 1; margin: 0; padding: 1.75rem 1.5rem; background: #fff; border-radius: 28px; box-shadow: 0 1px 2px rgba(21,60,97,.06), 0 14px 40px rgba(21,60,97,.1); opacity: 0; transform: translateY(8px); pointer-events: none; transition: opacity .6s cubic-bezier(.28,.11,.32,1), transform .6s cubic-bezier(.28,.11,.32,1); display: flex; flex-direction: column; align-items: center; gap: .9rem; }
+.ag .ag-rc__card.is-on { opacity: 1; transform: none; pointer-events: auto; }
+.ag .ag-rc__card blockquote { margin: 0; font-size: clamp(1.0625rem, 2.6vw, 1.3125rem); line-height: 1.55; color: #1b2b3a; }
+.ag .ag-rc__card figcaption { display: grid; gap: .15rem; font-size: .9375rem; color: #5b7287; }
+.ag .ag-rc__card figcaption strong { color: var(--deep); font-size: 1rem; }
+.ag .ag-rc__dots { display: flex; justify-content: center; margin-top: .6rem; flex-wrap: wrap; }
+.ag .ag-rc__dots button { width: 44px; height: 44px; border: 0; background: none; cursor: pointer; position: relative; padding: 0; }
+.ag .ag-rc__dots button::after { content: ""; position: absolute; inset: 50% auto auto 50%; width: 9px; height: 9px; margin: -4.5px 0 0 -4.5px; border-radius: 50%; background: #c3d5e6; transition: background .3s, transform .3s; }
+.ag .ag-rc__dots button.on::after { background: var(--accent); transform: scale(1.35); }
+@media (prefers-reduced-motion: reduce) { .ag .ag-rc__card { transition: none; } }

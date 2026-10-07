@@ -4,6 +4,7 @@ import Link from "next/link";
 import { requireMembership } from "@/lib/auth";
 import { logout } from "@/app/panel/actions/auth";
 import { AgendaNav } from "@/components/agenda/AgendaNav";
+import { PanelSofi } from "@/components/agenda/PanelSofi";
 
 // Agenda privada de Ingrid: turnos, clientes y caja. Requiere sesión (requireMembership).
 export default async function AgendaLayout({ children }: { children: React.ReactNode }) {
@@ -31,6 +32,7 @@ export default async function AgendaLayout({ children }: { children: React.React
         </div>
       </header>
       <main className="ag-g-wrap">{children}</main>
+      <PanelSofi />
     </div>
   );
 }

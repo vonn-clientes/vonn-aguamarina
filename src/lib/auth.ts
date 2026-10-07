@@ -38,3 +38,21 @@ export async function requireMembership(): Promise<Membership> {
     role: membership.role as TenantMember["role"],
   };
 }
+
+// Igual que requireMembership pero sin redirigir: para rutas de API (devuelve null si no hay acceso).
+export async function getMembership(): Promise<Membership | null> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return null;
+  const { data: membership } = await supabase
+    .from("tenant_members")
+    .select("role, tenant:tenants(*)")
+    .eq("user_id", user.id)
+    .eq("status", "activo")
+    .limit(1)
+    .maybeSingle();
+  if (!membership || !membership.tenant) return null;
+  return { userId: user.id, email: user.email ?? "", tenant: membership.tenant as unknown as Tenant, role: membership.role as TenantMember["role"] };
+}
