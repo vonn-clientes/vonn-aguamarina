@@ -96,9 +96,9 @@ export function SiteHeader({
   showProducts?: boolean;
 }) {
   const nav: NavItem[] = [
+    { href: "/#ingrid", label: "Conocé a Ingrid" },
     { href: "/#tratamientos", label: "Tratamientos" },
     ...(showProducts ? [{ href: "/tienda", label: "Tienda" }] : []),
-    { href: "/#ingrid", label: "Conocé a Ingrid" },
     { href: "/#preguntas", label: "Preguntas" },
     { href: "/#donde", label: "Contacto" },
   ];

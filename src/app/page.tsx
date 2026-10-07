@@ -83,8 +83,38 @@ export default async function Home() {
           </div>
           <svg className="ag-hero__wave" viewBox="0 0 1440 90" preserveAspectRatio="none" aria-hidden="true">
             <path d="M0 30c260 55 520 55 760 22s460-45 680-6v44H0z" fill="rgba(79,159,207,0.28)" />
-            <path d="M0 52c240 40 480 40 720 12s480-34 720 0v26H0z" fill="#eaf3fb" />
+            <path d="M0 52c240 40 480 40 720 12s480-34 720 0v26H0z" fill="#153c61" />
           </svg>
+        </section>
+
+        {/* ---- Ingrid ---- */}
+        <section className="ag-section ag-section--deep" id="ingrid" aria-labelledby="t-ingrid">
+          <div className="ag-wrap ag-meet ag-rise">
+            <div className="ag-meet__photo">
+              {content?.about_image_url ? (
+                <Image src={content.about_image_url} alt={seoAlt(SITE.owner, "perfil")} width={560} height={700} sizes="(max-width: 800px) 90vw, 460px" quality={75} />
+              ) : (
+                <div className="ag-meet__ph" role="img" aria-label={`Foto de ${SITE.owner}, próximamente`}>
+                  <Image src="/logo-aguamarina-oficial.png" alt="" width={240} height={84} sizes="240px" />
+                </div>
+              )}
+            </div>
+            <div className="ag-meet__text">
+              <p className="ag-kicker ag-kicker--light">Conocé a la profesional</p>
+              <h2 className="ag-h2" id="t-ingrid">
+                {SITE.owner}
+              </h2>
+              {content?.about_text && <p className="ag-lead">{content.about_text}</p>}
+              <ul className="ag-creds">
+                {CREDENTIALS.map((c) => (
+                  <li key={c}>{c}</li>
+                ))}
+              </ul>
+              <TurnoButton whatsapp={wa} tone="light" text="Hola Ingrid! Quiero sacar un turno">
+                Sacar turno con Ingrid
+              </TurnoButton>
+            </div>
+          </div>
         </section>
 
         {/* ---- Tratamientos ---- */}
@@ -170,36 +200,6 @@ export default async function Home() {
             </div>
           </section>
         )}
-
-        {/* ---- Ingrid ---- */}
-        <section className="ag-section ag-section--deep" id="ingrid" aria-labelledby="t-ingrid">
-          <div className="ag-wrap ag-meet ag-rise">
-            <div className="ag-meet__photo">
-              {content?.about_image_url ? (
-                <Image src={content.about_image_url} alt={seoAlt(SITE.owner, "perfil")} width={560} height={700} sizes="(max-width: 800px) 90vw, 460px" quality={75} />
-              ) : (
-                <div className="ag-meet__ph" role="img" aria-label={`Foto de ${SITE.owner}, próximamente`}>
-                  <Image src="/logo-aguamarina-oficial.png" alt="" width={240} height={84} sizes="240px" />
-                </div>
-              )}
-            </div>
-            <div className="ag-meet__text">
-              <p className="ag-kicker ag-kicker--light">Conocé a la profesional</p>
-              <h2 className="ag-h2" id="t-ingrid">
-                {SITE.owner}
-              </h2>
-              {content?.about_text && <p className="ag-lead">{content.about_text}</p>}
-              <ul className="ag-creds">
-                {CREDENTIALS.map((c) => (
-                  <li key={c}>{c}</li>
-                ))}
-              </ul>
-              <TurnoButton whatsapp={wa} tone="light" text="Hola Ingrid! Quiero sacar un turno">
-                Sacar turno con Ingrid
-              </TurnoButton>
-            </div>
-          </div>
-        </section>
 
         {/* ---- Contacto y ubicación ---- */}
         <section className="ag-section" id="donde" aria-labelledby="t-donde">
