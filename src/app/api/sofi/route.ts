@@ -34,12 +34,13 @@ async function ask(p: Provider, system: string, messages: ChatMsg[]): Promise<st
     const res = await fetch(`${p.base}/chat/completions`, {
       method: "POST",
       headers: { "content-type": "application/json", authorization: `Bearer ${p.key}` },
-      body: JSON.stringify({ model: p.model, temperature: 0.5, max_tokens: 400, messages: [{ role: "system", content: system }, ...messages] }),
+      body: JSON.stringify({ model: p.model, temperature: 0.5, max_tokens: 900, ...(p.model.includes("gpt-oss") ? { reasoning_effort: "low" } : {}), messages: [{ role: "system", content: system }, ...messages] }),
       signal: AbortSignal.timeout(12_000),
     });
     if (!res.ok) { lastErr = `${p.model}:${res.status}`; return null; }
     const j = await res.json();
     const t = j?.choices?.[0]?.message?.content;
+    if (!(typeof t === "string" && t.trim())) lastErr = `${p.model}:vacio`;
     return typeof t === "string" && t.trim() ? t.trim() : null;
   } catch (e) {
     lastErr = `${p.model}:${e instanceof Error ? e.name : "err"}`;
@@ -78,4 +79,15 @@ export async function POST(req: Request) {
     ({ reply, mentioned } = fallbackReply(site, messages[messages.length - 1].content, name));
   }
   return NextResponse.json({ reply, mentioned, via: text ? "ai" : `fallback ${lastErr}` });
+}
+
+// Diagnóstico: lista los modelos disponibles para la clave configurada (no expone la clave).
+export async function GET() {
+  const p = providers()[0];
+  if (!p) return NextResponse.json({ error: "sin configurar" });
+  try {
+    const r = await fetch(`${p.base}/models`, { headers: { authorization: `Bearer ${p.key}` }, signal: AbortSignal.timeout(8000) });
+    const j = await r.json();
+    return NextResponse.json({ status: r.status, models: (j?.data ?? []).map((m: { id: string }) => m.id), configured: providers().map((x) => x.model) });
+  } catch { return NextResponse.json({ error: "fallo" }); }
 }

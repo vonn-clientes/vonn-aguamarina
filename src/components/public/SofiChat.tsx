@@ -77,12 +77,12 @@ export function SofiChat({ whatsapp }: { whatsapp: string | null | undefined }) 
             <button onClick={() => setOpen(false)} aria-label="Cerrar chat">×</button>
           </header>
           <div className="ag-sofi__body" aria-live="polite">
-            <div className="ag-sofi__bot">¡Hola! Soy Sofi, la asesora virtual de Aguamarina 🌊 Te ayudo a elegir tratamientos, productos y packs. {name ? `¿En qué te ayudo, ${name}?` : "¿Cómo te llamás?"}</div>
+            <div className="ag-sofi__bot">¡Hola! Soy Sofi, la asesora virtual de Aguamarina 🌊 Te ayudo a elegir tratamientos, productos y packs. ¿Cómo te llamás?</div>
             {msgs.map((m, i) => (
               <div key={i} className={m.role === "user" ? "ag-sofi__me" : "ag-sofi__bot"}>{m.content}</div>
             ))}
             {busy && <div className="ag-sofi__bot ag-sofi__typing" aria-label="Sofi está escribiendo"><i /><i /><i /></div>}
-            {name && msgs.length === 0 && (
+            {name && msgs.length <= 1 && !busy && (
               <div className="ag-sofi__chips">{CHIPS.map((c) => (<button key={c} onClick={() => send(c)}>{c}</button>))}</div>
             )}
             <div ref={end} />
@@ -94,7 +94,7 @@ export function SofiChat({ whatsapp }: { whatsapp: string | null | undefined }) 
             </a>
           )}
           {!name ? (
-            <form className="ag-sofi__form" onSubmit={(e) => { e.preventDefault(); const n = nameDraft.trim().slice(0, 30); if (n) setName(n); }}>
+            <form className="ag-sofi__form" onSubmit={(e) => { e.preventDefault(); const n = nameDraft.trim().slice(0, 30); if (n) { setName(n); setMsgs([{ role: "assistant", content: `¡Qué lindo conocerte, ${n}! 💙 ¿En qué te puedo ayudar? Contame si buscás algo para la cara, el cuerpo o algún producto.` }]); } }}>
               <input value={nameDraft} onChange={(e) => setNameDraft(e.target.value)} placeholder="Tu nombre" aria-label="Tu nombre" autoComplete="given-name" />
               <button type="submit">Empezar</button>
             </form>
