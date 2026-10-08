@@ -132,7 +132,7 @@ export default async function ProductPage(props: PageProps<"/tienda/[slug]">) {
 
         <ProductGuide item={item} />
 
-        <Reviews itemId={item.id} itemName={item.name} reviews={reviews} path={path} />
+        <Reviews itemId={item.id} itemName={item.name} reviews={reviews} path={path} kind="producto" />
         <Advice whatsapp={wa} topic={item.name} />
       </main>
       <SiteFooter content={content} />

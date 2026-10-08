@@ -829,3 +829,8 @@ html.ag-chat-open, html.ag-chat-open body { background: #f3f8fc !important; over
 .ag-product__img img:not(.ag-product__ph) { position: absolute; inset: 0; }
 .ag-pdp__img { position: relative; }
 .ag-pdp__img img:not(.ag-product__ph) { position: absolute; inset: 0; }
+.ag-product { position: relative; }
+.ag-product__name a::after { content: ""; position: absolute; inset: 0; z-index: 1; }
+.ag-product__cta { position: relative; z-index: 2; }
+.ag-product:hover .ag-product__name a { text-decoration: underline; }
+.ag-product:has(.ag-product__name a:focus-visible) { outline: 3px solid var(--accent); outline-offset: 3px; }

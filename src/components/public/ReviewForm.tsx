@@ -3,7 +3,7 @@
 import { useState, useTransition } from "react";
 import { submitReview } from "@/app/opiniones/actions";
 
-export function ReviewForm({ itemId, itemName, path }: { itemId: string | null; itemName?: string; path: string }) {
+export function ReviewForm({ itemId, itemName, path, kind = "tratamiento" }: { itemId: string | null; itemName?: string; path: string; kind?: "tratamiento" | "producto" }) {
   const [open, setOpen] = useState(false);
   const [rating, setRating] = useState(0);
   const [hover, setHover] = useState(0);
@@ -24,7 +24,7 @@ export function ReviewForm({ itemId, itemName, path }: { itemId: string | null; 
   if (!open)
     return (
       <button type="button" className="ag-btn ag-btn--ghost" onClick={() => setOpen(true)}>
-        {itemName ? `¿Te hiciste ${itemName}? Dejá tu opinión` : "Dejá tu opinión sobre Aguamarina"}
+        {itemName ? (kind === "producto" ? `¿Ya usaste ${itemName}? Dejá tu opinión` : `¿Te hiciste ${itemName}? Dejá tu opinión`) : "Dejá tu opinión sobre Aguamarina"}
       </button>
     );
 

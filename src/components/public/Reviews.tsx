@@ -15,7 +15,7 @@ export function Stars({ value }: { value: number }) {
 const fmt = (d: string) => new Date(d).toLocaleDateString("es-AR", { month: "long", year: "numeric" });
 
 // Opiniones de un tratamiento o producto: promedio, lista y formulario para opinar.
-export function Reviews({ itemId, itemName, reviews, path }: { itemId: string; itemName: string; reviews: Review[]; path: string }) {
+export function Reviews({ itemId, itemName, reviews, path, kind }: { itemId: string; itemName: string; reviews: Review[]; path: string; kind?: "tratamiento" | "producto" }) {
   const { count, avg } = summarize(reviews);
   return (
     <section className="ag-section ag-section--alt" id="opiniones" aria-labelledby="t-opiniones">
@@ -43,7 +43,7 @@ export function Reviews({ itemId, itemName, reviews, path }: { itemId: string; i
           ))}
         </ul>
         <div className="ag-center">
-          <ReviewForm itemId={itemId} itemName={itemName} path={path} />
+          <ReviewForm itemId={itemId} itemName={itemName} path={path} kind={kind} />
         </div>
       </div>
     </section>
