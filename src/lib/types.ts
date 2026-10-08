@@ -43,6 +43,20 @@ export interface SiteContent {
   schedule: Record<string, string>;
 }
 
+export interface ProductGuide {
+  marca?: string;
+  linea?: string;
+  tagline?: string;
+  que_es?: string;
+  ingredientes?: { nombre: string; funcion: string }[];
+  cuando?: string[];
+  como_usar?: string[];
+  para_quien?: string[];
+  resultados?: string[];
+  precauciones?: string[];
+  faq?: { q: string; a: string }[];
+}
+
 export interface CatalogItem {
   id: string;
   tenant_id: string;
@@ -60,6 +74,8 @@ export interface CatalogItem {
   product_type?: string | null;
   benefits?: string[];
   good_to_know?: string[];
+  featured?: boolean;
+  guide?: ProductGuide | null;
   sort_order: number;
 }
 

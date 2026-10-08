@@ -14,6 +14,7 @@ export const CONCERNS = [
 export const PRODUCT_TYPES = [
   "Limpieza",
   "Tónicos",
+  "Brumas",
   "Sérums",
   "Hidratantes",
   "Protector solar",

@@ -8,6 +8,7 @@ import { breadcrumbJsonLd, slugify, trimDescription, waLink } from "@/lib/seo";
 import { seoAlt } from "@/lib/seo-image";
 import { Advice, JsonLd, SiteFooter, SiteHeader } from "@/components/public/ag";
 import { AddToCart } from "@/components/tienda/AddToCart";
+import { ProductGuide } from "@/components/tienda/ProductGuide";
 import { Reviews, Stars } from "@/components/public/Reviews";
 import { getReviews, summarize } from "@/lib/reviews";
 
@@ -64,12 +65,17 @@ export default async function ProductPage(props: PageProps<"/tienda/[slug]">) {
     name: item.name,
     description: item.description ?? undefined,
     image: photos.length ? photos : undefined,
-    brand: { "@type": "Brand", name: SITE.name },
+    brand: { "@type": "Brand", name: item.guide?.marca ?? SITE.name },
+    category: item.product_type ?? undefined,
     offers: hasPrice
       ? { "@type": "Offer", priceCurrency: "ARS", price: item.price, availability: soldOut ? "https://schema.org/OutOfStock" : "https://schema.org/InStock", url: `${SITE.url}${path}` }
       : undefined,
     aggregateRating: rating.count > 0 ? { "@type": "AggregateRating", ratingValue: rating.avg, reviewCount: rating.count, bestRating: 5 } : undefined,
   };
+
+  const faqLd = item.guide?.faq?.length
+    ? { "@context": "https://schema.org", "@type": "FAQPage", mainEntity: item.guide.faq.map((f) => ({ "@type": "Question", name: f.q, acceptedAnswer: { "@type": "Answer", text: f.a } })) }
+    : null;
 
   return (
     <div className="ag">
@@ -96,6 +102,7 @@ export default async function ProductPage(props: PageProps<"/tienda/[slug]">) {
             )}
           </div>
           <div className="ag-pdp__info">
+            {item.featured && <span className="ag-pdp__star">★ Producto estrella</span>}
             <h1 className="ag-h1">{item.name}</h1>
             {rating.count > 0 && (
               <a className="ag-rv-badge" href="#opiniones"><Stars value={rating.avg} /> {rating.avg.toFixed(1)} · {rating.count} {rating.count === 1 ? "opinión" : "opiniones"}</a>
@@ -123,11 +130,14 @@ export default async function ProductPage(props: PageProps<"/tienda/[slug]">) {
           </div>
         </section>
 
+        <ProductGuide item={item} />
+
         <Reviews itemId={item.id} itemName={item.name} reviews={reviews} path={path} />
         <Advice whatsapp={wa} topic={item.name} />
       </main>
       <SiteFooter content={content} />
       <JsonLd data={jsonLd} />
+      {faqLd && <JsonLd data={faqLd} />}
       <JsonLd data={breadcrumbJsonLd([{ name: "Inicio", path: "/" }, { name: "Tienda", path: "/tienda" }, { name: item.name, path }])} />
     </div>
   );

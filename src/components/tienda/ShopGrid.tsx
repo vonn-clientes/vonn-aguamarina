@@ -26,6 +26,9 @@ export function ShopGrid({ products, whatsapp }: { products: CatalogItem[]; what
       (!sel.type || p.product_type === sel.type),
   );
 
+  const stars = shown.filter((p) => p.featured);
+  const others = shown.filter((p) => !p.featured);
+
   const groups: { key: keyof Sel; label: string; list: readonly string[] }[] = [
     { key: "skin", label: "Tu tipo de piel", list: options.skins },
     { key: "concern", label: "Qué querés mejorar", list: options.concerns },
@@ -78,11 +81,27 @@ export function ShopGrid({ products, whatsapp }: { products: CatalogItem[]; what
           <p className="ag-count" aria-live="polite">
             {shown.length} {shown.length === 1 ? "producto" : "productos"}
           </p>
+          {stars.length > 0 && (
+            <div className="ag-stars-head">
+              <h2>Productos estrella</h2>
+              <p>Los más elegidos de la tienda: muy buenos y muy efectivos.</p>
+            </div>
+          )}
           <div className="ag-shop">
-            {shown.map((p) => (
+            {stars.map((p) => (
               <ProductCard key={p.id} item={p} whatsapp={whatsapp} />
             ))}
           </div>
+          {others.length > 0 && (
+            <>
+              {stars.length > 0 && <h2 className="ag-others-head">Más productos</h2>}
+              <div className="ag-shop">
+                {others.map((p) => (
+                  <ProductCard key={p.id} item={p} whatsapp={whatsapp} />
+                ))}
+              </div>
+            </>
+          )}
         </>
       )}
     </>

@@ -11,13 +11,14 @@ export function ProductCard({ item, whatsapp }: { item: CatalogItem; whatsapp: s
   const hasPrice = item.price != null;
   const soldOut = !!item.sold_out;
   return (
-    <article className="ag-product ag-rise" id={slugify(item.name)}>
+    <article className={`ag-product ag-rise${item.featured ? " ag-product--star" : ""}`} id={slugify(item.name)}>
       <div className="ag-product__img">
         {item.image_url ? (
           <Image src={item.image_url} alt={seoAlt(item.name, "producto")} width={640} height={640} sizes="(max-width: 760px) 46vw, (max-width: 1100px) 30vw, 300px" quality={70} />
         ) : (
           <Image src="/logo-aguamarina-oficial.png" alt="" width={300} height={105} className="ag-product__ph" />
         )}
+        {item.featured && !soldOut && <span className="ag-product__star">★ Producto estrella</span>}
         {soldOut && <span className="ag-product__tag">Agotado</span>}
       </div>
       <div className="ag-product__body">

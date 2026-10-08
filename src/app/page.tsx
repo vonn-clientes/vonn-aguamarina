@@ -194,12 +194,12 @@ export default async function Home() {
             <div className="ag-wrap">
               <div className="ag-head ag-rise">
                 <h2 className="ag-h2" id="t-productos">
-                  Tienda
+                  {products.some((p) => p.featured) ? "Productos estrella" : "Tienda"}
                 </h2>
                 <p className="ag-lead">Para seguir en casa lo que trabajamos en Aguamarina.</p>
               </div>
               <div className="ag-shop">
-                {products.slice(0, 4).map((p) => (
+                {[...products].sort((a, b) => Number(!!b.featured) - Number(!!a.featured)).slice(0, 4).map((p) => (
                   <ProductCard key={p.id} item={p} whatsapp={wa} />
                 ))}
               </div>

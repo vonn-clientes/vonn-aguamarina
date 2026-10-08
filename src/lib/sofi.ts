@@ -13,7 +13,9 @@ export function catalogContext(site: PublicSite): string {
     `- ${i.name} (${i.category ?? "Tratamiento"}${i.duration_minutes ? `, ${i.duration_minutes} min` : ""}, ${money(i.price)}): ${i.description ?? ""}` +
     `${i.benefits?.length ? ` Beneficios: ${i.benefits.join("; ")}.` : ""}${i.good_to_know?.length ? ` Es bueno saber: ${i.good_to_know.join("; ")}.` : ""}`;
   const prod = (i: CatalogItem) =>
-    `- ${i.name} (${money(i.price)}${i.sold_out ? ", AGOTADO por ahora" : ""}): ${i.description ?? ""}`;
+    `- ${i.name} (${money(i.price)}${i.sold_out ? ", AGOTADO por ahora" : ""}${i.featured ? ", PRODUCTO ESTRELLA" : ""}): ${i.description ?? ""}` +
+    `${i.skin_types?.length ? ` Piel: ${i.skin_types.join(", ")}.` : ""}${i.benefits?.length ? ` Beneficios: ${i.benefits.join("; ")}.` : ""}` +
+    `${i.guide?.ingredientes?.length ? ` Activos: ${i.guide.ingredientes.map((g) => g.nombre).join(", ")}.` : ""}${i.guide?.como_usar?.length ? ` Cómo se usa: ${i.guide.como_usar.join(" ")}` : ""}${i.guide?.precauciones?.length ? ` Precauciones: ${i.guide.precauciones.join(" ")}` : ""}`;
   const c = site.content;
   const schedule = c?.schedule && Object.keys(c.schedule).length ? Object.entries(c.schedule).map(([d, h]) => `${d}: ${h}`).join(" | ") : "se coordina por WhatsApp";
   return [
