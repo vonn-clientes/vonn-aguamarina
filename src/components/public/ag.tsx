@@ -99,6 +99,7 @@ export function SiteHeader({
     { href: "/#ingrid", label: "Conocé a Ingrid" },
     { href: "/#tratamientos", label: "Tratamientos" },
     ...(showProducts ? [{ href: "/tienda", label: "Tienda" }] : []),
+    { href: "/guias", label: "Guías" },
     { href: "/#preguntas", label: "Preguntas" },
     { href: "/#donde", label: "Contacto" },
   ];
@@ -155,6 +156,11 @@ export function SiteFooter({ content }: { content: SiteContent | null }) {
             </a>
           </div>
         </div>
+        <nav className="ag-footer__links" aria-label="Más en el sitio">
+          <Link href="/estetica-concepcion-del-uruguay">Estética en {SITE.city}</Link>
+          <Link href="/tienda">Tienda</Link>
+          <Link href="/guias">Guías</Link>
+        </nav>
         <div className="ag-footer__bottom">
           <p>© {new Date().getFullYear()} {SITE.name}</p>
           <a className="ag-made" href="https://www.vonn.com.ar" target="_blank" rel="noopener noreferrer" aria-label="Sitio creado por VONN. Ir a vonn.com.ar">

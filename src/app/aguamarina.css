@@ -834,3 +834,26 @@ html.ag-chat-open, html.ag-chat-open body { background: #f3f8fc !important; over
 .ag-product__cta { position: relative; z-index: 2; }
 .ag-product:hover .ag-product__name a { text-decoration: underline; }
 .ag-product:has(.ag-product__name a:focus-visible) { outline: 3px solid var(--accent); outline-offset: 3px; }
+
+/* ---- Guías (blog) ---- */
+.ag-guias { display: grid; gap: 1rem; }
+@media (min-width: 760px) { .ag-guias { grid-template-columns: repeat(3, 1fr); } }
+.ag-guia-card { background: #fff; border-radius: 28px; padding: 1.5rem; display: flex; flex-direction: column; gap: 0.6rem; position: relative; }
+.ag-guia-card h2 { font-size: 1.25rem; font-weight: 600; letter-spacing: -0.02em; line-height: 1.25; }
+.ag-guia-card h2 a { color: inherit; text-decoration: none; }
+.ag-guia-card h2 a::after { content: ""; position: absolute; inset: 0; border-radius: 28px; }
+.ag-guia-card:hover h2 a { text-decoration: underline; }
+.ag-guia-card p { color: var(--soft); }
+.ag-guia-card span { color: var(--accent-d); font-size: 0.875rem; font-weight: 500; margin-top: auto; }
+.ag-post { padding-bottom: 3rem; }
+.ag-post .ag-h1 { font-size: clamp(2rem, 4.5vw, 3rem); margin: 1.25rem 0 0.5rem; }
+.ag-post__meta { color: var(--soft); font-size: 0.9375rem; margin-bottom: 1rem; }
+.ag-post h2 { font-size: 1.5rem; font-weight: 600; letter-spacing: -0.02em; margin: 2.25rem 0 0.6rem; }
+.ag-post p, .ag-post li { font-size: 1.125rem; line-height: 1.55; margin-bottom: 0.75rem; }
+.ag-post ul { padding-left: 1.25rem; list-style: disc; }
+.ag-post details { border-top: 1px solid var(--alt); padding: 0.8rem 0; }
+.ag-post summary { cursor: pointer; font-weight: 600; font-size: 1.0625rem; }
+.ag-post a { color: var(--link, var(--accent-d)); }
+.ag-footer__links { display: flex; flex-wrap: wrap; gap: 1.25rem; padding: 1.25rem 0; }
+.ag-footer__links a { color: inherit; opacity: 0.8; text-decoration: none; font-size: 0.9375rem; }
+.ag-footer__links a:hover { text-decoration: underline; opacity: 1; }

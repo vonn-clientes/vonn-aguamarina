@@ -2,6 +2,7 @@ import type { MetadataRoute } from "next";
 import { getPublicSite } from "@/lib/public-data";
 import { SITE } from "@/lib/site";
 import { slugify } from "@/lib/seo";
+import { GUIAS } from "@/lib/guias";
 
 export const revalidate = 3600;
 
@@ -10,6 +11,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const entries: MetadataRoute.Sitemap = [
     { url: SITE.url, lastModified: now, changeFrequency: "monthly", priority: 1 },
   ];
+
+  entries.push({ url: `${SITE.url}/estetica-concepcion-del-uruguay`, lastModified: now, changeFrequency: "monthly", priority: 0.9 });
+  entries.push({ url: `${SITE.url}/guias`, lastModified: now, changeFrequency: "weekly", priority: 0.7 });
+  for (const g of GUIAS) {
+    entries.push({ url: `${SITE.url}/guias/${g.slug}`, lastModified: new Date(g.fecha), changeFrequency: "monthly", priority: 0.6 });
+  }
 
   try {
     const site = await getPublicSite();
