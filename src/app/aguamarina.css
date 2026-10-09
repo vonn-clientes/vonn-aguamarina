@@ -199,6 +199,8 @@
 .ag-stickybar .ag-btn { width: 100%; }
 .ag-stickybar ~ .ag-footer { padding-bottom: 6rem; }
 @media (min-width: 900px) { .ag-stickybar { display: none; } .ag-stickybar ~ .ag-footer { padding-bottom: 2.5rem; } }
+/* En celular, dejar aire abajo para que Sofi y la barra fija no tapen el "Creado por VONN". */
+@media (max-width: 899px) { .ag-footer, .ag-stickybar ~ .ag-footer { padding-bottom: 9rem; } }
 
 /* ---- Conocé a Ingrid ---- */
 .ag-meet { display: grid; gap: 2.5rem; align-items: center; }
