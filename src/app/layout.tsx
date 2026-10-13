@@ -37,12 +37,12 @@ const script = localFont({
 });
 
 const DESCRIPTION =
-  "Gabinete de estética en Concepción del Uruguay: tratamientos faciales y corporales, aparatología, maquillaje y peinado. Atención solo con turno previo.";
+  "Gabinete de estética y cosmetología en Concepción del Uruguay: Hifu 7D, depilación definitiva, tratamientos faciales y corporales, aparatología, maquillaje y peinado. Tienda de dermocosmética. Turno previo por WhatsApp.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE.url),
   title: {
-    default: "Estética en Concepción del Uruguay | Aguamarina",
+    default: "Estética y Cosmetología en Concepción del Uruguay | Aguamarina",
     template: "%s | Aguamarina",
   },
   description: DESCRIPTION,
@@ -52,13 +52,13 @@ export const metadata: Metadata = {
     type: "website",
     locale: "es_AR",
     siteName: SITE.name,
-    title: "Estética en Concepción del Uruguay | Aguamarina",
+    title: "Estética y Cosmetología en Concepción del Uruguay | Aguamarina",
     description: DESCRIPTION,
     url: "/",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Estética en Concepción del Uruguay | Aguamarina",
+    title: "Estética y Cosmetología en Concepción del Uruguay | Aguamarina",
     description: DESCRIPTION,
   },
   // Mientras sea una muestra, Google no la indexa (ver SITE.indexable).

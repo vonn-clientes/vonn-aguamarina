@@ -157,4 +157,42 @@ export const GUIAS: Guia[] = [
     ],
     enlaces: [{ label: "Depilación definitiva", href: "/tratamientos/depilacion-definitiva" }],
   },
+  {
+    slug: "criolipolisis-que-es-y-para-quien-es",
+    seo: "Criolipólisis: qué es y para quién es",
+    titulo: "Criolipólisis: qué es, cómo funciona y para quién es",
+    desc: "Qué es la criolipólisis, cómo actúa el frío sobre la grasa localizada, cuántas sesiones suelen hacer falta y qué conviene saber antes de empezar.",
+    fecha: "2026-10-13",
+    tiempo: "4 min",
+    secciones: [
+      { h: "Qué es la criolipólisis", p: ["Es un tratamiento corporal con aparatología que aplica frío controlado sobre una zona con grasa localizada. No es un método para bajar de peso: apunta a reducir volumen en zonas puntuales donde la grasa se resiste a la dieta y el ejercicio."] },
+      { h: "Para quién puede ser", p: ["Suele pensarse para personas cercanas a su peso, con pequeñas zonas de acumulación, como abdomen o flancos. Si tenés alguna condición de salud, tomás medicación o estás embarazada, avisalo en la evaluación: la profesional define si es adecuado para vos."] },
+      { h: "Cómo es una sesión", p: ["Se evalúa la zona, se protege la piel y se coloca el cabezal del equipo durante el tiempo indicado. Es normal sentir frío y algo de entumecimiento al principio, y puede haber enrojecimiento pasajero después."] },
+      { h: "Qué resultados esperar", p: ["Los cambios no son inmediatos: se van notando con las semanas. La cantidad de sesiones depende de cada persona y de la zona, y se define en la evaluación inicial. Los resultados se cuidan con hábitos saludables."] },
+    ],
+    faq: [
+      { q: "¿La criolipólisis sirve para adelgazar?", a: "No. Está pensada para reducir grasa localizada, no para bajar de peso." },
+      { q: "¿Dónde puedo hacerme criolipólisis en Concepción del Uruguay?", a: "En Aguamarina Estética y Bienestar, con turno previo por WhatsApp." },
+    ],
+    enlaces: [{ label: "Todos los tratamientos de Aguamarina", href: "/estetica-concepcion-del-uruguay" }],
+  },
+  {
+    slug: "dermapen-microneedling-que-es-y-que-esperar",
+    seo: "Dermapen (microneedling): qué es y qué esperar",
+    titulo: "Dermapen o microneedling: qué es y qué esperar del tratamiento",
+    desc: "Qué es el Dermapen, para qué se usa en la piel del rostro, cómo es la sesión, qué cuidados hacer después y por qué conviene una evaluación previa.",
+    fecha: "2026-10-13",
+    tiempo: "4 min",
+    secciones: [
+      { h: "Qué es el Dermapen", p: ["Es un dispositivo de microneedling: con agujas muy finas genera microestímulos controlados en la piel para favorecer su renovación. Se usa en tratamientos faciales buscando mejorar la textura, el aspecto de cicatrices superficiales y la luminosidad."] },
+      { h: "Cómo es la sesión", p: ["Primero se limpia la piel y se evalúa qué zonas tratar. Durante la sesión se desliza el equipo sobre el rostro, con ajustes según cada zona. Después es habitual ver la piel enrojecida unas horas, parecido a una exposición solar leve."] },
+      { h: "Cuidados después", p: ["Las indicaciones exactas te las da la profesional, pero en general:"], ul: ["Evitar el sol y usar protector solar todos los días.", "Hidratar la piel con productos suaves.", "No maquillarte ni usar activos fuertes hasta que te lo indiquen."] },
+      { h: "Cuándo conviene consultar primero", p: ["Si tenés la piel muy sensible, acné activo, heridas o alguna condición de salud, conviene hacer una evaluación antes. La cantidad de sesiones y el intervalo entre ellas dependen de cada piel."] },
+    ],
+    faq: [
+      { q: "¿Duele el Dermapen?", a: "La sensación varía según la persona y la zona. Se trabaja con una profesional que te acompaña durante toda la sesión." },
+      { q: "¿Dónde me lo puedo hacer en Concepción del Uruguay?", a: "En Aguamarina Estética y Bienestar, con turno previo por WhatsApp." },
+    ],
+    enlaces: [{ label: "Todos los tratamientos de Aguamarina", href: "/estetica-concepcion-del-uruguay" }],
+  },
 ];
