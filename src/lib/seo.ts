@@ -61,6 +61,7 @@ export function businessJsonLd(content: SiteContent | null, services: CatalogIte
     "@type": "BeautySalon",
     "@id": `${SITE.url}/#negocio`,
     name: SITE.name,
+    alternateName: ["Aguamarina Gabinete de Estética", "Centro de estética Aguamarina", "Aguamarina Estética"],
     url: SITE.url,
     image: `${SITE.url}/logo-aguamarina-oficial.png`,
     logo: `${SITE.url}/logo-aguamarina-oficial.png`,
@@ -74,7 +75,8 @@ export function businessJsonLd(content: SiteContent | null, services: CatalogIte
       addressRegion: SITE.region,
       addressCountry: SITE.country,
     },
-    areaServed: { "@type": "City", name: SITE.city },
+    areaServed: [{ "@type": "City", name: SITE.city }, { "@type": "AdministrativeArea", name: SITE.region }],
+    knowsAbout: ["Estética facial", "Estética corporal", "Cosmetología", "Depilación definitiva", "Hifu", "Dermocosmética"],
     sameAs: sameAs.length ? sameAs : undefined,
     employee: {
       "@type": "Person",
