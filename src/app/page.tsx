@@ -20,6 +20,8 @@ import { ProductCard } from "@/components/tienda/ProductCard";
 import { TreatmentCard } from "@/components/public/TreatmentCard";
 import { ReviewForm } from "@/components/public/ReviewForm";
 import { ReviewsCarousel } from "@/components/public/ReviewsCarousel";
+import { Works } from "@/components/public/Works";
+import { WORK_ALBUMS } from "@/lib/trabajos";
 import { getSiteReviews, type ShowcaseReview } from "@/lib/reviews";
 import { getGoogleReviews } from "@/lib/google-reviews";
 
@@ -211,6 +213,19 @@ export default async function Home() {
             </div>
           </section>
         )}
+
+        {/* ---- Trabajos realizados ---- */}
+        <section className="ag-section ag-section--foam" id="trabajos" aria-labelledby="t-trabajos">
+          <div className="ag-wrap">
+            <div className="ag-head ag-rise">
+              <h2 className="ag-h2" id="t-trabajos">
+                Trabajos realizados
+              </h2>
+              <p className="ag-lead">Tocá una carpeta para ver todas las fotos.</p>
+            </div>
+            <Works albums={WORK_ALBUMS} />
+          </div>
+        </section>
 
         {/* ---- Opiniones ---- */}
         {(
