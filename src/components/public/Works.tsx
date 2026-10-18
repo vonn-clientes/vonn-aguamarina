@@ -20,7 +20,7 @@ function useReducedMotion() {
 
 // Pasa solo la foto actual y la siguiente (las demás no se descargan hasta que toca su turno).
 // Cada foto se muestra entera, vertical u horizontal, sobre su propio fondo desenfocado.
-function Stage({ album, index, sizes, priority }: { album: WorkAlbum; index: number; sizes: string; priority?: boolean }) {
+function Stage({ album, index, sizes }: { album: WorkAlbum; index: number; sizes: string }) {
   const n = album.photos.length;
   return (
     <div className="ag-stage">
@@ -29,7 +29,7 @@ function Stage({ album, index, sizes, priority }: { album: WorkAlbum; index: num
         if (!near) return null;
         return (
           <div key={p.src} className={`ag-stage__slide${k === index ? " is-on" : ""}`} aria-hidden={k !== index}>
-            <Image src={p.src} alt="" fill sizes={sizes} quality={40} className="ag-stage__bg" aria-hidden />
+            <Image src={p.src} alt="" fill sizes={sizes} quality={40} className="ag-stage__bg" loading="eager" aria-hidden />
             <Image
               src={p.src}
               alt={k === index ? p.alt : ""}
@@ -37,7 +37,7 @@ function Stage({ album, index, sizes, priority }: { album: WorkAlbum; index: num
               sizes={sizes}
               quality={75}
               className="ag-stage__img"
-              priority={priority && k === 0}
+              loading="eager"
               data-orientation={p.width >= p.height ? "horizontal" : "vertical"}
             />
           </div>
@@ -49,18 +49,35 @@ function Stage({ album, index, sizes, priority }: { album: WorkAlbum; index: num
 
 function AlbumCard({ album, onOpen }: { album: WorkAlbum; onOpen: () => void }) {
   const [i, setI] = useState(0);
+  const [seen, setSeen] = useState(false);
+  const [visible, setVisible] = useState(false);
+  const ref = useRef<HTMLButtonElement>(null);
   const reduce = useReducedMotion();
   const n = album.photos.length;
+  // Las fotos se cargan y pasan solo cuando la carpeta está a la vista (no gasta datos antes).
   useEffect(() => {
-    if (n < 2 || reduce) return;
+    const el = ref.current;
+    if (!el) return;
+    const io = new IntersectionObserver(
+      ([e]) => {
+        setVisible(e.isIntersecting);
+        if (e.isIntersecting) setSeen(true);
+      },
+      { rootMargin: "150px" },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+  useEffect(() => {
+    if (n < 2 || reduce || !visible) return;
     const t = setInterval(() => setI((c) => (c + 1) % n), EVERY_MS);
     return () => clearInterval(t);
-  }, [n, reduce]);
+  }, [n, reduce, visible]);
   return (
-    <button type="button" className="ag-album" onClick={onOpen} aria-label={`Abrir la carpeta ${album.title}, ${n} fotos`}>
+    <button ref={ref} type="button" className="ag-album" onClick={onOpen} aria-label={`Abrir la carpeta ${album.title}, ${n} fotos`}>
       <span className="ag-album__stack" aria-hidden="true" />
       <span className="ag-album__cover">
-        <Stage album={album} index={i} sizes="(max-width: 700px) 86vw, 420px" priority />
+        {seen && <Stage album={album} index={i} sizes="(max-width: 700px) 86vw, 420px" />}
         <span className="ag-album__label">
           <strong>{album.title}</strong>
           <span>
@@ -143,7 +160,7 @@ function Viewer({ album, start, onClose }: { album: WorkAlbum; start: number; on
           setHold(false);
         }}
       >
-        <Stage album={album} index={i} sizes="(max-width: 900px) 100vw, 900px" priority />
+        <Stage album={album} index={i} sizes="(max-width: 900px) 100vw, 900px" />
         {n > 1 && (
           <>
             <button type="button" className="ag-viewer__nav ag-viewer__nav--prev" onClick={() => go(-1)} aria-label="Foto anterior">
