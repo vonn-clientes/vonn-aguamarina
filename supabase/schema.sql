@@ -325,3 +325,24 @@ drop trigger if exists on_auth_user_created on auth.users;
 create trigger on_auth_user_created
   after insert on auth.users
   for each row execute function link_invited_member();
+
+-- --------------------------------------------------------------------------
+-- WORK_ALBUMS — carpetas de "Trabajos realizados" (se editan desde /panel/trabajos)
+--   photos: [{ "src": url, "width": n, "height": n, "alt": texto }]
+-- --------------------------------------------------------------------------
+create table if not exists work_albums (
+  id uuid primary key default gen_random_uuid(),
+  tenant_id uuid not null references tenants(id) on delete cascade,
+  title text not null,
+  caption text,
+  photos jsonb not null default '[]'::jsonb,
+  active boolean not null default true,
+  sort_order int not null default 0,
+  created_at timestamptz not null default now()
+);
+alter table work_albums enable row level security;
+create policy "work_albums: lectura pública" on work_albums
+  for select using (active = true or is_tenant_member(tenant_id));
+create policy "work_albums: miembros administran" on work_albums
+  for all using (is_tenant_member(tenant_id))
+  with check (is_tenant_member(tenant_id));
