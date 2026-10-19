@@ -18,6 +18,7 @@ const GROUPS: { title?: string; links: { href: string; label: string; big?: bool
     links: [
       { href: "/panel/contenido", label: "Textos y datos" },
       { href: "/panel/catalogo", label: "Tratamientos y productos" },
+      { href: "/panel/trabajos", label: "Trabajos realizados" },
       { href: "/panel/promos", label: "Promociones" },
       { href: "/panel/opiniones", label: "Opiniones" },
     ],

@@ -21,7 +21,7 @@ import { TreatmentCard } from "@/components/public/TreatmentCard";
 import { ReviewForm } from "@/components/public/ReviewForm";
 import { ReviewsCarousel } from "@/components/public/ReviewsCarousel";
 import { Works } from "@/components/public/Works";
-import { WORK_ALBUMS } from "@/lib/trabajos";
+import { getPublicWorkAlbums } from "@/lib/trabajos-db";
 import { getSiteReviews, type ShowcaseReview } from "@/lib/reviews";
 import { getGoogleReviews } from "@/lib/google-reviews";
 
@@ -51,6 +51,7 @@ export default async function Home() {
   const site = await getPublicSite();
   if (!site) notFound();
   const { content, services, products, promos } = site;
+  const workAlbums = await getPublicWorkAlbums(site.tenant.id);
   const [own, google] = await Promise.all([getSiteReviews(site.tenant.id).catch((): ShowcaseReview[] => []), getGoogleReviews()]);
   // Intercala opiniones de Google y de la web para que se vean variadas.
   const showcase: ShowcaseReview[] = [];
@@ -223,7 +224,7 @@ export default async function Home() {
               </h2>
               <p className="ag-lead">Tocá una carpeta para ver todas las fotos.</p>
             </div>
-            <Works albums={WORK_ALBUMS} />
+            <Works albums={workAlbums} />
           </div>
         </section>
 
