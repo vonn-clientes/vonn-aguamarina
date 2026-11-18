@@ -974,3 +974,6 @@ html.ag-chat-open, html.ag-chat-open body { background: #f3f8fc !important; over
 }
 @media (min-width: 980px) { .ag-promo { flex-basis: calc(33.333% - 8px); } }
 @media (max-width: 520px) { .ag-trow__desc { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; } }
+.ag-rv-empty { display: flex; flex-direction: column; align-items: center; gap: 1.25rem; }
+.ag-rv-empty__score { display: inline-flex; align-items: center; gap: 0.6rem; margin: 0; font-size: 1.125rem; font-weight: 500; color: var(--ink); }
+.ag-rv-empty__score .ag-stars { font-size: 1.25rem; }
