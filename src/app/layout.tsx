@@ -10,6 +10,7 @@ import "@fontsource/nunito/800.css";
 import "./globals.css";
 import "./aguamarina.css";
 import { SITE } from "@/lib/site";
+import { Analitica } from "@/components/public/Analitica";
 
 // Tipografías del sitio público. Con next/font se precargan y se les calcula
 // una fuente de respaldo del mismo tamaño, así el texto no "salta" al cargar
@@ -78,7 +79,10 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="es-AR" className={`h-full antialiased ${sans.variable} ${script.variable}`}>
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col">
+        {children}
+        <Analitica />
+      </body>
     </html>
   );
 }

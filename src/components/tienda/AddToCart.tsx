@@ -10,6 +10,8 @@ export function AddToCart({ id, name }: { id: string; name: string }) {
     <button
       type="button"
       className="ag-btn"
+      data-evento="agregar_carrito"
+      data-item={name}
       onClick={() => {
         addToCart(id);
         setAdded(true);

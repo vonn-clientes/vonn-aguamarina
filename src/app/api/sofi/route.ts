@@ -12,7 +12,10 @@ function limited(ip: string) {
   const arr = (hits.get(ip) ?? []).filter((t) => now - t < 10 * 60_000);
   arr.push(now);
   hits.set(ip, arr);
-  if (hits.size > 2000) hits.clear();
+  if (hits.size > 5000) {
+    // Limpia solo las IP sin actividad reciente (no borra a todos de golpe).
+    for (const [k, v] of hits) if (!v.some((t) => now - t < 10 * 60_000)) hits.delete(k);
+  }
   return arr.length > 30;
 }
 
@@ -54,7 +57,20 @@ function asksAboutVonn(t: string): boolean {
   return /\bvonn\b|quien (hizo|creo|armo|desarrollo|diseno|programo|hace) (esta|la|el|este)|quien (esta )?(detras|hizo)|(hacer|armar|crear|tener|necesito|quiero|quisiera|diseñar|disenar|desarrollar)[^.?!]{0,25}(pagina|sitio|web|tienda online|sistema de turnos|app)\b|desarrollador|programador|agencia web|diseno web|pagina web para mi/.test(q);
 }
 
+// Solo se aceptan pedidos que vienen desde la propia página (evita que otros sitios usen a Sofi).
+function sameOrigin(req: Request) {
+  const origin = req.headers.get("origin");
+  if (!origin) return false;
+  try {
+    const host = new URL(origin).host;
+    return host === new URL(req.url).host || host === "aguamarina.vonn.com.ar" || host.endsWith(".vercel.app") || host.startsWith("localhost");
+  } catch {
+    return false;
+  }
+}
+
 export async function POST(req: Request) {
+  if (!sameOrigin(req)) return NextResponse.json({ error: "forbidden" }, { status: 403 });
   const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "anon";
   if (limited(ip)) return NextResponse.json({ reply: "Uf, me escribiste muchísimo 😅 Probá en unos minutos o escribile directo a Ingrid por WhatsApp.", mentioned: [] });
 

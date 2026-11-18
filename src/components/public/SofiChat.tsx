@@ -66,7 +66,7 @@ export function SofiChat({ whatsapp }: { whatsapp: string | null | undefined }) 
   return (
     <>
       {!open && (
-        <button className="ag-sofi-fab" onClick={() => setOpen(true)} aria-label="Hablar con Sofi, asesora virtual">
+        <button className="ag-sofi-fab" data-evento="abrir_sofi" onClick={() => setOpen(true)} aria-label="Hablar con Sofi, asesora virtual">
           <span className="ag-sofi-fab__dot" aria-hidden>{face}</span>
           <span><b>Sofi</b><small><i className="ag-sofi__on" aria-hidden />En línea · asesora virtual</small></span>
         </button>
