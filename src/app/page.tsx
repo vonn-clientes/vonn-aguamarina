@@ -60,6 +60,9 @@ export default async function Home() {
     if (own[k]) showcase.push(own[k]);
   }
   const groups = groupByCategory(services);
+  // Accesos directos del hero: los tratamientos que más se buscan, si están cargados.
+  const BUSCADOS = ["hifu", "depilaci", "criolip", "dermapen"];
+  const destacados = BUSCADOS.map((k) => services.find((s) => slugify(s.name).startsWith(k))).filter((x): x is (typeof services)[number] => !!x);
   const wa = content?.whatsapp_number ?? null;
 
   return (
@@ -74,7 +77,7 @@ export default async function Home() {
         <section className="ag-hero ag-hero--water">
           <div className="ag-wrap ag-hero__grid">
             <div className="ag-hero__copy">
-              <h1 className="ag-hero__title">Estética y bienestar para tu piel y tu cuerpo.</h1>
+              <h1 className="ag-hero__title">Estética y bienestar en {SITE.city}.</h1>
               <p className="ag-hero__lead">
                 {content?.hero_title || "Tratamientos faciales y corporales, aparatología, maquillaje y peinado"}
               </p>
@@ -84,12 +87,27 @@ export default async function Home() {
                   Ver tratamientos
                 </Link>
               </div>
-              <a className="ag-gbadge" href={MAPS_LINK} target="_blank" rel="noopener noreferrer">
-                <span className="ag-stars" aria-hidden="true">
-                  <span className="on">★</span><span className="on">★</span><span className="on">★</span><span className="on">★</span><span className="on">★</span>
-                </span>
-                <span>5 estrellas en Google Maps</span>
-              </a>
+              {destacados.length > 0 && (
+                <nav className="ag-hero__quick" aria-label="Tratamientos más buscados">
+                  <span className="ag-hero__quick-t">Lo más buscado</span>
+                  <ul>
+                    {destacados.map((d) => (
+                      <li key={d.id}>
+                        <Link href={`/tratamientos/${slugify(d.name)}`}>{d.name}</Link>
+                      </li>
+                    ))}
+                  </ul>
+                </nav>
+              )}
+              <div className="ag-hero__meta">
+                <a className="ag-gbadge" href={MAPS_LINK} target="_blank" rel="noopener noreferrer">
+                  <span className="ag-stars" aria-hidden="true">
+                    <span className="on">★</span><span className="on">★</span><span className="on">★</span><span className="on">★</span><span className="on">★</span>
+                  </span>
+                  <span>5 estrellas en Google Maps</span>
+                </a>
+                <span className="ag-hero__addr">{SITE.street} · con turno previo</span>
+              </div>
             </div>
             <div className="ag-hero__logo">
               <Medallion priority size={420} />
@@ -133,7 +151,16 @@ export default async function Home() {
               <h2 className="ag-h2" id="t-tratamientos">
                 Tratamientos
               </h2>
-              <p className="ag-lead">Tratamientos para cuidar cada detalle de tu piel y tu cuerpo.</p>
+              <p className="ag-lead">Elegí una categoría o tocá un tratamiento para ver de qué se trata.</p>
+              {groups.length > 1 && (
+                <nav className="ag-catnav" aria-label="Categorías de tratamientos">
+                  {groups.map(([category, items]) => (
+                    <a key={category} href={`#${slugify(category)}`}>
+                      {category} <span>{items.length}</span>
+                    </a>
+                  ))}
+                </nav>
+              )}
             </div>
             {groups.map(([category, items]) => (
               <article className="ag-cat" key={category} id={slugify(category)}>
@@ -151,6 +178,34 @@ export default async function Home() {
           </div>
         </section>
 
+        {/* ---- Opiniones ---- */}
+        {(
+          <section className="ag-section ag-section--white" id="opiniones" aria-labelledby="t-opiniones">
+            <div className="ag-narrow">
+              <div className="ag-head ag-rise">
+                <h2 className="ag-h2" id="t-opiniones">Lo que cuentan nuestras clientas</h2>
+              </div>
+              <ReviewsCarousel reviews={showcase} rating={google?.rating ?? null} total={google?.total ?? null} mapsUri={google?.mapsUri ?? null} />
+              <div style={{ textAlign: "center", marginTop: "1.5rem" }}>
+                <ReviewForm itemId={null} path="/" />
+              </div>
+            </div>
+          </section>
+        )}
+
+        {/* ---- Trabajos realizados ---- */}
+        <section className="ag-section ag-section--foam" id="trabajos" aria-labelledby="t-trabajos">
+          <div className="ag-wrap">
+            <div className="ag-head ag-rise">
+              <h2 className="ag-h2" id="t-trabajos">
+                Trabajos realizados
+              </h2>
+              <p className="ag-lead">Tocá una carpeta para ver todas las fotos.</p>
+            </div>
+            <Works albums={workAlbums} />
+          </div>
+        </section>
+
         {/* ---- Promociones ---- */}
         {promos.length > 0 && (
           <section className="ag-section" id="promociones" aria-labelledby="t-promos">
@@ -159,23 +214,22 @@ export default async function Home() {
                 <h2 className="ag-h2" id="t-promos">
                   Promociones
                 </h2>
-                <p className="ag-lead">Combos armados para resultados más completos.</p>
+                <p className="ag-lead">Varios tratamientos combinados en un mismo plan. Consultá precio y disponibilidad por WhatsApp.</p>
               </div>
               <div className="ag-promos">
                 {promos.map((p) => (
                   <article className="ag-promo ag-rise" key={p.id}>
                     <h3>{p.title}</h3>
                     {p.description && <p className="ag-promo__desc">{p.description}</p>}
-                    <p className="ag-promo__q">¿Qué incluye?</p>
-                    <ul>
+                    <ul aria-label={`Qué incluye el ${p.title}`}>
                       {p.items.map((i) => (
                         <li key={i}>{i}</li>
                       ))}
                     </ul>
                     {p.price != null && <p className="ag-promo__price">${Number(p.price).toLocaleString("es-AR")}</p>}
                     {p.note && <p className="ag-promo__note">{p.note}</p>}
-                    <TurnoButton whatsapp={wa} text={`Hola! Quiero consultar por el ${p.title}`}>
-                      Quiero este combo
+                    <TurnoButton whatsapp={wa} tone="outline" text={`Hola! Quiero consultar por el ${p.title}`}>
+                      Consultar este combo
                     </TurnoButton>
                   </article>
                 ))}
@@ -197,7 +251,7 @@ export default async function Home() {
                 <p className="ag-lead">Para seguir en casa lo que trabajamos en Aguamarina.</p>
               </div>
               <div className="ag-shop">
-                {[...products].sort((a, b) => Number(!!b.featured) - Number(!!a.featured)).slice(0, 4).map((p) => (
+                {[...products].sort((a, b) => Number(!!b.featured) - Number(!!a.featured)).slice(0, 3).map((p) => (
                   <ProductCard key={p.id} item={p} whatsapp={wa} />
                 ))}
               </div>
@@ -210,36 +264,79 @@ export default async function Home() {
           </section>
         )}
 
-        {/* ---- Trabajos realizados ---- */}
-        <section className="ag-section ag-section--foam" id="trabajos" aria-labelledby="t-trabajos">
+        {/* ---- Cómo sacar turno ---- */}
+        <section className="ag-section" id="turnos" aria-labelledby="t-turnos">
           <div className="ag-wrap">
             <div className="ag-head ag-rise">
-              <h2 className="ag-h2" id="t-trabajos">
-                Trabajos realizados
+              <h2 className="ag-h2" id="t-turnos">
+                Tu primera visita, paso a paso.
               </h2>
-              <p className="ag-lead">Tocá una carpeta para ver todas las fotos.</p>
             </div>
-            <Works albums={workAlbums} />
+            <ol className="ag-steps ag-steps--4">
+              <li className="ag-rise">
+                <h3>Escribinos</h3>
+                <p>Contanos qué tratamiento te interesa o qué querés mejorar.</p>
+              </li>
+              <li className="ag-rise">
+                <h3>Elegimos el horario</h3>
+                <p>La atención es solo con turno previo: buscamos el momento que te quede cómodo.</p>
+              </li>
+              <li className="ag-rise">
+                <h3>Primera consulta</h3>
+                <p>Conocemos tu piel y tu caso, y te proponemos el tratamiento y la cantidad de sesiones.</p>
+              </li>
+              <li className="ag-rise">
+                <h3>Sesión y cuidados</h3>
+                <p>Te explicamos cómo cuidarte en casa para sostener el resultado.</p>
+              </li>
+            </ol>
+            <div className="ag-center">
+              <TurnoButton whatsapp={wa}>Sacar turno</TurnoButton>
+            </div>
           </div>
         </section>
 
-        {/* ---- Opiniones ---- */}
-        {(
-          <section className="ag-section" id="opiniones" aria-labelledby="t-opiniones">
-            <div className="ag-narrow">
-              <div className="ag-head ag-rise">
-                <h2 id="t-opiniones">Lo que cuentan nuestras clientas</h2>
-              </div>
-              <ReviewsCarousel reviews={showcase} rating={google?.rating ?? null} total={google?.total ?? null} mapsUri={google?.mapsUri ?? null} />
-              <div style={{ textAlign: "center", marginTop: "1.5rem" }}>
-                <ReviewForm itemId={null} path="/" />
-              </div>
+        {/* ---- Políticas ---- */}
+        <section className="ag-section ag-section--foam" id="politicas" aria-labelledby="t-politicas">
+          <div className="ag-wrap">
+            <div className="ag-head ag-rise">
+              <h2 className="ag-h2" id="t-politicas">
+                Para que todo salga bien.
+              </h2>
+              <p className="ag-lead">Unos acuerdos simples, para cuidar el tiempo de todas.</p>
             </div>
-          </section>
-        )}
+            <ul className="ag-policies">
+              {POLICIES.map((p) => (
+                <li className="ag-rise" key={p.title}>
+                  <h3>{p.title}</h3>
+                  <p>{p.text}</p>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </section>
+
+        {/* ---- Preguntas frecuentes ---- */}
+        <section className="ag-section ag-section--alt" id="preguntas" aria-labelledby="t-preguntas">
+          <div className="ag-narrow">
+            <div className="ag-head ag-rise">
+              <h2 className="ag-h2" id="t-preguntas">
+                Preguntas frecuentes
+              </h2>
+            </div>
+            <div className="ag-faq">
+              {FAQ.map((f) => (
+                <details key={f.q}>
+                  <summary>{f.q}</summary>
+                  <p>{f.a}</p>
+                </details>
+              ))}
+            </div>
+          </div>
+        </section>
 
         {/* ---- Contacto y ubicación ---- */}
-        <section className="ag-section" id="donde" aria-labelledby="t-donde">
+        <section className="ag-section ag-section--white" id="donde" aria-labelledby="t-donde">
           <div className="ag-wrap ag-where">
             <div className="ag-rise ag-where__info">
               <h2 className="ag-h2" id="t-donde">
@@ -280,77 +377,6 @@ export default async function Home() {
               loading="lazy"
               referrerPolicy="no-referrer-when-downgrade"
             />
-          </div>
-        </section>
-
-        {/* ---- Cómo sacar turno ---- */}
-        <section className="ag-section" id="turnos" aria-labelledby="t-turnos">
-          <div className="ag-wrap">
-            <div className="ag-head ag-rise">
-              <h2 className="ag-h2" id="t-turnos">
-                Tu primera visita, paso a paso.
-              </h2>
-            </div>
-            <ol className="ag-steps ag-steps--4">
-              <li className="ag-rise">
-                <h3>Escribinos</h3>
-                <p>Contanos qué tratamiento te interesa o qué querés mejorar.</p>
-              </li>
-              <li className="ag-rise">
-                <h3>Elegimos el horario</h3>
-                <p>La atención es solo con turno previo: buscamos el momento que te quede cómodo.</p>
-              </li>
-              <li className="ag-rise">
-                <h3>Primera consulta</h3>
-                <p>Conocemos tu piel y tu caso, y te proponemos el tratamiento y la cantidad de sesiones.</p>
-              </li>
-              <li className="ag-rise">
-                <h3>Sesión y cuidados</h3>
-                <p>Te explicamos cómo cuidarte en casa para sostener el resultado.</p>
-              </li>
-            </ol>
-            <div className="ag-center">
-              <TurnoButton whatsapp={wa}>Sacar turno</TurnoButton>
-            </div>
-          </div>
-        </section>
-
-        {/* ---- Políticas ---- */}
-        <section className="ag-section" id="politicas" aria-labelledby="t-politicas">
-          <div className="ag-wrap">
-            <div className="ag-head ag-rise">
-              <h2 className="ag-h2" id="t-politicas">
-                Para que todo salga bien.
-              </h2>
-              <p className="ag-lead">Unos acuerdos simples, para cuidar el tiempo de todas.</p>
-            </div>
-            <ul className="ag-policies">
-              {POLICIES.map((p) => (
-                <li className="ag-rise" key={p.title}>
-                  <h3>{p.title}</h3>
-                  <p>{p.text}</p>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </section>
-
-        {/* ---- Preguntas frecuentes ---- */}
-        <section className="ag-section ag-section--alt" id="preguntas" aria-labelledby="t-preguntas">
-          <div className="ag-narrow">
-            <div className="ag-head ag-rise">
-              <h2 className="ag-h2" id="t-preguntas">
-                Preguntas frecuentes
-              </h2>
-            </div>
-            <div className="ag-faq">
-              {FAQ.map((f) => (
-                <details key={f.q}>
-                  <summary>{f.q}</summary>
-                  <p>{f.a}</p>
-                </details>
-              ))}
-            </div>
           </div>
         </section>
 

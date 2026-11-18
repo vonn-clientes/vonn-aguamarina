@@ -75,9 +75,9 @@ export function TurnoButton({
   text?: string;
   children?: React.ReactNode;
   size?: "small";
-  tone?: "light";
+  tone?: "light" | "outline";
 }) {
-  const cls = ["ag-btn", size === "small" && "ag-btn--small", tone === "light" && "ag-btn--light"]
+  const cls = ["ag-btn", size === "small" && "ag-btn--small", tone === "light" && "ag-btn--light", tone === "outline" && "ag-btn--outline"]
     .filter(Boolean)
     .join(" ");
   return (
