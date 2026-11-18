@@ -100,12 +100,9 @@ export default async function ServicePage(props: PageProps<"/tratamientos/[slug]
 
         <section className="ag-svc-hero">
           <div className="ag-wrap">
-            {item.category && (
-              <p className="ag-kicker">
-                {item.category} · {SITE.city}
-              </p>
-            )}
-            <h1 className="ag-h1">{item.name}</h1>
+            <h1 className="ag-h1">
+              {item.name} <span className="ag-h1__lugar">en {SITE.city}</span>
+            </h1>
             {item.description && <p className="ag-lead">{item.description}</p>}
             {rating.count > 0 && (
               <a className="ag-rv-badge" href="#opiniones">

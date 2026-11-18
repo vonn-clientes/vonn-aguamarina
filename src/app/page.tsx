@@ -103,20 +103,15 @@ export default async function Home() {
 
         {/* ---- Ingrid ---- */}
         <section className="ag-section ag-section--deep" id="ingrid" aria-labelledby="t-ingrid">
-          <div className="ag-wrap ag-meet ag-rise">
-            <div className="ag-meet__photo">
-              {content?.about_image_url ? (
+          <div className={`ag-wrap ag-meet ag-rise${content?.about_image_url ? "" : " ag-meet--solo"}`}>
+            {content?.about_image_url && (
+              <div className="ag-meet__photo">
                 <Image src={content.about_image_url} alt={seoAlt(SITE.owner, "perfil")} width={560} height={700} sizes="(max-width: 800px) 90vw, 460px" quality={75} />
-              ) : (
-                <div className="ag-meet__ph" role="img" aria-label={`Foto de ${SITE.owner}, próximamente`}>
-                  <Image src="/logo-aguamarina-oficial.png" alt="" width={240} height={84} sizes="240px" />
-                </div>
-              )}
-            </div>
+              </div>
+            )}
             <div className="ag-meet__text">
-              <p className="ag-kicker ag-kicker--light">Conocé a la profesional</p>
               <h2 className="ag-h2" id="t-ingrid">
-                {SITE.owner}
+                Conocé a {SITE.owner}
               </h2>
               {content?.about_text && <p className="ag-lead">{content.about_text}</p>}
               <ul className="ag-creds">
@@ -143,10 +138,10 @@ export default async function Home() {
             {groups.map(([category, items]) => (
               <article className="ag-cat" key={category} id={slugify(category)}>
                 <div className="ag-cat__head ag-rise">
-                  <p className="ag-kicker">{category}</p>
-                  <h3 className="ag-h3">{CATEGORY_HEADLINES[category] ?? category}</h3>
+                  <h3 className="ag-h3">{category}</h3>
+                  {CATEGORY_HEADLINES[category] && <p className="ag-cat__lead">{CATEGORY_HEADLINES[category]}</p>}
                 </div>
-                <div className="ag-tgrid">
+                <div className={items.some((i) => i.image_url) ? "ag-tgrid" : "ag-tlist"}>
                   {items.map((item) => (
                     <TreatmentCard key={item.id} item={item} />
                   ))}
