@@ -185,7 +185,21 @@ export default async function Home() {
               <div className="ag-head ag-rise">
                 <h2 className="ag-h2" id="t-opiniones">Lo que cuentan nuestras clientas</h2>
               </div>
-              <ReviewsCarousel reviews={showcase} rating={google?.rating ?? null} total={google?.total ?? null} mapsUri={google?.mapsUri ?? null} />
+              {showcase.length > 0 ? (
+                <ReviewsCarousel reviews={showcase} rating={google?.rating ?? null} total={google?.total ?? null} mapsUri={google?.mapsUri ?? null} />
+              ) : (
+                <div className="ag-rv-empty">
+                  <p className="ag-rv-empty__score">
+                    <span className="ag-stars" aria-hidden="true">
+                      <span className="on">★</span><span className="on">★</span><span className="on">★</span><span className="on">★</span><span className="on">★</span>
+                    </span>
+                    5 estrellas en Google Maps
+                  </p>
+                  <a className="ag-btn ag-btn--outline" href={MAPS_LINK} target="_blank" rel="noopener noreferrer">
+                    Leer las opiniones en Google
+                  </a>
+                </div>
+              )}
               <div style={{ textAlign: "center", marginTop: "1.5rem" }}>
                 <ReviewForm itemId={null} path="/" />
               </div>
