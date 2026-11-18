@@ -24,6 +24,7 @@ import { Works } from "@/components/public/Works";
 import { getPublicWorkAlbums } from "@/lib/trabajos-db";
 import { getSiteReviews, type ShowcaseReview } from "@/lib/reviews";
 import { getGoogleReviews } from "@/lib/google-reviews";
+import { GOOGLE_RESUMEN, RESENAS_GOOGLE } from "@/lib/resenas-google";
 
 // La página se genera una vez y se refresca sola cada 60 segundos: rápida
 // para quien visita, y los cambios que haga la dueña desde el panel se ven
@@ -52,7 +53,9 @@ export default async function Home() {
   if (!site) notFound();
   const { content, services, products, promos } = site;
   const workAlbums = await getPublicWorkAlbums(site.tenant.id);
-  const [own, google] = await Promise.all([getSiteReviews(site.tenant.id).catch((): ShowcaseReview[] => []), getGoogleReviews()]);
+  const [own, googleApi] = await Promise.all([getSiteReviews(site.tenant.id).catch((): ShowcaseReview[] => []), getGoogleReviews()]);
+  // Sin la API de Google (paga), se usan las opiniones copiadas a mano en lib/resenas-google.ts.
+  const google = googleApi ?? { reviews: RESENAS_GOOGLE, rating: GOOGLE_RESUMEN.rating, total: GOOGLE_RESUMEN.total, mapsUri: MAPS_LINK };
   // Intercala opiniones de Google y de la web para que se vean variadas.
   const showcase: ShowcaseReview[] = [];
   for (let k = 0; k < Math.max(own.length, google?.reviews.length ?? 0); k++) {
