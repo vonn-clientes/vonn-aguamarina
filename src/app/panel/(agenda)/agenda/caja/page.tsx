@@ -12,9 +12,10 @@ export default async function CajaPage({ searchParams }: { searchParams: Promise
   const { from, to } = monthRange(ym);
   const supabase = await createClient();
 
-  const [monthRes, allRes] = await Promise.all([
+  const [monthRes, allRes, clientsRes] = await Promise.all([
     supabase.from("ag_movements").select("*, client:ag_clients(full_name)").eq("tenant_id", tenant.tenant.id).gte("occurred_on", from).lt("occurred_on", to).in("kind", ["pago", "gasto"]).order("occurred_on", { ascending: false }).order("created_at", { ascending: false }),
     supabase.from("ag_movements").select("client_id, kind, amount").eq("tenant_id", tenant.tenant.id).not("client_id", "is", null).in("kind", ["cargo", "pago"]),
+    supabase.from("ag_clients").select("id").eq("tenant_id", tenant.tenant.id).eq("archived", false),
   ]);
 
   type Row = Movement & { client: { full_name: string } | null };
@@ -27,7 +28,9 @@ export default async function CajaPage({ searchParams }: { searchParams: Promise
   for (const r of rows) if (r.kind === "pago") porMetodo.set(r.method || "Sin indicar", (porMetodo.get(r.method || "Sin indicar") ?? 0) + Number(r.amount));
 
   const perClient = new Map<string, { kind: "cargo" | "pago"; amount: number }[]>();
-  for (const r of allRes.data ?? []) perClient.set(r.client_id, [...(perClient.get(r.client_id) ?? []), r as { kind: "cargo" | "pago"; amount: number }]);
+  // Igual que "Clientes con deuda": los clientes archivados no cuentan como por cobrar.
+  const activos = new Set((clientsRes.data ?? []).map((c) => c.id as string));
+  for (const r of allRes.data ?? []) if (activos.has(r.client_id)) perClient.set(r.client_id, [...(perClient.get(r.client_id) ?? []), r as { kind: "cargo" | "pago"; amount: number }]);
   let porCobrar = 0;
   for (const list of perClient.values()) {
     const b = balance(list);
