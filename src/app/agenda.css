@@ -227,7 +227,9 @@ main.ag-g-wrap > * + * { margin-top: 0; }
 .ag-g-stats > * { min-width: 0; }
 
 /* ---------- Sofi dentro de la agenda ---------- */
-.ag-ps-fab { position: fixed; right: 1rem; bottom: calc(1rem + env(safe-area-inset-bottom)); z-index: 60; display: flex; align-items: center; gap: .65rem; min-height: 60px; padding: 0 1.25rem 0 .55rem; border: 0; border-radius: 999px; background: #fff; color: #153c61; cursor: pointer; font: inherit; box-shadow: 0 10px 30px rgba(21,60,97,.22), 0 0 0 1px rgba(47,111,174,.12); transition: transform .25s cubic-bezier(.28,.11,.32,1); }
+/* El botón azul "Reportar un problema" (script de VONN) ocupa la esquina de abajo a la derecha: Sofi queda justo arriba y, con el chat abierto, el botón se oculta para no tapar el envío. */
+html.ag-chat-open #vr-btn { display: none !important; }
+.ag-ps-fab { position: fixed; right: 1rem; bottom: calc(4.75rem + env(safe-area-inset-bottom)); z-index: 60; display: flex; align-items: center; gap: .65rem; min-height: 60px; padding: 0 1.25rem 0 .55rem; border: 0; border-radius: 999px; background: #fff; color: #153c61; cursor: pointer; font: inherit; box-shadow: 0 10px 30px rgba(21,60,97,.22), 0 0 0 1px rgba(47,111,174,.12); transition: transform .25s cubic-bezier(.28,.11,.32,1); }
 .ag-ps-fab:hover { transform: translateY(-2px); }
 .ag-ps-fab > span:last-child { display: grid; text-align: left; line-height: 1.2; }
 .ag-ps-fab b { font-size: 1.0625rem; } .ag-ps-fab small { font-size: .8125rem; color: #5b7287; }
