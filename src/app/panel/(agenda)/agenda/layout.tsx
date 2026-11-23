@@ -1,5 +1,6 @@
 import "@/app/agenda.css";
 import Image from "next/image";
+import Script from "next/script";
 import Link from "next/link";
 import { requireMembership } from "@/lib/auth";
 import { logout } from "@/app/panel/actions/auth";
@@ -11,6 +12,7 @@ export default async function AgendaLayout({ children }: { children: React.React
   await requireMembership();
   return (
     <div className="ag ag-g">
+      <Script src="https://www.vonn.com.ar/reportar-error.js" data-cliente="aguamarina" strategy="afterInteractive" />
       <header className="ag-g-top">
         <div className="ag-g-wrap">
           <div className="ag-g-top__row">
