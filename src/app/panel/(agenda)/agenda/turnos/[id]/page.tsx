@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import { requireMembership } from "@/lib/auth";
-import { createClient } from "@/lib/supabase/server";
+import { query, queryOne } from "@/lib/db";
 import { dateKey, timeInput, type Appointment } from "@/lib/agenda";
 import { TurnoForm } from "@/components/agenda/TurnoForm";
 import { deleteAppointment, updateAppointment } from "../../actions";
@@ -9,15 +9,17 @@ export default async function EditarTurnoPage({ params, searchParams }: { params
   const m = await requireMembership();
   const { id } = await params;
   const sp = await searchParams;
-  const supabase = await createClient();
 
-  const { data } = await supabase.from("ag_appointments").select("*").eq("id", id).eq("tenant_id", m.tenant.id).maybeSingle();
-  if (!data) notFound();
-  const a = data as Appointment;
+  const a = /^[0-9a-f-]{36}$/i.test(id)
+    ? await queryOne<Appointment>("select * from ag_appointments where id = $1 and tenant_id = $2", [id, m.tenant.id])
+    : null;
+  if (!a) notFound();
 
   const [clientsRes, servicesRes] = await Promise.all([
-    supabase.from("ag_clients").select("id, full_name, first_name, last_name, phone").eq("tenant_id", m.tenant.id).eq("archived", false).order("full_name"),
-    supabase.from("catalog_items").select("id, name, duration_minutes, active").eq("tenant_id", m.tenant.id).neq("category", "Productos").order("active", { ascending: false }).order("sort_order"),
+    query<{ id: string; full_name: string; first_name: string | null; last_name: string | null; phone: string | null }>(
+      "select id, full_name, first_name, last_name, phone from ag_clients where tenant_id = $1 and archived = false order by full_name", [m.tenant.id]).then((data) => ({ data })),
+    query<{ id: string; name: string; duration_minutes: number | null; active: boolean }>(
+      "select id, name, duration_minutes, active from catalog_items where tenant_id = $1 and category <> 'Productos' order by active desc, sort_order", [m.tenant.id]).then((data) => ({ data })),
   ]);
   const clients = (clientsRes.data ?? []).map((c) => ({ id: c.id as string, name: c.full_name as string, first: (c.first_name ?? c.full_name) as string, last: (c.last_name ?? "") as string, phone: c.phone as string | null }));
   const services = (servicesRes.data ?? []).map((s) => ({ id: s.id as string, name: (s.active ? "" : "(oculto) ") + s.name, duration: s.duration_minutes as number | null }));

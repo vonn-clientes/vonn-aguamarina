@@ -1,19 +1,26 @@
 import Link from "next/link";
 import { requireMembership } from "@/lib/auth";
-import { createClient } from "@/lib/supabase/server";
+import { query } from "@/lib/db";
 import { balance, money, type Client, type Movement } from "@/lib/agenda";
 
 export default async function ClientesPage({ searchParams }: { searchParams: Promise<{ q?: string }> }) {
   const m = await requireMembership();
   const sp = await searchParams;
   const q = (sp.q ?? "").trim();
-  const supabase = await createClient();
 
-  let query = supabase.from("ag_clients").select("*").eq("tenant_id", m.tenant.id).eq("archived", false).order("full_name");
-  if (q) query = query.or(`full_name.ilike.%${q.replace(/[%,()]/g, " ")}%,phone.ilike.%${q.replace(/[%,()]/g, " ")}%`);
+  const like = `%${q.replace(/[%_\\,()]/g, " ")}%`;
   const [clientsRes, movRes] = await Promise.all([
-    query,
-    supabase.from("ag_movements").select("client_id, kind, amount").eq("tenant_id", m.tenant.id).not("client_id", "is", null).in("kind", ["cargo", "pago"]),
+    (q
+      ? query<Client>(
+          "select * from ag_clients where tenant_id = $1 and archived = false and (full_name ilike $2 or phone ilike $2) order by full_name",
+          [m.tenant.id, like],
+        )
+      : query<Client>("select * from ag_clients where tenant_id = $1 and archived = false order by full_name", [m.tenant.id])
+    ).then((data) => ({ data })),
+    query<{ client_id: string; kind: string; amount: number }>(
+      "select client_id, kind, amount from ag_movements where tenant_id = $1 and client_id is not null and kind in ('cargo','pago')",
+      [m.tenant.id],
+    ).then((data) => ({ data })),
   ]);
 
   const clients = (clientsRes.data as Client[]) ?? [];

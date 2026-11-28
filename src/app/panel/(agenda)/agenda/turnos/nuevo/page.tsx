@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { requireMembership } from "@/lib/auth";
-import { createClient } from "@/lib/supabase/server";
+import { query } from "@/lib/db";
 import { isDateKey, todayKey } from "@/lib/agenda";
 import { TurnoForm } from "@/components/agenda/TurnoForm";
 import { createAppointment } from "../../actions";
@@ -8,17 +8,12 @@ import { createAppointment } from "../../actions";
 export default async function NuevoTurnoPage({ searchParams }: { searchParams: Promise<{ d?: string; c?: string; error?: string }> }) {
   const m = await requireMembership();
   const sp = await searchParams;
-  const supabase = await createClient();
 
   const [clientsRes, servicesRes] = await Promise.all([
-    supabase.from("ag_clients").select("id, full_name, first_name, last_name, phone").eq("tenant_id", m.tenant.id).eq("archived", false).order("full_name"),
-    supabase
-      .from("catalog_items")
-      .select("id, name, duration_minutes, active")
-      .eq("tenant_id", m.tenant.id)
-      .neq("category", "Productos")
-      .order("active", { ascending: false })
-      .order("sort_order"),
+    query<{ id: string; full_name: string; first_name: string | null; last_name: string | null; phone: string | null }>(
+      "select id, full_name, first_name, last_name, phone from ag_clients where tenant_id = $1 and archived = false order by full_name", [m.tenant.id]).then((data) => ({ data })),
+    query<{ id: string; name: string; duration_minutes: number | null; active: boolean }>(
+      "select id, name, duration_minutes, active from catalog_items where tenant_id = $1 and category <> 'Productos' order by active desc, sort_order", [m.tenant.id]).then((data) => ({ data })),
   ]);
 
   const day = isDateKey(sp.d) ? sp.d : todayKey();

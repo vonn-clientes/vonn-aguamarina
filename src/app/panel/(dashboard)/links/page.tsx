@@ -1,5 +1,5 @@
 import { requireMembership } from "@/lib/auth";
-import { createClient } from "@/lib/supabase/server";
+import { query } from "@/lib/db";
 import { PageHeader } from "@/components/panel/PageHeader";
 import { CopyLink } from "@/components/panel/CopyLink";
 import { SITE } from "@/lib/site";
@@ -8,16 +8,10 @@ import type { CatalogItem } from "@/lib/types";
 
 export default async function LinksPage() {
   const membership = await requireMembership();
-  const supabase = await createClient();
-  const { data } = await supabase
-    .from("catalog_items")
-    .select("*")
-    .eq("tenant_id", membership.tenant.id)
-    .eq("active", true)
-    .neq("category", "Productos")
-    .order("category")
-    .order("name");
-  const items = (data as CatalogItem[]) ?? [];
+  const items = await query<CatalogItem>(
+    "select * from catalog_items where tenant_id = $1 and active = true and category <> 'Productos' order by category, name",
+    [membership.tenant.id],
+  );
 
   const rows = [
     { name: "Página principal", url: `${SITE.url}/?utm_source=instagram&utm_medium=bio` },

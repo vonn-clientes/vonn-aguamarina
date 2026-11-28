@@ -4,10 +4,10 @@ import { headers } from "next/headers";
 // subdominio en la URL.
 //
 // En producción: cliente.vonn.com.ar -> slug = "cliente"
-// En desarrollo local (localhost, o preview de Vercel): no hay subdominio
+// En desarrollo local (localhost, o preview de Vercel/Cloudflare): no hay subdominio
 // real, así que se usa NEXT_PUBLIC_DEMO_TENANT_SLUG como cliente de prueba.
 //
-// El header x-tenant-slug lo agrega el middleware (ver src/middleware.ts).
+// El header x-tenant-slug lo agrega el middleware (ver src/proxy.ts).
 export async function resolveTenantSlug(): Promise<string> {
   const headerList = await headers();
   const fromMiddleware = headerList.get("x-tenant-slug");
@@ -21,9 +21,15 @@ export function extractSlugFromHost(host: string | null): string | null {
 
   const hostname = host.split(":")[0]; // saca el puerto si lo tiene (localhost:3000)
 
-  // Dominios de Vercel (previews y el *.vercel.app por defecto) no son un
+  // Dominios de Vercel y Cloudflare (previews, *.vercel.app y *.workers.dev) no son un
   // subdominio real de cliente -> sin tenant (cae al demo).
-  if (hostname === "localhost" || hostname.endsWith(".vercel.app")) return null;
+  if (
+    hostname === "localhost" ||
+    hostname.endsWith(".vercel.app") ||
+    hostname.endsWith(".workers.dev")
+  ) {
+    return null;
+  }
 
   const parts = hostname.split(".");
   if (parts.length < 3) return null;

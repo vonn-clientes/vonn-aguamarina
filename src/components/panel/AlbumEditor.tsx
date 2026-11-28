@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { createClient } from "@/lib/supabase/client";
+import { uploadMedia } from "@/lib/upload-client";
 import { seoAlt, seoImageFileName } from "@/lib/seo-image";
 import type { WorkPhoto } from "@/lib/trabajos";
 import { addAlbum, deleteAlbum, moveAlbum, toggleAlbum, updateAlbum } from "@/app/panel/(dashboard)/trabajos/actions";
@@ -33,15 +33,11 @@ function PhotoEditor({ tenantId, title, photos, setPhotos }: { tenantId: string;
     if (files.length === 0) return;
     setState("uploading");
     try {
-      const supabase = createClient();
       const added: WorkPhoto[] = [];
       for (const file of files) {
         const { blob, width, height } = await shrink(file);
-        const path = `${tenantId}/${seoImageFileName(`trabajo ${title}`)}`;
-        const { error } = await supabase.storage.from("aguamarina-media").upload(path, blob, { contentType: "image/webp" });
-        if (error) throw error;
         added.push({
-          src: supabase.storage.from("aguamarina-media").getPublicUrl(path).data.publicUrl,
+          src: await uploadMedia(blob, seoImageFileName(`trabajo ${title}`)),
           width,
           height,
           alt: seoAlt(title || "Trabajo realizado", "tratamiento", photos.length + added.length + 1),

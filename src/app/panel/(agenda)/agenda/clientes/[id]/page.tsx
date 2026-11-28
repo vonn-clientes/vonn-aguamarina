@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { requireMembership } from "@/lib/auth";
-import { createClient } from "@/lib/supabase/server";
+import { query, queryOne } from "@/lib/db";
 import { PAY_METHODS, balance, chatLink, dateKey, fmtDayShort, money, todayKey, type Appointment, type Client, type Movement } from "@/lib/agenda";
 import { ClientForm } from "@/components/agenda/ClientForm";
 import { AppointmentCard } from "@/components/agenda/AppointmentCard";
@@ -11,18 +11,19 @@ export default async function FichaPage({ params, searchParams }: { params: Prom
   const m = await requireMembership();
   const { id } = await params;
   const sp = await searchParams;
-  const supabase = await createClient();
 
-  const { data } = await supabase.from("ag_clients").select("*").eq("id", id).eq("tenant_id", m.tenant.id).maybeSingle();
+  const data = /^[0-9a-f-]{36}$/i.test(id)
+    ? await queryOne<Client>("select * from ag_clients where id = $1 and tenant_id = $2", [id, m.tenant.id])
+    : null;
   if (!data) notFound();
   const c = data as Client;
 
   const [movRes, apRes] = await Promise.all([
-    supabase.from("ag_movements").select("*").eq("tenant_id", m.tenant.id).eq("client_id", id).order("occurred_on", { ascending: false }).order("created_at", { ascending: false }),
-    supabase.from("ag_appointments").select("*").eq("tenant_id", m.tenant.id).eq("client_id", id).order("starts_at", { ascending: false }).limit(30),
+    query<Movement>("select * from ag_movements where tenant_id = $1 and client_id = $2 order by occurred_on desc, created_at desc", [m.tenant.id, id]),
+    query<Appointment>("select * from ag_appointments where tenant_id = $1 and client_id = $2 order by starts_at desc limit 30", [m.tenant.id, id]),
   ]);
-  const movs = (movRes.data as Movement[]) ?? [];
-  const appts = (apRes.data as Appointment[]) ?? [];
+  const movs = movRes;
+  const appts = apRes;
   const saldo = balance(movs);
   const here = `/panel/agenda/clientes/${id}`;
   const upcoming = appts.filter((a) => a.status === "pendiente" || a.status === "confirmado").reverse();

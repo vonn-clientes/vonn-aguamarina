@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { getMembership } from "@/lib/auth";
-import { createClient } from "@/lib/supabase/server";
+import { query } from "@/lib/db";
 import { isWrite, panelPrompt, runTool, TOOLS, type PendingAction } from "@/lib/sofi-panel";
 
 export const dynamic = "force-dynamic";
@@ -46,12 +46,14 @@ export async function POST(req: Request) {
     .map((x) => ({ role: x.role, content: x.content.slice(0, 2500) }));
   if (!history.length || history[history.length - 1].role !== "user") return NextResponse.json({ error: "bad" }, { status: 400 });
 
-  const sb = await createClient();
-  const { data: cat } = await sb.from("catalog_items").select("name, price, duration_minutes").eq("tenant_id", m.tenant.id).eq("active", true).order("sort_order").limit(80);
-  const catalog = (cat ?? []).map((x) => `- ${x.name}${x.price ? ` · $${x.price}` : ""}${x.duration_minutes ? ` · ${x.duration_minutes} min` : ""}`).join("\n") || "(sin cargar)";
+  const cat = await query<{ name: string; price: number | null; duration_minutes: number | null }>(
+    "select name, price, duration_minutes from catalog_items where tenant_id = $1 and active = true order by sort_order limit 80",
+    [m.tenant.id],
+  );
+  const catalog = cat.map((x) => `- ${x.name}${x.price ? ` · $${x.price}` : ""}${x.duration_minutes ? ` · ${x.duration_minutes} min` : ""}`).join("\n") || "(sin cargar)";
   const msgs: Msg[] = [{ role: "system", content: panelPrompt(m.tenant.business_name || "Aguamarina", catalog) }, ...history];
 
-  const ctx = { sb, tenantId: m.tenant.id };
+  const ctx = { tenantId: m.tenant.id };
   const pending: PendingAction[] = [];
   const provs = providers();
   if (!provs.length) return NextResponse.json({ reply: "Todavía no tengo mi cerebro conectado 😅", pending: [] });

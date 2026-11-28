@@ -1,5 +1,5 @@
 import { requireMembership } from "@/lib/auth";
-import { createClient } from "@/lib/supabase/server";
+import { query } from "@/lib/db";
 import { PageHeader } from "@/components/panel/PageHeader";
 import { PromoRow } from "@/components/panel/PromoRow";
 import { PromoFields } from "@/components/panel/PromoForm";
@@ -8,9 +8,7 @@ import type { Promo } from "@/lib/types";
 
 export default async function PromosPage() {
   const m = await requireMembership();
-  const supabase = await createClient();
-  const { data } = await supabase.from("promos").select("*").eq("tenant_id", m.tenant.id).order("sort_order");
-  const promos = (data as Promo[]) ?? [];
+  const promos = await query<Promo>("select * from promos where tenant_id = $1 order by sort_order", [m.tenant.id]);
 
   return (
     <>

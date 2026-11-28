@@ -1,20 +1,16 @@
 import { requireMembership } from "@/lib/auth";
-import { createClient } from "@/lib/supabase/server";
+import { query } from "@/lib/db";
 import { PageHeader } from "@/components/panel/PageHeader";
 import { MessageCard } from "@/components/panel/MessageCard";
 import type { ContactMessage } from "@/lib/types";
 
 export default async function MensajesPage() {
   const membership = await requireMembership();
-  const supabase = await createClient();
 
-  const { data } = await supabase
-    .from("contact_messages")
-    .select("*")
-    .eq("tenant_id", membership.tenant.id)
-    .order("created_at", { ascending: false });
-
-  const messages = (data as ContactMessage[]) ?? [];
+  const messages = await query<ContactMessage>(
+    "select * from contact_messages where tenant_id = $1 order by created_at desc",
+    [membership.tenant.id],
+  );
 
   return (
     <>

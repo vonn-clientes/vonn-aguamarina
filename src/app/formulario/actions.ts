@@ -1,9 +1,9 @@
 "use server";
 
-import { createClient } from "@supabase/supabase-js";
+import { insertRow, queryOne } from "@/lib/db";
 import { SITE } from "@/lib/site";
 
-// Guarda una respuesta del formulario. Usa la clave pública: la base solo permite ENVIAR, no leer.
+// Guarda una respuesta del formulario. Solo inserta; nunca devuelve datos.
 export async function submitIntake(answers: Record<string, string | string[]>, honeypot: string) {
   if (honeypot) return { ok: true }; // un bot: fingimos éxito
   const clean: Record<string, string | string[]> = {};
@@ -13,12 +13,12 @@ export async function submitIntake(answers: Record<string, string | string[]>, h
   }
   if (Object.keys(clean).length === 0) return { ok: false, error: "Completá al menos una respuesta." };
 
-  const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!, {
-    auth: { persistSession: false },
-  });
-  const { data: tenant } = await supabase.from("tenants").select("id").eq("slug", SITE.slug).maybeSingle();
-  if (!tenant) return { ok: false, error: "No pudimos enviar. Probá de nuevo en un rato." };
-  const { error } = await supabase.from("intake_submissions").insert({ tenant_id: tenant.id, answers: clean });
-  if (error) return { ok: false, error: "No pudimos enviar. Probá de nuevo en un rato." };
-  return { ok: true };
+  try {
+    const tenant = await queryOne<{ id: string }>("select id from tenants where slug = $1", [SITE.slug]);
+    if (!tenant) return { ok: false, error: "No pudimos enviar. Probá de nuevo en un rato." };
+    await insertRow("intake_submissions", { tenant_id: tenant.id, answers: clean }, { json: ["answers"] });
+    return { ok: true };
+  } catch {
+    return { ok: false, error: "No pudimos enviar. Probá de nuevo en un rato." };
+  }
 }

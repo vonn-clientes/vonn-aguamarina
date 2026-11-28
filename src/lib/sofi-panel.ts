@@ -1,11 +1,11 @@
 // Sofi dentro del panel de Ingrid: herramientas que la IA puede usar.
 // - Las de LECTURA se ejecutan al instante.
 // - Las de ESCRITURA nunca se ejecutan solas: quedan como "propuesta" y Ingrid las confirma con un botón.
-import type { SupabaseClient } from "@supabase/supabase-js";
+import { query, queryOne, insertRow, updateRows } from "@/lib/db";
 import { addDays, dateKey, dayStartISO, fmtDateTimeLong, fmtDayLong, fold, isDateKey, money, STATUS_LABEL, toInstant, todayKey, type Status } from "@/lib/agenda";
 
 export type PendingAction = { kind: string; args: Record<string, unknown>; label: string };
-type Ctx = { sb: SupabaseClient; tenantId: string };
+type Ctx = { tenantId: string };
 
 const str = (v: unknown) => (typeof v === "string" ? v.trim() : "");
 const num = (v: unknown) => {
@@ -51,17 +51,20 @@ export const isWrite = (n: string) => WRITE.has(n);
 
 // ---------- Ejecución de herramientas de lectura / armado de propuestas ----------
 async function findClients(c: Ctx, q: string) {
-  const { data } = await c.sb.from("ag_clients").select("id, full_name, phone").eq("tenant_id", c.tenantId).eq("archived", false).limit(500);
+  const data = await query<{ id: string; full_name: string; phone: string | null }>(
+    "select id, full_name, phone from ag_clients where tenant_id = $1 and archived = false limit 500", [c.tenantId]);
   const f = fold(q);
   const words = f.split(/\s+/).filter(Boolean);
-  const all = (data ?? []).filter((x) => words.every((w) => fold(x.full_name).includes(w) || (x.phone ?? "").includes(w)));
+  const all = data.filter((x) => words.every((w) => fold(x.full_name).includes(w) || (x.phone ?? "").includes(w)));
   const exact = all.filter((x) => fold(x.full_name) === f);
   return exact.length === 1 ? exact : all;
 }
 
+type Appt = { id: string; client_id: string | null; client_name: string; service_name: string; starts_at: string; price: number | null; charged: boolean; status: string; duration_min: number };
+
 async function loadAppt(c: Ctx, id: string) {
-  const { data } = await c.sb.from("ag_appointments").select("*").eq("id", id).eq("tenant_id", c.tenantId).maybeSingle();
-  return data;
+  if (!/^[0-9a-f-]{36}$/i.test(id)) return null;
+  return queryOne<Appt>("select * from ag_appointments where id = $1 and tenant_id = $2", [id, c.tenantId]);
 }
 
 export async function runTool(name: string, a: Record<string, unknown>, c: Ctx): Promise<{ result: unknown; pending?: PendingAction }> {
@@ -69,25 +72,29 @@ export async function runTool(name: string, a: Record<string, unknown>, c: Ctx):
     case "ver_turnos": {
       const d = str(a.desde), h = str(a.hasta);
       if (!isDateKey(d) || !isDateKey(h)) return { result: { error: "fechas inválidas, usá AAAA-MM-DD" } };
-      const { data } = await c.sb.from("ag_appointments").select("id, client_name, service_name, starts_at, duration_min, status, price").eq("tenant_id", c.tenantId)
-        .gte("starts_at", dayStartISO(d)).lt("starts_at", dayStartISO(addDays(h, 1))).order("starts_at").limit(60);
-      return { result: (data ?? []).map((t) => ({ turno_id: t.id, clienta: t.client_name, tratamiento: t.service_name, cuando: fmtDateTimeLong(t.starts_at), minutos: t.duration_min, estado: STATUS_LABEL[t.status as Status], precio: t.price })) };
+      const data = await query<{ id: string; client_name: string; service_name: string; starts_at: string; duration_min: number; status: string; price: number | null }>(
+        "select id, client_name, service_name, starts_at, duration_min, status, price from ag_appointments where tenant_id = $1 and starts_at >= $2 and starts_at < $3 order by starts_at limit 60",
+        [c.tenantId, dayStartISO(d), dayStartISO(addDays(h, 1))]);
+      return { result: data.map((t) => ({ turno_id: t.id, clienta: t.client_name, tratamiento: t.service_name, cuando: fmtDateTimeLong(t.starts_at), minutos: t.duration_min, estado: STATUS_LABEL[t.status as Status], precio: t.price })) };
     }
     case "buscar_clientes": {
       const list = (await findClients(c, str(a.texto))).slice(0, 8);
       if (!list.length) return { result: { clientas: [] } };
-      const { data: mv } = await c.sb.from("ag_movements").select("client_id, kind, amount").eq("tenant_id", c.tenantId).in("client_id", list.map((x) => x.id));
-      return { result: { clientas: list.map((x) => ({ nombre: x.full_name, telefono: x.phone, saldo_que_debe: (mv ?? []).filter((m) => m.client_id === x.id).reduce((s, m) => s + (m.kind === "cargo" ? Number(m.amount) : m.kind === "pago" ? -Number(m.amount) : 0), 0) })) } };
+      const mv = await query<{ client_id: string; kind: string; amount: number }>(
+        "select client_id, kind, amount from ag_movements where tenant_id = $1 and client_id = any($2::uuid[])", [c.tenantId, list.map((x) => x.id)]);
+      return { result: { clientas: list.map((x) => ({ nombre: x.full_name, telefono: x.phone, saldo_que_debe: mv.filter((m) => m.client_id === x.id).reduce((s, m) => s + (m.kind === "cargo" ? Number(m.amount) : m.kind === "pago" ? -Number(m.amount) : 0), 0) })) } };
     }
     case "ver_catalogo": {
-      const { data } = await c.sb.from("catalog_items").select("name, price, duration_minutes, category, image_url, description").eq("tenant_id", c.tenantId).eq("active", true).order("sort_order").limit(80);
-      return { result: (data ?? []).map((x) => ({ nombre: x.name, precio: x.price, minutos: x.duration_minutes, categoria: x.category, tiene_foto: !!x.image_url, tiene_descripcion: !!x.description })) };
+      const data = await query<{ name: string; price: number | null; duration_minutes: number | null; category: string | null; image_url: string | null; description: string | null }>(
+        "select name, price, duration_minutes, category, image_url, description from catalog_items where tenant_id = $1 and active = true order by sort_order limit 80", [c.tenantId]);
+      return { result: data.map((x) => ({ nombre: x.name, precio: x.price, minutos: x.duration_minutes, categoria: x.category, tiene_foto: !!x.image_url, tiene_descripcion: !!x.description })) };
     }
     case "ver_caja": {
       const d = str(a.desde), h = str(a.hasta);
       if (!isDateKey(d) || !isDateKey(h)) return { result: { error: "fechas inválidas" } };
-      const { data } = await c.sb.from("ag_movements").select("kind, amount").eq("tenant_id", c.tenantId).gte("occurred_on", d).lte("occurred_on", h);
-      const sum = (k: string) => (data ?? []).filter((m) => m.kind === k).reduce((s, m) => s + Number(m.amount), 0);
+      const data = await query<{ kind: string; amount: number }>(
+        "select kind, amount from ag_movements where tenant_id = $1 and occurred_on >= $2 and occurred_on <= $3", [c.tenantId, d, h]);
+      const sum = (k: string) => data.filter((m) => m.kind === k).reduce((s, m) => s + Number(m.amount), 0);
       return { result: { cobrado: money(sum("pago")), gastos: money(sum("gasto")), cargado_en_cuentas: money(sum("cargo")), ganancia_neta: money(sum("pago") - sum("gasto")) } };
     }
 
@@ -96,8 +103,9 @@ export async function runTool(name: string, a: Record<string, unknown>, c: Ctx):
       if (!who || !service || !isDateKey(date) || !time) return { result: { error: "faltan datos: necesito clienta, tratamiento, fecha (AAAA-MM-DD) y hora" } };
       const matches = await findClients(c, who);
       if (matches.length > 1) return { result: { error: `Hay varias clientas que coinciden: ${matches.slice(0, 5).map((m) => m.full_name).join(", ")}. Preguntale a Ingrid cuál es.` } };
-      const { data: cat } = await c.sb.from("catalog_items").select("id, name, price, duration_minutes").eq("tenant_id", c.tenantId).eq("active", true);
-      const item = (cat ?? []).find((x) => fold(x.name) === fold(service)) ?? (cat ?? []).find((x) => fold(x.name).includes(fold(service)) || fold(service).includes(fold(x.name)));
+      const cat = await query<{ id: string; name: string; price: number | null; duration_minutes: number | null }>(
+        "select id, name, price, duration_minutes from catalog_items where tenant_id = $1 and active = true", [c.tenantId]);
+      const item = cat.find((x) => fold(x.name) === fold(service)) ?? cat.find((x) => fold(x.name).includes(fold(service)) || fold(service).includes(fold(x.name)));
       const client = matches[0];
       const args = {
         client_id: client?.id ?? null, client_name: client?.full_name ?? who, client_phone: client?.phone ?? (str(a.telefono) || null),
@@ -147,8 +155,8 @@ export async function runTool(name: string, a: Record<string, unknown>, c: Ctx):
       return { result: { ok: true, propuesta: label }, pending: { kind: "pago_cliente", args: { client_id: matches[0].id, amount, method }, label } };
     }
     case "proponer_edicion_item": {
-      const { data: all } = await c.sb.from("catalog_items").select("id, name").eq("tenant_id", c.tenantId);
-      const it = (all ?? []).find((x) => fold(x.name) === fold(str(a.item))) ?? (all ?? []).find((x) => fold(x.name).includes(fold(str(a.item))));
+      const all = await query<{ id: string; name: string }>("select id, name from catalog_items where tenant_id = $1", [c.tenantId]);
+      const it = all.find((x) => fold(x.name) === fold(str(a.item))) ?? all.find((x) => fold(x.name).includes(fold(str(a.item))));
       if (!it) return { result: { error: "no encontré ese tratamiento, usá ver_catalogo" } };
       const patch: Record<string, unknown> = {};
       if (num(a.precio) !== null) patch.price = num(a.precio);
@@ -170,26 +178,28 @@ export async function runTool(name: string, a: Record<string, unknown>, c: Ctx):
 
 // ---------- Ejecutar una propuesta ya confirmada por Ingrid ----------
 export async function execute(kind: string, a: Record<string, unknown>, c: Ctx): Promise<string> {
-  const { sb, tenantId } = c;
+  const { tenantId } = c;
   switch (kind) {
     case "crear_turno": {
       const date = str(a.date), time = hhmm(a.time), name = str(a.client_name), service = str(a.service_name);
       if (!isDateKey(date) || !time || !name || !service) throw new Error("datos incompletos");
       let clientId = str(a.client_id) || null;
       if (clientId) {
-        const { data } = await sb.from("ag_clients").select("id").eq("id", clientId).eq("tenant_id", tenantId).maybeSingle();
+        const data = /^[0-9a-f-]{36}$/i.test(clientId)
+          ? await queryOne<{ id: string }>("select id from ag_clients where id = $1 and tenant_id = $2", [clientId, tenantId])
+          : null;
         if (!data) clientId = null;
       }
       if (!clientId) {
-        const { data } = await sb.from("ag_clients").insert({ tenant_id: tenantId, full_name: name, first_name: name.split(" ")[0], last_name: name.split(" ").slice(1).join(" ") || null, phone: str(a.client_phone) || null }).select("id").single();
+        const data = await insertRow("ag_clients", { tenant_id: tenantId, full_name: name, first_name: name.split(" ")[0], last_name: name.split(" ").slice(1).join(" ") || null, phone: str(a.client_phone) || null });
         clientId = data?.id ?? null;
       }
-      const { error } = await sb.from("ag_appointments").insert({
+      const catId = str(a.catalog_item_id);
+      await insertRow("ag_appointments", {
         tenant_id: tenantId, client_id: clientId, client_name: name, client_phone: str(a.client_phone) || null,
-        catalog_item_id: str(a.catalog_item_id) || null, service_name: service, starts_at: toInstant(date, time),
+        catalog_item_id: /^[0-9a-f-]{36}$/i.test(catId) ? catId : null, service_name: service, starts_at: toInstant(date, time),
         duration_min: Math.max(5, Math.min(600, num(a.duration_min) ?? 60)), price: num(a.price), notes: str(a.notes) || null,
       });
-      if (error) throw new Error(error.message);
       return `Listo, agendé a ${name} el ${fmtDayLong(date)} a las ${time} hs ✅`;
     }
     case "estado_turno": {
@@ -197,24 +207,22 @@ export async function execute(kind: string, a: Record<string, unknown>, c: Ctx):
       if (!(st in STATUS_LABEL)) throw new Error("estado inválido");
       const patch: Record<string, unknown> = { status: st };
       if (st === "confirmado") patch.confirmed_at = new Date().toISOString();
-      const { error } = await sb.from("ag_appointments").update(patch).eq("id", str(a.id)).eq("tenant_id", tenantId);
-      if (error) throw new Error(error.message);
+      await updateRows("ag_appointments", patch, { id: str(a.id), tenant_id: tenantId });
       return `Listo, el turno quedó como "${STATUS_LABEL[st as Status]}" ✅`;
     }
     case "mover_turno": {
       const date = str(a.date), time = hhmm(a.time);
       if (!isDateKey(date) || !time) throw new Error("fecha inválida");
-      const { error } = await sb.from("ag_appointments").update({ starts_at: toInstant(date, time) }).eq("id", str(a.id)).eq("tenant_id", tenantId);
-      if (error) throw new Error(error.message);
+      await updateRows("ag_appointments", { starts_at: toInstant(date, time) }, { id: str(a.id), tenant_id: tenantId });
       return `Listo, moví el turno al ${fmtDayLong(date)} a las ${time} hs ✅`;
     }
     case "cobrar_turno": {
       const t = await loadAppt(c, str(a.id));
       if (!t) throw new Error("turno no encontrado");
       const price = num(a.price) ?? t.price ?? 0, paid = num(a.paid) ?? 0, day = dateKey(t.starts_at);
-      await sb.from("ag_appointments").update({ status: "realizado", price: price || t.price, charged: true }).eq("id", t.id).eq("tenant_id", tenantId);
-      if (!t.charged && price > 0) await sb.from("ag_movements").insert({ tenant_id: tenantId, client_id: t.client_id, appointment_id: t.id, kind: "cargo", amount: price, concept: t.service_name, occurred_on: day });
-      if (paid > 0) await sb.from("ag_movements").insert({ tenant_id: tenantId, client_id: t.client_id, appointment_id: t.id, kind: "pago", amount: paid, method: str(a.method) || null, concept: t.service_name, occurred_on: day });
+      await updateRows("ag_appointments", { status: "realizado", price: price || t.price, charged: true }, { id: t.id, tenant_id: tenantId });
+      if (!t.charged && price > 0) await insertRow("ag_movements", { tenant_id: tenantId, client_id: t.client_id, appointment_id: t.id, kind: "cargo", amount: price, concept: t.service_name, occurred_on: day });
+      if (paid > 0) await insertRow("ag_movements", { tenant_id: tenantId, client_id: t.client_id, appointment_id: t.id, kind: "pago", amount: paid, method: str(a.method) || null, concept: t.service_name, occurred_on: day });
       return `Listo, cobro registrado: ${money(paid)} de ${money(price)} ✅`;
     }
     case "gasto": {
@@ -222,17 +230,18 @@ export async function execute(kind: string, a: Record<string, unknown>, c: Ctx):
       if (!amount) throw new Error("monto inválido");
       const cat = str(a.category) || "Otro", det = str(a.concept);
       const day = isDateKey(str(a.date)) ? str(a.date) : todayKey();
-      const { error } = await sb.from("ag_movements").insert({ tenant_id: tenantId, client_id: null, kind: "gasto", amount, concept: det ? `${cat}: ${det}` : cat, occurred_on: day });
-      if (error) throw new Error(error.message);
+      await insertRow("ag_movements", { tenant_id: tenantId, client_id: null, kind: "gasto", amount, concept: det ? `${cat}: ${det}` : cat, occurred_on: day });
       return `Listo, anoté el gasto de ${money(amount)} ✅`;
     }
     case "pago_cliente": {
       const amount = num(a.amount);
       if (!amount) throw new Error("monto inválido");
-      const { data: cl } = await sb.from("ag_clients").select("id").eq("id", str(a.client_id)).eq("tenant_id", tenantId).maybeSingle();
+      const cid = str(a.client_id);
+      const cl = /^[0-9a-f-]{36}$/i.test(cid)
+        ? await queryOne<{ id: string }>("select id from ag_clients where id = $1 and tenant_id = $2", [cid, tenantId])
+        : null;
       if (!cl) throw new Error("clienta no encontrada");
-      const { error } = await sb.from("ag_movements").insert({ tenant_id: tenantId, client_id: cl.id, kind: "pago", amount, method: str(a.method) || null, concept: "Pago a cuenta", occurred_on: todayKey() });
-      if (error) throw new Error(error.message);
+      await insertRow("ag_movements", { tenant_id: tenantId, client_id: cl.id, kind: "pago", amount, method: str(a.method) || null, concept: "Pago a cuenta", occurred_on: todayKey() });
       return `Listo, anoté el pago de ${money(amount)} ✅`;
     }
     case "editar_item": {
@@ -242,22 +251,19 @@ export async function execute(kind: string, a: Record<string, unknown>, c: Ctx):
       if (num(p.duration_minutes)) patch.duration_minutes = num(p.duration_minutes);
       if (str(p.description)) patch.description = str(p.description).slice(0, 1500);
       if (!Object.keys(patch).length) throw new Error("nada para cambiar");
-      const { error } = await sb.from("catalog_items").update(patch).eq("id", str(a.id)).eq("tenant_id", tenantId);
-      if (error) throw new Error(error.message);
+      await updateRows("catalog_items", patch, { id: str(a.id), tenant_id: tenantId });
       return "Listo, ya quedó actualizado en la web ✅";
     }
     case "asignar_foto": {
       const url = str(a.url);
-      if (!url.includes(`/aguamarina-media/${tenantId}/`)) throw new Error("foto inválida");
-      const { error } = await sb.from("catalog_items").update({ image_url: url }).eq("id", str(a.id)).eq("tenant_id", tenantId);
-      if (error) throw new Error(error.message);
+      if (!url.includes(`/${tenantId}/`)) throw new Error("foto inválida");
+      await updateRows("catalog_items", { image_url: url }, { id: str(a.id), tenant_id: tenantId });
       return "Listo, la foto ya está en la web ✅";
     }
     case "crear_clienta": {
       const name = str(a.name);
       if (!name) throw new Error("falta el nombre");
-      const { error } = await sb.from("ag_clients").insert({ tenant_id: tenantId, full_name: name, first_name: name.split(" ")[0], last_name: name.split(" ").slice(1).join(" ") || null, phone: str(a.phone) || null, notes: str(a.notes) || null });
-      if (error) throw new Error(error.message);
+      await insertRow("ag_clients", { tenant_id: tenantId, full_name: name, first_name: name.split(" ")[0], last_name: name.split(" ").slice(1).join(" ") || null, phone: str(a.phone) || null, notes: str(a.notes) || null });
       return `Listo, di de alta a ${name} ✅`;
     }
   }

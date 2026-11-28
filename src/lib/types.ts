@@ -1,5 +1,5 @@
 // Tipos compartidos entre el sitio público y el panel. Reflejan las tablas
-// de supabase/schema.sql — si cambiás el schema, actualizá esto también.
+// de docs/neon-migracion-extra.sql y del schema de Neon — si cambiás el schema, actualizá esto también.
 
 export type BusinessMode = "turnos" | "pedidos" | "ninguno";
 

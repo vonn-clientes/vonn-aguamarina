@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { createClient as sbClient } from "@supabase/supabase-js";
+import { insertRow } from "@/lib/db";
 import { fallbackReply, fold, getPublicSite, systemPrompt, type ChatMsg } from "@/lib/sofi";
 
 export const dynamic = "force-dynamic";
@@ -63,7 +63,7 @@ function sameOrigin(req: Request) {
   if (!origin) return false;
   try {
     const host = new URL(origin).host;
-    return host === new URL(req.url).host || host === "aguamarina.vonn.com.ar" || host.endsWith(".vercel.app") || host.startsWith("localhost");
+    return host === new URL(req.url).host || host === "aguamarina.vonn.com.ar" || host.endsWith(".vercel.app") || host.endsWith(".workers.dev") || host.startsWith("localhost");
   } catch {
     return false;
   }
@@ -110,13 +110,19 @@ export async function POST(req: Request) {
       const comment = rm[3].trim().slice(0, 600);
       const author = (rm[4] ?? "").replace(/[^\p{L}\p{N} .'-]/gu, "").trim().slice(0, 40) || name || "Clienta";
       if (comment.length >= 5) {
-        const sb = sbClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!, { auth: { persistSession: false } });
         const base = { tenant_id: site.tenant.id, author, rating: Number(rm[2]), comment, visible: false };
-        let { error } = await sb.from("reviews").insert({ ...base, item_id: picked?.id ?? null });
-        const fallback = site.services[0] ?? site.products[0];
-        // Si la base todavía exige un tratamiento, usa el primero del catálogo.
-        if (error && !picked && fallback) ({ error } = await sb.from("reviews").insert({ ...base, item_id: fallback.id }));
-        savedReview = !error;
+        let ok = false;
+        try {
+          await insertRow("reviews", { ...base, item_id: picked?.id ?? null });
+          ok = true;
+        } catch {
+          const fallback = site.services[0] ?? site.products[0];
+          // Si la base todavía exige un tratamiento, usa el primero del catálogo.
+          if (!picked && fallback) {
+            try { await insertRow("reviews", { ...base, item_id: fallback.id }); ok = true; } catch {}
+          }
+        }
+        savedReview = ok;
       }
     }
   }

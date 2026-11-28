@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { requireMembership } from "@/lib/auth";
-import { createClient } from "@/lib/supabase/server";
+import { query } from "@/lib/db";
 import { EXPENSE_CATEGORIES, PAY_METHODS, addMonths, balance, dateKey, fmtDayShort, fmtMonth, isMonthKey, money, monthRange, todayKey, type Movement } from "@/lib/agenda";
 import { addMovement, deleteMovement } from "../actions";
 
@@ -10,12 +10,20 @@ export default async function CajaPage({ searchParams }: { searchParams: Promise
   const now = todayKey().slice(0, 7);
   const ym = isMonthKey(sp.m) ? sp.m : now;
   const { from, to } = monthRange(ym);
-  const supabase = await createClient();
 
   const [monthRes, allRes, clientsRes] = await Promise.all([
-    supabase.from("ag_movements").select("*, client:ag_clients(full_name)").eq("tenant_id", tenant.tenant.id).gte("occurred_on", from).lt("occurred_on", to).in("kind", ["pago", "gasto"]).order("occurred_on", { ascending: false }).order("created_at", { ascending: false }),
-    supabase.from("ag_movements").select("client_id, kind, amount").eq("tenant_id", tenant.tenant.id).not("client_id", "is", null).in("kind", ["cargo", "pago"]),
-    supabase.from("ag_clients").select("id").eq("tenant_id", tenant.tenant.id).eq("archived", false),
+    query(
+      `select m.*, case when c.id is null then null else json_build_object('full_name', c.full_name) end as client
+       from ag_movements m left join ag_clients c on c.id = m.client_id and c.tenant_id = m.tenant_id
+       where m.tenant_id = $1 and m.occurred_on >= $2 and m.occurred_on < $3 and m.kind in ('pago','gasto')
+       order by m.occurred_on desc, m.created_at desc`,
+      [tenant.tenant.id, from, to],
+    ).then((data) => ({ data })),
+    query<{ client_id: string; kind: string; amount: number }>(
+      "select client_id, kind, amount from ag_movements where tenant_id = $1 and client_id is not null and kind in ('cargo','pago')",
+      [tenant.tenant.id],
+    ).then((data) => ({ data })),
+    query<{ id: string }>("select id from ag_clients where tenant_id = $1 and archived = false", [tenant.tenant.id]).then((data) => ({ data })),
   ]);
 
   type Row = Movement & { client: { full_name: string } | null };

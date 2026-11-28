@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { createClient } from "@/lib/supabase/client";
+import { uploadMedia } from "@/lib/upload-client";
 import { nameFromForm, seoImageFileName } from "@/lib/seo-image";
 
 // Subida de fotos desde el panel. La foto se achica en el navegador (máx. 1200 px, formato WebP)
@@ -43,11 +43,7 @@ export function ImageUpload({
     setState("uploading");
     try {
       const blob = await shrink(file);
-      const supabase = createClient();
-      const path = `${tenantId}/${seoImageFileName(nameFromForm(input, seoHint))}`;
-      const { error } = await supabase.storage.from("aguamarina-media").upload(path, blob, { contentType: "image/webp" });
-      if (error) throw error;
-      setUrl(supabase.storage.from("aguamarina-media").getPublicUrl(path).data.publicUrl);
+      setUrl(await uploadMedia(blob, seoImageFileName(nameFromForm(input, seoHint))));
       setState("idle");
     } catch {
       setState("error");

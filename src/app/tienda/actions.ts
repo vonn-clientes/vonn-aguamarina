@@ -1,6 +1,7 @@
 "use server";
 
-import { createClient } from "@supabase/supabase-js";
+import { query, queryOne, insertRow } from "@/lib/db";
+import { isDbConfigured } from "@/lib/config";
 import { SITE } from "@/lib/site";
 import { waDigits } from "@/lib/seo";
 
@@ -34,23 +35,22 @@ export async function placeOrder(input: Input): Promise<Result> {
   }
   if (wanted.size === 0 || wanted.size > 30) return { ok: false, error: "Tu carrito está vacío." };
 
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-  if (!url || !key) return { ok: false, error: "La tienda no está disponible en este momento." };
-  const supabase = createClient(url, key, { auth: { persistSession: false, autoRefreshToken: false } });
+  if (!isDbConfigured()) return { ok: false, error: "La tienda no está disponible en este momento." };
 
-  const { data: tenant } = await supabase.from("tenants").select("id").eq("slug", SITE.slug).eq("status", "activo").maybeSingle();
+  const tenant = await queryOne<{ id: string }>("select id from tenants where slug = $1 and status = 'activo'", [SITE.slug]);
   if (!tenant) return { ok: false, error: "La tienda no está disponible en este momento." };
 
-  const { data: products } = await supabase
-    .from("catalog_items")
-    .select("id,name,price,sold_out,active")
-    .eq("tenant_id", tenant.id)
-    .in("id", [...wanted.keys()]);
+  const ids = [...wanted.keys()].filter((x) => /^[0-9a-f-]{36}$/i.test(x));
+  const products = ids.length
+    ? await query<{ id: string; name: string; price: number | null; sold_out: boolean; active: boolean }>(
+        "select id, name, price, sold_out, active from catalog_items where tenant_id = $1 and id = any($2::uuid[])",
+        [tenant.id, ids],
+      )
+    : [];
 
   const lines: { id: string; name: string; qty: number; price: number }[] = [];
   for (const [id, qty] of wanted) {
-    const p = products?.find((x) => x.id === id);
+    const p = products.find((x) => x.id === id);
     if (!p || !p.active || p.sold_out || p.price == null) {
       return { ok: false, error: `${p?.name ?? "Un producto"} ya no está disponible. Sacalo del carrito para seguir.` };
     }
@@ -61,35 +61,35 @@ export async function placeOrder(input: Input): Promise<Result> {
   const orderId = crypto.randomUUID();
   const code = orderId.slice(0, 8).toUpperCase();
 
-  const { error: orderError } = await supabase.from("orders").insert({
-    id: orderId,
-    tenant_id: tenant.id,
-    customer_name: name,
-    customer_phone: phone,
-    payment_method: "transferencia",
-    status: "pendiente",
-    total,
-    notes: `Retira en el gabinete. Pedido ${code}`,
-  });
-  if (orderError) return { ok: false, error: "No pudimos guardar tu pedido. Probá de nuevo en un momento." };
+  try {
+    await insertRow("orders", {
+      id: orderId,
+      tenant_id: tenant.id,
+      customer_name: name,
+      customer_phone: phone,
+      payment_method: "transferencia",
+      status: "pendiente",
+      total,
+      notes: `Retira en el gabinete. Pedido ${code}`,
+    });
+    for (const l of lines) {
+      await insertRow("order_items", {
+        order_id: orderId,
+        catalog_item_id: l.id,
+        item_name: l.name,
+        quantity: l.qty,
+        unit_price: l.price,
+        subtotal: l.price * l.qty,
+      });
+    }
+  } catch {
+    return { ok: false, error: "No pudimos guardar tu pedido. Probá de nuevo en un momento." };
+  }
 
-  const { error: itemsError } = await supabase.from("order_items").insert(
-    lines.map((l) => ({
-      order_id: orderId,
-      catalog_item_id: l.id,
-      item_name: l.name,
-      quantity: l.qty,
-      unit_price: l.price,
-      subtotal: l.price * l.qty,
-    }))
+  const content = await queryOne<{ whatsapp_number: string | null }>(
+    "select whatsapp_number from site_content where tenant_id = $1",
+    [tenant.id],
   );
-  if (itemsError) return { ok: false, error: "No pudimos guardar tu pedido. Probá de nuevo en un momento." };
-
-  const { data: content } = await supabase
-    .from("site_content")
-    .select("whatsapp_number")
-    .eq("tenant_id", tenant.id)
-    .maybeSingle();
 
   const message = [
     "Hola! Quiero comprar estos productos de la tienda de Aguamarina.",

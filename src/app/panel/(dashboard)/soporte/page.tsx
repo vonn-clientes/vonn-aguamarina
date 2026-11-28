@@ -1,5 +1,5 @@
 import { requireMembership } from "@/lib/auth";
-import { createClient } from "@/lib/supabase/server";
+import { query } from "@/lib/db";
 import { PageHeader } from "@/components/panel/PageHeader";
 import { SupportForm } from "@/components/panel/SupportButton";
 import type { SupportTicket } from "@/lib/types";
@@ -12,15 +12,11 @@ const statusLabel: Record<SupportTicket["status"], string> = {
 
 export default async function SoportePage() {
   const membership = await requireMembership();
-  const supabase = await createClient();
 
-  const { data } = await supabase
-    .from("support_tickets")
-    .select("*")
-    .eq("tenant_id", membership.tenant.id)
-    .order("created_at", { ascending: false });
-
-  const tickets = (data as SupportTicket[]) ?? [];
+  const tickets = await query<SupportTicket>(
+    "select * from support_tickets where tenant_id = $1 order by created_at desc",
+    [membership.tenant.id],
+  );
 
   return (
     <>

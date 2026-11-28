@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { requireMembership } from "@/lib/auth";
-import { createClient } from "@/lib/supabase/server";
+import { query } from "@/lib/db";
 import { addDays, dateKey, dayStartISO, fmtDayShort, fmtTime, isDateKey, todayKey, weekStart, type Appointment } from "@/lib/agenda";
 
 export default async function SemanaPage({ searchParams }: { searchParams: Promise<{ d?: string }> }) {
@@ -9,16 +9,11 @@ export default async function SemanaPage({ searchParams }: { searchParams: Promi
   const today = todayKey();
   const start = weekStart(isDateKey(sp.d) ? sp.d : today);
   const end = addDays(start, 7);
-  const supabase = await createClient();
 
-  const { data } = await supabase
-    .from("ag_appointments")
-    .select("*")
-    .eq("tenant_id", m.tenant.id)
-    .gte("starts_at", dayStartISO(start))
-    .lt("starts_at", dayStartISO(end))
-    .order("starts_at");
-  const list = (data as Appointment[]) ?? [];
+  const list = await query<Appointment>(
+    "select * from ag_appointments where tenant_id = $1 and starts_at >= $2 and starts_at < $3 order by starts_at",
+    [m.tenant.id, dayStartISO(start), dayStartISO(end)],
+  );
 
   const days = Array.from({ length: 7 }, (_, i) => addDays(start, i));
   const byDay = new Map<string, Appointment[]>();

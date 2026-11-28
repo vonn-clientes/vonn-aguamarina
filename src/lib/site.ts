@@ -1,6 +1,6 @@
 // Datos fijos del negocio que no cambian seguido y que el SEO necesita tal
 // cual (nombre, dirección, país). Lo que la dueña edita desde el panel
-// (textos, WhatsApp, tratamientos) sale de Supabase — ver public-data.ts.
+// (textos, WhatsApp, tratamientos) sale de la base Neon — ver public-data.ts.
 
 export const SITE = {
   // Slug del cliente en la tabla `tenants` (compartida entre clientes de VONN).

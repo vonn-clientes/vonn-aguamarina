@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { requireMembership } from "@/lib/auth";
-import { createClient } from "@/lib/supabase/server";
+import { query } from "@/lib/db";
 import { balance, chatLink, fmtDayShort, money, todayKey, type Movement } from "@/lib/agenda";
 
 type Debtor = { id: string; name: string; phone: string | null; debt: number; since: string; days: number; lastPay: string | null };
@@ -9,12 +9,14 @@ const daysBetween = (a: string, b: string) => Math.round((new Date(`${b}T12:00:0
 
 export default async function DeudasPage() {
   const m = await requireMembership();
-  const supabase = await createClient();
   const today = todayKey();
 
   const [clientsRes, movRes] = await Promise.all([
-    supabase.from("ag_clients").select("id, full_name, phone").eq("tenant_id", m.tenant.id).eq("archived", false),
-    supabase.from("ag_movements").select("client_id, kind, amount, occurred_on").eq("tenant_id", m.tenant.id).not("client_id", "is", null).in("kind", ["cargo", "pago"]).order("occurred_on").order("created_at"),
+    query<{ id: string; full_name: string; phone: string | null }>("select id, full_name, phone from ag_clients where tenant_id = $1 and archived = false", [m.tenant.id]).then((data) => ({ data })),
+    query<{ client_id: string; kind: string; amount: number; occurred_on: string }>(
+      "select client_id, kind, amount, occurred_on from ag_movements where tenant_id = $1 and client_id is not null and kind in ('cargo','pago') order by occurred_on, created_at",
+      [m.tenant.id],
+    ).then((data) => ({ data })),
   ]);
 
   const byClient = new Map<string, Pick<Movement, "kind" | "amount" | "occurred_on">[]>();

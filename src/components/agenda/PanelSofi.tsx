@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useKeyboardFit } from "@/lib/use-keyboard-fit";
-import { createClient } from "@/lib/supabase/client";
+import { uploadMedia } from "@/lib/upload-client";
 import { useRouter } from "next/navigation";
 
 type Pending = { kind: string; args: Record<string, unknown>; label: string; state?: "idle" | "busy" | "done" | "skipped" };
@@ -93,11 +93,7 @@ export function PanelSofi() {
       cv.getContext("2d")!.drawImage(bmp, 0, 0, cv.width, cv.height);
       const blob: Blob = await new Promise((res, rej) => cv.toBlob((b) => (b ? res(b) : rej()), "image/webp", 0.8));
       const meta = await (await fetch("/api/sofi/panel/items")).json();
-      const path = `${meta.tenantId}/sofi-${Date.now()}.webp`;
-      const sb = createClient();
-      const { error } = await sb.storage.from("aguamarina-media").upload(path, blob, { contentType: "image/webp" });
-      if (error) throw error;
-      const url = sb.storage.from("aguamarina-media").getPublicUrl(path).data.publicUrl;
+      const url = await uploadMedia(blob, `sofi-${Date.now()}.webp`);
       setMsgs((cur) => [...cur, { role: "user", content: "📷 Te mandé una foto" }, { role: "assistant", content: "¡Linda! ¿A qué tratamiento o producto se la pongo? (los que no tienen foto van primero)", photo: { url, items: meta.items } }]);
     } catch {
       setMsgs((cur) => [...cur, { role: "assistant", content: "No pude subir la foto, probá con otra 💙" }]);

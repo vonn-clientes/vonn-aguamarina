@@ -1,18 +1,16 @@
 import { requireMembership } from "@/lib/auth";
-import { createClient } from "@/lib/supabase/server";
+import { query } from "@/lib/db";
 import { PageHeader } from "@/components/panel/PageHeader";
 import { ReviewRow } from "@/components/panel/ReviewRow";
 import type { Review } from "@/lib/types";
 
 export default async function OpinionesPage() {
   const m = await requireMembership();
-  const supabase = await createClient();
-  const [{ data: rv }, { data: items }] = await Promise.all([
-    supabase.from("reviews").select("*").eq("tenant_id", m.tenant.id).order("created_at", { ascending: false }),
-    supabase.from("catalog_items").select("id,name").eq("tenant_id", m.tenant.id),
+  const [reviews, items] = await Promise.all([
+    query<Review>("select * from reviews where tenant_id = $1 order by created_at desc", [m.tenant.id]),
+    query<{ id: string; name: string }>("select id, name from catalog_items where tenant_id = $1", [m.tenant.id]),
   ]);
-  const names = new Map((items ?? []).map((i: { id: string; name: string }) => [i.id, i.name]));
-  const reviews = (rv as Review[]) ?? [];
+  const names = new Map(items.map((i) => [i.id, i.name]));
   return (
     <>
       <PageHeader

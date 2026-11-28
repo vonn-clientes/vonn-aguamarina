@@ -1,21 +1,11 @@
-import { createClient } from "@supabase/supabase-js";
+import { query } from "@/lib/db";
 import type { Review } from "@/lib/types";
 
-function client() {
-  return createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!, {
-    auth: { persistSession: false, autoRefreshToken: false },
-  });
-}
-
 export async function getReviews(itemId: string): Promise<Review[]> {
-  const { data } = await client()
-    .from("reviews")
-    .select("*")
-    .eq("item_id", itemId)
-    .eq("visible", true)
-    .order("created_at", { ascending: false })
-    .limit(50);
-  return (data as Review[]) ?? [];
+  return query<Review>(
+    "select * from reviews where item_id = $1 and visible = true order by created_at desc limit 50",
+    [itemId],
+  );
 }
 
 export function summarize(reviews: Review[]) {
@@ -28,11 +18,13 @@ export type ShowcaseReview = { id: string; author: string; rating: number; comme
 
 /** Opiniones visibles de todo el sitio (para el carrusel de la portada). */
 export async function getSiteReviews(tenantId: string): Promise<ShowcaseReview[]> {
-  const sb = client();
-  const [{ data: rv }, { data: items }] = await Promise.all([
-    sb.from("reviews").select("id, author, rating, comment, item_id").eq("tenant_id", tenantId).eq("visible", true).gte("rating", 4).order("created_at", { ascending: false }).limit(30),
-    sb.from("catalog_items").select("id, name").eq("tenant_id", tenantId),
+  const [rv, items] = await Promise.all([
+    query<{ id: string; author: string; rating: number; comment: string; item_id: string | null }>(
+      "select id, author, rating, comment, item_id from reviews where tenant_id = $1 and visible = true and rating >= 4 order by created_at desc limit 30",
+      [tenantId],
+    ),
+    query<{ id: string; name: string }>("select id, name from catalog_items where tenant_id = $1", [tenantId]),
   ]);
-  const names = new Map((items ?? []).map((i) => [i.id as string, i.name as string]));
-  return (rv ?? []).map((r) => ({ id: r.id, author: r.author, rating: r.rating, comment: r.comment, source: "web" as const, detail: r.item_id ? names.get(r.item_id) : "Opinión del lugar" }));
+  const names = new Map(items.map((i) => [i.id, i.name]));
+  return rv.map((r) => ({ id: r.id, author: r.author, rating: r.rating, comment: r.comment, source: "web" as const, detail: r.item_id ? names.get(r.item_id) : "Opinión del lugar" }));
 }

@@ -1,7 +1,7 @@
 import "@/app/agenda.css";
 import type { Metadata } from "next";
 import Image from "next/image";
-import { createClient } from "@/lib/supabase/server";
+import { queryOne } from "@/lib/db";
 import { fmtDateTimeLong, STATUS_LABEL, type Status } from "@/lib/agenda";
 import { waLink } from "@/lib/seo";
 import { respondAppointment } from "./actions";
@@ -12,9 +12,10 @@ type Row = { service_name: string; starts_at: string; duration_min: number; stat
 
 export default async function TurnoPage({ params }: { params: Promise<{ token: string }> }) {
   const { token } = await params;
-  const supabase = await createClient();
-  const { data } = await supabase.rpc("ag_get_appointment", { p_token: token });
-  const a = (Array.isArray(data) ? data[0] : data) as Row | undefined;
+  const a =
+    token.length >= 8 && token.length <= 128
+      ? await queryOne<Row>("select * from ag_get_appointment($1::text)", [token])
+      : null;
 
   return (
     <div className="ag ag-t">

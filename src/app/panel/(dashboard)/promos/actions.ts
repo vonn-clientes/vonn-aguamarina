@@ -1,7 +1,7 @@
 "use server";
 
 import { requireMembership } from "@/lib/auth";
-import { createClient } from "@/lib/supabase/server";
+import { deleteRows, insertRow, updateRows } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 
 function parse(formData: FormData) {
@@ -28,28 +28,24 @@ function refresh() {
 
 export async function addPromo(formData: FormData) {
   const m = await requireMembership();
-  const supabase = await createClient();
-  await supabase.from("promos").insert({ tenant_id: m.tenant.id, ...parse(formData), sort_order: Date.now() % 1000000 });
+  await insertRow("promos", { tenant_id: m.tenant.id, ...parse(formData), sort_order: Date.now() % 1000000 });
   refresh();
 }
 
 export async function updatePromo(id: string, formData: FormData) {
   const m = await requireMembership();
-  const supabase = await createClient();
-  await supabase.from("promos").update(parse(formData)).eq("id", id).eq("tenant_id", m.tenant.id);
+  await updateRows("promos", parse(formData), { id, tenant_id: m.tenant.id });
   refresh();
 }
 
 export async function togglePromo(id: string, active: boolean) {
   const m = await requireMembership();
-  const supabase = await createClient();
-  await supabase.from("promos").update({ active }).eq("id", id).eq("tenant_id", m.tenant.id);
+  await updateRows("promos", { active }, { id, tenant_id: m.tenant.id });
   refresh();
 }
 
 export async function deletePromo(id: string) {
   const m = await requireMembership();
-  const supabase = await createClient();
-  await supabase.from("promos").delete().eq("id", id).eq("tenant_id", m.tenant.id);
+  await deleteRows("promos", { id, tenant_id: m.tenant.id });
   refresh();
 }

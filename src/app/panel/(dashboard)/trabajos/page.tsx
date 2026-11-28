@@ -1,5 +1,5 @@
 import { requireMembership } from "@/lib/auth";
-import { createClient } from "@/lib/supabase/server";
+import { query } from "@/lib/db";
 import { PageHeader } from "@/components/panel/PageHeader";
 import { AddAlbumForm, AlbumCard, type AlbumRowData } from "@/components/panel/AlbumEditor";
 import { WORK_ALBUMS } from "@/lib/trabajos";
@@ -7,15 +7,11 @@ import { importStaticAlbums } from "./actions";
 
 export default async function TrabajosPage() {
   const membership = await requireMembership();
-  const supabase = await createClient();
 
-  const { data } = await supabase
-    .from("work_albums")
-    .select("id,title,caption,photos,active")
-    .eq("tenant_id", membership.tenant.id)
-    .order("sort_order", { ascending: true })
-    .order("created_at", { ascending: true });
-  const albums = (data as AlbumRowData[]) ?? [];
+  const albums = await query<AlbumRowData>(
+    "select id, title, caption, photos, active from work_albums where tenant_id = $1 order by sort_order asc, created_at asc",
+    [membership.tenant.id],
+  );
 
   return (
     <>

@@ -1,19 +1,16 @@
 import { requireMembership } from "@/lib/auth";
-import { createClient } from "@/lib/supabase/server";
+import { query } from "@/lib/db";
 import { PageHeader } from "@/components/panel/PageHeader";
 import { PedidoCard, type PedidoConItems } from "./PedidoCard";
 
 export default async function PedidosPage() {
   const membership = await requireMembership();
-  const supabase = await createClient();
 
-  const { data } = await supabase
-    .from("orders")
-    .select("*, order_items(*)")
-    .eq("tenant_id", membership.tenant.id)
-    .order("created_at", { ascending: false });
-
-  const orders = (data as PedidoConItems[]) ?? [];
+  const orders = await query<PedidoConItems>(
+    `select o.*, coalesce((select json_agg(i order by i.created_at) from order_items i where i.order_id = o.id), '[]'::json) as order_items
+     from orders o where o.tenant_id = $1 order by o.created_at desc`,
+    [membership.tenant.id],
+  );
 
   return (
     <>

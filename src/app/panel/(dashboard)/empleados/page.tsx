@@ -1,5 +1,5 @@
 import { requireMembership } from "@/lib/auth";
-import { createClient } from "@/lib/supabase/server";
+import { query } from "@/lib/db";
 import { PageHeader } from "@/components/panel/PageHeader";
 import { InviteForm } from "@/components/panel/InviteForm";
 import { RevokeButton } from "@/components/panel/RevokeButton";
@@ -13,15 +13,11 @@ const statusLabel: Record<TenantMember["status"], string> = {
 
 export default async function EmpleadosPage() {
   const membership = await requireMembership();
-  const supabase = await createClient();
 
-  const { data } = await supabase
-    .from("tenant_members")
-    .select("*")
-    .eq("tenant_id", membership.tenant.id)
-    .order("created_at", { ascending: true });
-
-  const members = (data as TenantMember[]) ?? [];
+  const members = await query<TenantMember>(
+    "select * from tenant_members where tenant_id = $1 order by created_at asc",
+    [membership.tenant.id],
+  );
 
   return (
     <>

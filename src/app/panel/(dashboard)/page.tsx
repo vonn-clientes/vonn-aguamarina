@@ -1,23 +1,25 @@
 import Link from "next/link";
 import { requireMembership } from "@/lib/auth";
-import { createClient } from "@/lib/supabase/server";
+import { query } from "@/lib/db";
 import { PageHeader } from "@/components/panel/PageHeader";
 import { addDays, dayStartISO, todayKey } from "@/lib/agenda";
 
 export default async function DashboardHome() {
   const membership = await requireMembership();
-  const supabase = await createClient();
   const t = membership.tenant.id;
   const today = todayKey();
 
   const [turnos, pedidos] = await Promise.all([
-    supabase.from("ag_appointments").select("id", { count: "exact", head: true }).eq("tenant_id", t).in("status", ["pendiente", "confirmado"]).gte("starts_at", dayStartISO(today)).lt("starts_at", dayStartISO(addDays(today, 1))),
-    supabase.from("orders").select("id", { count: "exact", head: true }).eq("tenant_id", t).eq("status", "pendiente"),
+    query<{ n: number }>(
+      "select count(*)::int as n from ag_appointments where tenant_id = $1 and status in ('pendiente','confirmado') and starts_at >= $2 and starts_at < $3",
+      [t, dayStartISO(today), dayStartISO(addDays(today, 1))],
+    ),
+    query<{ n: number }>("select count(*)::int as n from orders where tenant_id = $1 and status = 'pendiente'", [t]),
   ]);
 
   const cards = [
-    { n: turnos.count ?? 0, label: "turnos para hoy", href: "/panel/agenda" },
-    { n: pedidos.count ?? 0, label: "pedidos de la tienda por atender", href: "/panel/pedidos" },
+    { n: turnos[0]?.n ?? 0, label: "turnos para hoy", href: "/panel/agenda" },
+    { n: pedidos[0]?.n ?? 0, label: "pedidos de la tienda por atender", href: "/panel/pedidos" },
   ];
   const shortcuts = [
     { href: "/panel/agenda/turnos/nuevo", title: "Agendar un turno", text: "Cargá un turno nuevo en segundos." },

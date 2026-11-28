@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { createClient } from "@/lib/supabase/client";
+import { uploadMedia } from "@/lib/upload-client";
 import { nameFromForm, seoImageFileName } from "@/lib/seo-image";
 
 // Galería de fotos de un tratamiento o producto: se pueden subir varias a la vez.
@@ -36,14 +36,10 @@ export function GalleryUpload({
     if (files.length === 0) return;
     setState("uploading");
     try {
-      const supabase = createClient();
       const added: string[] = [];
       for (const file of files) {
         const blob = await shrink(file);
-        const path = `${tenantId}/${seoImageFileName(nameFromForm(input))}`;
-        const { error } = await supabase.storage.from("aguamarina-media").upload(path, blob, { contentType: "image/webp" });
-        if (error) throw error;
-        added.push(supabase.storage.from("aguamarina-media").getPublicUrl(path).data.publicUrl);
+        added.push(await uploadMedia(blob, seoImageFileName(nameFromForm(input))));
       }
       setUrls((prev) => [...prev, ...added]);
       setState("idle");

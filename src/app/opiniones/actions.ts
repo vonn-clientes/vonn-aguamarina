@@ -1,6 +1,6 @@
 "use server";
 
-import { createClient } from "@supabase/supabase-js";
+import { insertRow, queryOne } from "@/lib/db";
 import { revalidatePath } from "next/cache";
 import { SITE } from "@/lib/site";
 
@@ -12,32 +12,38 @@ export async function submitReview(input: { itemId: string | null; author: strin
   const rating = Math.round(Number(input.rating));
   if (!author || !comment || rating < 1 || rating > 5) return { ok: false, error: "Completá tu nombre, las estrellas y tu opinión." };
 
-  const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!, {
-    auth: { persistSession: false },
-  });
-  // Sin itemId = opinión general del lugar.
-  let item: { id: string | null; tenant_id: string } | null = null;
-  if (input.itemId) {
-    const { data } = await supabase.from("catalog_items").select("id, tenant_id").eq("id", input.itemId).eq("active", true).maybeSingle();
-    item = data;
-  } else {
-    const { data: t } = await supabase.from("tenants").select("id").eq("slug", SITE.slug).eq("status", "activo").maybeSingle();
-    item = t ? { id: null, tenant_id: t.id } : null;
-  }
-  if (!item) return { ok: false, error: "No encontramos este tratamiento." };
+  try {
+    // Sin itemId = opinión general del lugar.
+    let item: { id: string | null; tenant_id: string } | null = null;
+    if (input.itemId) {
+      item = /^[0-9a-f-]{36}$/i.test(input.itemId)
+        ? await queryOne<{ id: string; tenant_id: string }>("select id, tenant_id from catalog_items where id = $1 and active = true", [input.itemId])
+        : null;
+    } else {
+      const t = await queryOne<{ id: string }>("select id from tenants where slug = $1 and status = 'activo'", [SITE.slug]);
+      item = t ? { id: null, tenant_id: t.id } : null;
+    }
+    if (!item) return { ok: false, error: "No encontramos este tratamiento." };
 
-  const since = new Date(Date.now() - 3600_000).toISOString();
-  const q = supabase.from("reviews").select("id", { count: "exact", head: true }).eq("tenant_id", item.tenant_id).gte("created_at", since);
-  const { count } = await (item.id ? q.eq("item_id", item.id) : q.is("item_id", null));
-  if ((count ?? 0) >= 8) return { ok: false, error: "Hay muchas opiniones en poco tiempo. Probá de nuevo en un rato." };
+    const since = new Date(Date.now() - 3600_000).toISOString();
+    const cnt = await queryOne<{ n: number }>(
+      "select count(*)::int as n from reviews where tenant_id = $1 and created_at >= $2 and item_id is not distinct from $3::uuid",
+      [item.tenant_id, since, item.id],
+    );
+    if ((cnt?.n ?? 0) >= 8) return { ok: false, error: "Hay muchas opiniones en poco tiempo. Probá de nuevo en un rato." };
 
-  let { error } = await supabase.from("reviews").insert({ tenant_id: item.tenant_id, item_id: item.id, author, rating, comment });
-  if (error && !item.id) {
-    // Si la base todavía exige un tratamiento, se guarda en el primero del catálogo.
-    const { data: first } = await supabase.from("catalog_items").select("id").eq("tenant_id", item.tenant_id).eq("active", true).order("sort_order").limit(1).maybeSingle();
-    if (first) ({ error } = await supabase.from("reviews").insert({ tenant_id: item.tenant_id, item_id: first.id, author, rating, comment }));
+    try {
+      await insertRow("reviews", { tenant_id: item.tenant_id, item_id: item.id, author, rating, comment });
+    } catch (e) {
+      if (item.id) throw e;
+      // Si la base todavía exige un tratamiento, se guarda en el primero del catálogo.
+      const first = await queryOne<{ id: string }>("select id from catalog_items where tenant_id = $1 and active = true order by sort_order limit 1", [item.tenant_id]);
+      if (!first) throw e;
+      await insertRow("reviews", { tenant_id: item.tenant_id, item_id: first.id, author, rating, comment });
+    }
+  } catch {
+    return { ok: false, error: "No pudimos guardar tu opinión. Probá de nuevo." };
   }
-  if (error) return { ok: false, error: "No pudimos guardar tu opinión. Probá de nuevo." };
   revalidatePath(input.path.startsWith("/") ? input.path : "/");
   return { ok: true };
 }
