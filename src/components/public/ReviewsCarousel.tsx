@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import type { ShowcaseReview } from "@/lib/reviews";
+import type { ShowcaseReview } from "@/lib/reviews-shared";
 import { Stars } from "@/components/public/Reviews";
 
 // Pasa una opinión cada 4 segundos. Se frena al pasar el mouse / tocar / enfocar, y respeta "reducir movimiento".

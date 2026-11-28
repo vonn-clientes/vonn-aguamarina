@@ -22,14 +22,16 @@ import { ReviewForm } from "@/components/public/ReviewForm";
 import { ReviewsCarousel } from "@/components/public/ReviewsCarousel";
 import { Works } from "@/components/public/Works";
 import { getPublicWorkAlbums } from "@/lib/trabajos-db";
-import { getSiteReviews, type ShowcaseReview } from "@/lib/reviews";
+import { getSiteReviews } from "@/lib/reviews";
+import type { ShowcaseReview } from "@/lib/reviews-shared";
 import { getGoogleReviews } from "@/lib/google-reviews";
 import { GOOGLE_RESUMEN, RESENAS_GOOGLE } from "@/lib/resenas-google";
 
 // La página se genera una vez y se refresca sola cada 60 segundos: rápida
 // para quien visita, y los cambios que haga la dueña desde el panel se ven
 // en menos de un minuto.
-export const revalidate = 60;
+// Se arma en cada visita (lee la base Neon): lo que edita la dueña se ve al instante.
+export const dynamic = "force-dynamic";
 
 const CATEGORY_HEADLINES: Record<string, string> = {
   Faciales: "Tu piel, bien cuidada.",

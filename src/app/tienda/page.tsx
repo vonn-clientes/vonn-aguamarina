@@ -6,7 +6,8 @@ import { breadcrumbJsonLd } from "@/lib/seo";
 import { Advice, JsonLd, SiteFooter, SiteHeader } from "@/components/public/ag";
 import { ShopGrid } from "@/components/tienda/ShopGrid";
 
-export const revalidate = 60;
+// Se arma en cada visita (lee la base Neon): lo que edita la dueña se ve al instante.
+export const dynamic = "force-dynamic";
 
 const TITLE = `Tienda de cuidado de la piel en ${SITE.city}`;
 const DESCRIPTION = `Productos de cuidado facial y corporal de Aguamarina Estética y Bienestar, en ${SITE.city}. Elegís online, coordinás el pago por WhatsApp y retirás en el gabinete.`;

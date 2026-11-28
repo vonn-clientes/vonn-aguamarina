@@ -1,4 +1,4 @@
-import type { ShowcaseReview } from "@/lib/reviews";
+import type { ShowcaseReview } from "@/lib/reviews-shared";
 
 // Opiniones de Google Maps copiadas a mano (sin conectar la API, que es paga).
 // Se actualizan una vez por mes: copiar las nuevas de Google Maps, con su texto tal cual,

@@ -5,7 +5,8 @@ import { getPublicSite } from "@/lib/public-data";
 import { FormularioIngrid } from "@/components/FormularioIngrid";
 
 export const metadata: Metadata = { title: "Formulario", robots: { index: false, follow: false } };
-export const revalidate = 60;
+// Se arma en cada visita (lee la base Neon): lo que edita la dueña se ve al instante.
+export const dynamic = "force-dynamic";
 
 export default async function FormularioPage() {
   const site = await getPublicSite();

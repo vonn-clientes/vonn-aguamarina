@@ -1,5 +1,6 @@
 import { query } from "@/lib/db";
 import type { Review } from "@/lib/types";
+import type { ShowcaseReview } from "@/lib/reviews-shared";
 
 export async function getReviews(itemId: string): Promise<Review[]> {
   return query<Review>(
@@ -8,13 +9,6 @@ export async function getReviews(itemId: string): Promise<Review[]> {
   );
 }
 
-export function summarize(reviews: Review[]) {
-  const count = reviews.length;
-  const avg = count ? reviews.reduce((s, r) => s + r.rating, 0) / count : 0;
-  return { count, avg: Math.round(avg * 10) / 10 };
-}
-
-export type ShowcaseReview = { id: string; author: string; rating: number; comment: string; source: "google" | "web"; detail?: string };
 
 /** Opiniones visibles de todo el sitio (para el carrusel de la portada). */
 export async function getSiteReviews(tenantId: string): Promise<ShowcaseReview[]> {

@@ -5,7 +5,8 @@ import { FULL_ADDRESS, SITE } from "@/lib/site";
 import { breadcrumbJsonLd, faqJsonLd, slugify, waLink } from "@/lib/seo";
 import { Advice, JsonLd, SiteFooter, SiteHeader, TurnoButton } from "@/components/public/ag";
 
-export const revalidate = 3600;
+// Se arma en cada visita (lee la base Neon): lo que edita la dueña se ve al instante.
+export const dynamic = "force-dynamic";
 
 const TITLE = "Centro de estética en Concepción del Uruguay";
 const DESCRIPTION = `Aguamarina Estética y Bienestar: tratamientos faciales y corporales, depilación definitiva, maquillaje y peinados en ${SITE.city}, ${SITE.region}. Atención con turno previo.`;

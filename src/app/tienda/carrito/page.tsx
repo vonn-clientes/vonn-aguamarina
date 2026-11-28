@@ -9,7 +9,8 @@ export const metadata: Metadata = {
   title: "Tu carrito",
   robots: { index: false, follow: false },
 };
-export const revalidate = 60;
+// Se arma en cada visita (lee la base Neon): lo que edita la dueña se ve al instante.
+export const dynamic = "force-dynamic";
 
 export default async function CarritoPage() {
   const site = await getPublicSite();

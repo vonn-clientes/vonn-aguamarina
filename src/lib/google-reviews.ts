@@ -1,4 +1,4 @@
-import type { ShowcaseReview } from "@/lib/reviews";
+import type { ShowcaseReview } from "@/lib/reviews-shared";
 
 // Opiniones de Google (Places API). Se activa sola cuando existen GOOGLE_PLACES_API_KEY y GOOGLE_PLACE_ID.
 // Se guarda en caché 6 horas para no gastar cuota. Si algo falla, simplemente no muestra nada.

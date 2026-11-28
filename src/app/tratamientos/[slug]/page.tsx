@@ -8,24 +8,17 @@ import { seoAlt } from "@/lib/seo-image";
 import { Advice, JsonLd, SiteFooter, SiteHeader, TurnoButton } from "@/components/public/ag";
 import { TreatmentCard } from "@/components/public/TreatmentCard";
 import { Reviews, Stars } from "@/components/public/Reviews";
-import { getReviews, summarize } from "@/lib/reviews";
+import { getReviews } from "@/lib/reviews";
+import { summarize } from "@/lib/reviews-shared";
 
-export const revalidate = 60;
+// Se arma en cada visita (lee la base Neon): lo que edita la dueña se ve al instante.
+export const dynamic = "force-dynamic";
 
 async function findService(slug: string) {
   const site = await getPublicSite();
   if (!site) return null;
   const item = site.services.find((s) => slugify(s.name) === slug);
   return item ? { site, item } : null;
-}
-
-export async function generateStaticParams() {
-  try {
-    const site = await getPublicSite();
-    return (site?.services ?? []).map((s) => ({ slug: slugify(s.name) }));
-  } catch {
-    return [];
-  }
 }
 
 export async function generateMetadata(props: PageProps<"/tratamientos/[slug]">): Promise<Metadata> {

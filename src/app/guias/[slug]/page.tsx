@@ -7,7 +7,8 @@ import { breadcrumbJsonLd, faqJsonLd } from "@/lib/seo";
 import { GUIAS } from "@/lib/guias";
 import { Advice, JsonLd, SiteFooter, SiteHeader } from "@/components/public/ag";
 
-export const revalidate = 3600;
+// Se arma en cada visita (lee la base Neon): lo que edita la dueña se ve al instante.
+export const dynamic = "force-dynamic";
 export const dynamicParams = false;
 
 export function generateStaticParams() {

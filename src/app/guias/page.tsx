@@ -6,7 +6,8 @@ import { breadcrumbJsonLd } from "@/lib/seo";
 import { GUIAS } from "@/lib/guias";
 import { JsonLd, SiteFooter, SiteHeader } from "@/components/public/ag";
 
-export const revalidate = 3600;
+// Se arma en cada visita (lee la base Neon): lo que edita la dueña se ve al instante.
+export const dynamic = "force-dynamic";
 
 const TITLE = "Guías de cuidado de la piel y estética";
 const DESCRIPTION = `Guías simples de Aguamarina, ${SITE.city}: rutinas de skincare, retinol, vitamina C, limpieza facial, HIFU y depilación definitiva.`;

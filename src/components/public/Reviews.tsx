@@ -1,5 +1,5 @@
 import type { Review } from "@/lib/types";
-import { summarize } from "@/lib/reviews";
+import { summarize } from "@/lib/reviews-shared";
 import { ReviewForm } from "./ReviewForm";
 
 export function Stars({ value }: { value: number }) {

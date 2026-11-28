@@ -10,24 +10,17 @@ import { Advice, JsonLd, SiteFooter, SiteHeader } from "@/components/public/ag";
 import { AddToCart } from "@/components/tienda/AddToCart";
 import { ProductGuide } from "@/components/tienda/ProductGuide";
 import { Reviews, Stars } from "@/components/public/Reviews";
-import { getReviews, summarize } from "@/lib/reviews";
+import { getReviews } from "@/lib/reviews";
+import { summarize } from "@/lib/reviews-shared";
 
-export const revalidate = 60;
+// Se arma en cada visita (lee la base Neon): lo que edita la dueña se ve al instante.
+export const dynamic = "force-dynamic";
 
 async function findProduct(slug: string) {
   const site = await getPublicSite();
   if (!site) return null;
   const item = site.products.find((p) => slugify(p.name) === slug);
   return item ? { site, item } : null;
-}
-
-export async function generateStaticParams() {
-  try {
-    const site = await getPublicSite();
-    return (site?.products ?? []).map((p) => ({ slug: slugify(p.name) }));
-  } catch {
-    return [];
-  }
 }
 
 export async function generateMetadata(props: PageProps<"/tienda/[slug]">): Promise<Metadata> {
