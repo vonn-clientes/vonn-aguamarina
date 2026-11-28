@@ -25,6 +25,10 @@ const csp = [
 ].join("; ");
 
 const nextConfig: NextConfig = {
+  // La imagen para compartir el link es estatica (el generador dinamico no entra en el plan gratis de Cloudflare).
+  async rewrites() {
+    return [{ source: "/opengraph-image", destination: "/logo-aguamarina-oficial.png" }];
+  },
   async headers() {
     return [
       { source: "/:path*", headers: comunes },
